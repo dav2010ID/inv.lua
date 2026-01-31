@@ -1,12 +1,10 @@
-![Screenshot](https://github.com/knector01/inv.lua/blob/master/inv-client-screenshot.png?raw=true)
-
 # inv.lua
 
-This software provides a lightweight, configurable inventory management and autocrafting system for ComputerCraft:Tweaked / Restitched. Sequences of recipes can be automatically crafted using a crafting turtle alongside crafting machines such as furnaces. A client interface is also provided, allowing quick retrieval and crafting of items, and this interface was created using a [custom GUI toolkit](https://github.com/knector01/gui.lua).
+This software provides a lightweight, configurable inventory management and autocrafting system for ComputerCraft:Tweaked / Restitched. Sequences of recipes can be automatically crafted using a crafting turtle alongside crafting machines such as furnaces. The server runs headless and is controlled via a built-in CLI.
 
 ## Installation
 
-The client and server software can be downloaded from GitHub and installed onto turtles in-game using [SquidDev's Git downloader](https://forums.computercraft.cc/index.php?topic=120.0):
+The software can be downloaded from GitHub and installed onto turtles in-game using [SquidDev's Git downloader](https://forums.computercraft.cc/index.php?topic=120.0):
 
 ```
 wget https://gist.githubusercontent.com/SquidDev/e0f82765bfdefd48b0b15a5c06c0603b/raw/clone.min.lua
@@ -27,21 +25,24 @@ shell.setDir("inv")
 shell.run("run_server.lua")
 ```
 
-Finally, place a separate Advanced Turtle connected to the same network. This one will be used as a client to retrieve items from the inventory system. Install the software as before, then run `inv_client.lua SERVER_ID` on the client turtle, replacing `SERVER_ID` with the numeric computer ID of the server. This ID can be found by running the `id` command  on the server turtle. If desired, you can make a startup script for the client as well:
+Once running, use the CLI on the server turtle:
 
-```lua
-local SERVER_ID = 1 -- replace with your server's ID
-shell.setDir("inv")
-shell.run("run_client.lua", SERVER_ID)
 ```
-
-You can then use the client turtle's GUI to request items from the storage network, and they will be placed in the turtle's inventory. The turtles and chests can be placed anywhere as long as they are connected to the network by cables and modems, and an arbitrary number of client turtles can be connected.
+help
+list [filter]
+count <item>
+craft <item> <count>
+scan
+devices
+status
+quit
+```
 
 ## Troubleshooting
 
-Make sure to use `cd` to enter the repository folder before running the client or server so that the configuration files can be read.
+Make sure to use `cd` to enter the repository folder before running the server so that the configuration files can be read.
 
-If the client or server crash when run, or you are unable to view the list of items in the network, then one of the turtles likely has not been connected to the server properly (check the cables). If the items show up in the list but cannot be pulled into to the client inventory then you may have forgotten to right-click the modem to connect the turtle fully to the network.
+If the server crashes when run, or you are unable to view the list of items in the network, then one of the turtles likely has not been connected to the server properly (check the cables). If items show up in the list but do not move, verify modem connections and device configuration.
 
 ## Configuration
 

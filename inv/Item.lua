@@ -111,7 +111,6 @@ function Item:getName()
 end
 
 -- Returns the Item's information as a plain table.
--- Used when sending item information to clients.
 function Item:serialize()
     local t = {}
     t.name = self.name

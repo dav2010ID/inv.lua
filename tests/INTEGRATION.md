@@ -15,13 +15,12 @@ and a peripheral crafting machine (e.g., furnace).
 
 ## Steps
 1. Start the server: `run_server.lua`.
-2. Start a client turtle: `run_client.lua SERVER_ID`.
-3. Request a workbench-crafted item from the client UI.
-4. Confirm items are crafted and delivered.
-5. Request a furnace-crafted item.
-6. Confirm items are crafted and delivered.
+2. Use CLI: `craft minecraft:oak_planks 4` (or any workbench recipe).
+3. Confirm items are crafted and stored.
+4. Use CLI: `craft minecraft:stone 8` (or any furnace recipe).
+5. Confirm items are crafted and stored.
 
 ## Expected
 - Workbench crafting uses the turtle backend (no errors).
 - Furnace crafting uses peripheral backend (no errors).
-- Inventory counts update on the client after each craft.
+- Inventory counts update after each craft (`list` or `count`).

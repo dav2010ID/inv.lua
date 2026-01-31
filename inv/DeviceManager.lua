@@ -3,7 +3,6 @@ local Object = require 'object.Object'
 local Common = require 'inv.Common'
 local Storage = require 'inv.device.Storage'
 local Machine = require 'inv.device.Machine'
-local ClientDevice = require 'inv.device.ClientDevice'
 
 -- Manages network-attached devices, including storage and crafting machines.
 -- Specialized behavior is delegated by Devices to the appropriate class
@@ -97,10 +96,6 @@ function DeviceManager:createDevice(name)
         if config.craftOutputSlot == nil then
             config.craftOutputSlot = 10
         end
-    end
-
-    if deviceType == "turtle" then
-        return ClientDevice(self.server, name, deviceType)
     end
 
     if config.purpose == "crafting" then

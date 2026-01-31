@@ -13,9 +13,9 @@ function InvManager:init(server)
     -- Dictionary tag previously seen on this network.
     self.tags = {}
     -- bool: Whether the current state of the stored items has been updated.
-    -- If true, then the changes need to be synchronized to the clients.
+    -- If true, then changes should be processed by the server loop.
     self.updated = false
-    -- table<string, bool>: Items that have changed since the last client sync.
+    -- table<string, bool>: Items that have changed since the last update.
     self.updatedItems = {}
 end
 
@@ -192,8 +192,8 @@ function InvManager:pullItemsFrom(item, srcDevice, srcSlot)
     return moved
 end
 
--- Returns a list of items changed since the last client sync,
--- with all items serialized to the proper client format.
+-- Returns a list of items changed since the last update,
+-- with all items serialized to a plain table format.
 function InvManager:getUpdatedItems()
     if self.updated then
         local u = {}
