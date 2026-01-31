@@ -8,10 +8,16 @@ end
 
 -- Reads and parses a JSON file, returning its contents as a table.
 function Config.loadJSON(filename)
-    local file = io.open(filename, "r")
+    local file, err = io.open(filename, "r")
+    if not file then
+        error("failed to open config file: " .. filename .. " (" .. tostring(err) .. ")", 2)
+    end
     local data = file:read("*all")
-    local config = textutils.unserialiseJSON(data)
     file:close()
+    local ok, config = pcall(textutils.unserialiseJSON, data)
+    if not ok or config == nil then
+        error("failed to parse JSON: " .. filename, 2)
+    end
     return config
 end
 

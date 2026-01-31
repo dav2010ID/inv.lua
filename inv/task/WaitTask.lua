@@ -10,7 +10,7 @@ function WaitTask:init(server, parent, item)
 end
 
 function WaitTask:print()
-    write("waiting on items")
+    write("[task] waiting on items")
     if self.item.name then
         write(" " .. self.item.name)
     elseif self.item.tags then

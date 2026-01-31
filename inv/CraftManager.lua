@@ -1,5 +1,5 @@
 local Object = require 'object.Object'
-local CraftTask = require 'inv.task.CraftTask'
+local CraftPlanner = require 'inv.CraftPlanner'
 local Recipe = require 'inv.Recipe'
 
 local expect = require "cc.expect"
@@ -15,6 +15,7 @@ function CraftManager:init(server)
     -- table<string, table<string, Machine>>: Crafting machines connected to
     -- this network, indexed by machine type and device name.
     self.machines = {}
+    self.planner = CraftPlanner(server)
 end
 
 -- Adds a crafting machine to the network, updating network state as necessary.
@@ -42,7 +43,7 @@ function CraftManager:loadRecipes(data)
             assert(item.name) -- output should not be generic
             if not self.recipes[item.name] then
                 self.recipes[item.name] = recipe
-                print("added recipe",item.name)
+                print("[craft] added recipe",item.name)
             end
             local info = self.server.invManager.items[item.name]
             if not info then
@@ -65,7 +66,7 @@ function CraftManager:findRecipe(item)
     for name, v in pairs(results) do
         local recipe = self.recipes[name]
         if recipe then
-            print("recipe found",name)
+            print("[craft] recipe found",name)
             return recipe
         end
     end
@@ -81,10 +82,10 @@ function CraftManager:findMachine(machineType)
             if not machine:busy() then
                 return machine
             end
-            print(name,"busy")
+            print("[craft]",name,"busy")
         end
     end
-    print("no",machineType,"found")
+    print("[craft] no",machineType,"found")
     return nil
 end
 
@@ -94,22 +95,9 @@ function CraftManager:pushOrCraftItemsTo(criteria,dest,destSlot)
     local n = self.server.invManager:pushItemsTo(criteria,dest,destSlot)
 
     if n < criteria.count then
-        local recipe = self:findRecipe(criteria)
-        if recipe then
-            local nOut = 0
-            for slot, item in pairs(recipe.output) do
-                if criteria:matches(item) then
-                    nOut = item.count
-                    break
-                end
-            end
-
-            local toMake = criteria.count - n
-            local crafts = math.ceil(toMake / nOut)
-            for i=1,crafts do
-                self.server.taskManager:addTask(CraftTask(self.server, nil, recipe, dest, destSlot))
-            end
-        end
+        local remaining = criteria:copy()
+        remaining.count = criteria.count - n
+        self.planner:plan(remaining, dest, destSlot)
     end
     return n
 end

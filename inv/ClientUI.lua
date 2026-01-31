@@ -8,13 +8,14 @@ local ListBox = require 'gui.ListBox'
 local Root = require 'gui.Root'
 local ScrollBar = require 'gui.ScrollBar'
 local TextField = require 'gui.TextField'
+local UIConfig = require 'inv.ClientUIConfig'
 
 local ClientUI = Root:subclass()
 
 function ClientUI:init(client)
     ClientUI.superClass.init(self)
     
-    self.moveKeys = {w=-4,s=4,a=-1,d=1}
+    self.moveKeys = UIConfig.moveKeys
     self.client = client
     
     self.sidebarWidth = math.floor(self.size[1] / 3)
@@ -50,7 +51,7 @@ function ClientUI:init(client)
         self.btnBox = LinearContainer(self,1,1,0)
         
         self.field = TextField(self,4,"1")
-        self.btnReq = Button(self,"Request")
+        self.btnReq = Button(self, UIConfig.labels.request)
     
         self.btnPrevSlot = Button(self,"")
         self.btnNextSlot = Button(self,"")
@@ -133,19 +134,19 @@ end
 function ClientUI:setModifier(mod)
     self.modPressed = mod
     if mod then
-        self.btnRefresh.text = "ScanNet"
+        self.btnRefresh.text = UIConfig.labels.scan
     else
-        self.btnRefresh.text = "Refresh"
+        self.btnRefresh.text = UIConfig.labels.refresh
     end
     self.btnRefresh.dirty = true
     
     if turtle then
         if mod then
-            self.btnStore.text = " All "
+            self.btnStore.text = UIConfig.labels.storeAll
             self.btnPrevSlot.text = string.char(Constants.SpecialChars.TRI_UP)
             self.btnNextSlot.text = string.char(Constants.SpecialChars.TRI_DOWN)
         else
-            self.btnStore.text = "Store"
+            self.btnStore.text = UIConfig.labels.store
             self.btnPrevSlot.text = string.char(Constants.SpecialChars.TRI_LEFT)
             self.btnNextSlot.text = string.char(Constants.SpecialChars.TRI_RIGHT)
         end
@@ -170,23 +171,23 @@ end
 function ClientUI:onCharTyped(chr)
     if self.focus == self.list or not self.blockKeys[self.focus] then
         local l = chr:lower()
-        if l == "q" then
+        if l == UIConfig.keyActions.request then
             self:requestItem()
-        elseif chr == "e" then
+        elseif chr == UIConfig.keyActions.store then
             self:storeCurrentItem()
-        elseif chr == "E" then
+        elseif chr == UIConfig.keyActions.storeAll then
             self.client:depositAll()
-        elseif chr == "r" then
+        elseif chr == UIConfig.keyActions.refresh then
             self.client:fetchItems(false)
-        elseif chr == "R" then
+        elseif chr == UIConfig.keyActions.refreshScan then
             self.client:fetchItems(true)
-        elseif chr == "=" then
+        elseif chr == UIConfig.keyActions.plus then
             self:adjustItemCount(1)
-        elseif chr == "+" then
+        elseif chr == UIConfig.keyActions.plusMod then
             self:adjustItemCount(1, true)
-        elseif chr == "-" then
+        elseif chr == UIConfig.keyActions.minus then
             self:adjustItemCount(-1)
-        elseif chr == "_" then
+        elseif chr == UIConfig.keyActions.minusMod then
             self:adjustItemCount(-1, true)
         elseif self.moveKeys[l] then
             self.client:moveSelection(self.moveKeys[l])

@@ -1,6 +1,5 @@
 local Object = require 'object.Object'
 local Item = require 'inv.Item'
-local Common = require 'inv.Common'
 
 -- Manages network inventories and item storage/retrieval.
 local InvManager = Object:subclass()
@@ -13,11 +12,6 @@ function InvManager:init(server)
     -- table<string, table<string, Item>>: All items associated with each Ore
     -- Dictionary tag previously seen on this network.
     self.tags = {}
-    -- table<int, Storage>: The inventories connected to this network.
-    self.storage = {}
-    -- bool: Whether the storage list is currently sorted.
-    self.sorted = false
-
     -- bool: Whether the current state of the stored items has been updated.
     -- If true, then the changes need to be synchronized to the clients.
     self.updated = false
@@ -25,35 +19,9 @@ function InvManager:init(server)
     self.updatedItems = {}
 end
 
--- Adds an inventory to the network, updating the network state as necessary.
-function InvManager:addInventory(device)
-    table.insert(self.storage, device)
-    self:scanInventory(device)
-    self.sorted = false
-end
-
--- Removes an inventory from the network, updating the network state as necessary.
-function InvManager:removeInventory(device)
-    Common.removeItem(self.storage, device)
-    self:scanInventories()
-    -- removal does not affect sort
-end
-
--- Static comparison method.
--- Returns true if inventory a should be sorted before inventory b.
-function InvManager.deviceSort(a, b)
-    if a.priority ~= b.priority then
-        return a.priority > b.priority
-    end
-    return a.name < b.name
-end
-
--- Sorts the list of connected inventories if necessary.
-function InvManager:ensureSorted()
-    if not self.sorted then
-        table.sort(self.storage, self.deviceSort)
-        self.sorted = true
-    end
+function InvManager:getStorageManager()
+    assert(self.server.storageManager, "StorageManager not initialized")
+    return self.server.storageManager
 end
 
 -- Scans all connected inventories, adding their stored items to the database.
@@ -63,7 +31,8 @@ function InvManager:scanInventories()
         v.count = 0
     end
 
-    for i, device in ipairs(self.storage) do
+    local storageManager = self:getStorageManager()
+    for i, device in ipairs(storageManager.storage) do
         self:scanInventory(device)
     end
 end
@@ -164,8 +133,9 @@ function InvManager:pushItemsTo(criteria, destDevice, destSlot)
     local moved = 0
     local matches = self:resolveCriteria(criteria)
 
-    self:ensureSorted()
-    for i, device in ipairs(self.storage) do
+    local storageManager = self:getStorageManager()
+    storageManager:ensureSorted()
+    for i, device in ipairs(storageManager.storage) do
         local items = device:list()
 
         for slot, deviceItem in pairs(items) do
@@ -198,8 +168,9 @@ function InvManager:pullItemsFrom(item, srcDevice, srcSlot)
     local moved = 0
     self:updateDB(item) -- ensure we know what we're adding to the system
 
-    self:ensureSorted()
-    for i, device in ipairs(self.storage) do
+    local storageManager = self:getStorageManager()
+    storageManager:ensureSorted()
+    for i, device in ipairs(storageManager.storage) do
         local toMove = item.count - moved
         if device:itemAllowed(item) then
             local n = device:pullItems(srcDevice, srcSlot, toMove)

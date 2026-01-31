@@ -4,19 +4,29 @@ local Config = require 'inv.Config'
 local CraftManager = require 'inv.CraftManager'
 local DeviceManager = require 'inv.DeviceManager'
 local InvManager = require 'inv.InvManager'
+local StorageManager = require 'inv.StorageManager'
 local RPCMethods = require 'inv.RPCMethods'
 local TaskManager = require 'inv.TaskManager'
 
 local Server = Object:subclass()
 
 function Server:init()
+    local deviceConfig, recipeConfig = self:loadConfig()
+    self:setup(deviceConfig, recipeConfig)
+end
+
+function Server:loadConfig()
     local configDir = "config/"
     local deviceConfig = Config.loadDirectory(configDir .. "devices")
     local recipeConfig = Config.loadDirectory(configDir .. "recipes")
+    return deviceConfig, recipeConfig
+end
 
+function Server:setup(deviceConfig, recipeConfig)
     self.clients = {}
 
     self.invManager = InvManager(self)
+    self.storageManager = StorageManager(self)
     self.deviceManager = DeviceManager(self, deviceConfig)
     self.craftManager = CraftManager(self)
     self.taskManager = TaskManager(self)
@@ -25,6 +35,14 @@ function Server:init()
 
     self.craftManager:loadRecipes(recipeConfig)
     self.deviceManager:scanDevices()
+end
+
+function Server:openNetwork()
+    rednet.open(Common.getModemSide())
+end
+
+function Server:closeNetwork()
+    rednet.close(Common.getModemSide())
 end
 
 function Server:send(clientID, message)
@@ -49,44 +67,75 @@ function Server:onMessage(clientID, message, protocol)
     end
 end
 
-function Server:mainLoop()
-    rednet.open(Common.getModemSide())
-    while true do
-        local runTasks = true
-        evt = {os.pullEventRaw()}
-        if evt[1] == "rednet_message" then
-            self:onMessage(evt[2], evt[3], evt[4])
-        elseif evt[1] == "peripheral" then
-            if peripheral.isPresent(evt[2]) then
-                self.deviceManager:addDevice(evt[2])
-            end
-        elseif evt[1] == "peripheral_detach" then
-            if not peripheral.isPresent(evt[2]) then
-                self.deviceManager:removeDevice(evt[2])
-            end
-        elseif evt[1] == "terminate" then
-            break
-        elseif evt[1] == "timer" and evt[2] ~= self.taskTimer then
-            runTasks = false
-        end
-        if runTasks and self.taskManager:update() then
-            self.taskTimer = os.startTimer(1)
-            print("active tasks:", #self.taskManager.active)
-            --for i,t in pairs(self.taskManager.sleeping) do
-            --    print("sleeping",i)
-            --end
-            --print(math.random(1,100))
-        end
-        local updated = self.invManager:getUpdatedItems()
-        if updated then
-            local message = {"items", updated}
-            --print(textutils.serialize(self.clients))
-            for clientID, clientName in pairs(self.clients) do
-                self:send(clientID, message)
-            end
-        end
+function Server:handlePeripheralAttach(name)
+    if peripheral.isPresent(name) then
+        self.deviceManager:addDevice(name)
     end
-    rednet.close(Common.getModemSide())
+end
+
+function Server:handlePeripheralDetach(name)
+    if not peripheral.isPresent(name) then
+        self.deviceManager:removeDevice(name)
+    end
+end
+
+function Server:handleEvent(evt)
+    local event = evt[1]
+    if event == "rednet_message" then
+        self:onMessage(evt[2], evt[3], evt[4])
+    elseif event == "peripheral" then
+        self:handlePeripheralAttach(evt[2])
+    elseif event == "peripheral_detach" then
+        self:handlePeripheralDetach(evt[2])
+    elseif event == "terminate" then
+        return false, false
+    end
+
+    local runTasks = true
+    if event == "timer" and evt[2] ~= self.taskTimer then
+        runTasks = false
+    end
+
+    return true, runTasks
+end
+
+function Server:updateTasks()
+    if self.taskManager:update() then
+        self.taskTimer = os.startTimer(1)
+        print("[server] active tasks:", #self.taskManager.active)
+        --for i,t in pairs(self.taskManager.sleeping) do
+        --    print("sleeping",i)
+        --end
+        --print(math.random(1,100))
+    end
+end
+
+function Server:broadcastUpdatedItems()
+    local updated = self.invManager:getUpdatedItems()
+    if not updated then
+        return
+    end
+    local message = {"items", updated}
+    --print(textutils.serialize(self.clients))
+    for clientID in pairs(self.clients) do
+        self:send(clientID, message)
+    end
+end
+
+function Server:mainLoop()
+    self:openNetwork()
+    while true do
+        local evt = {os.pullEventRaw()}
+        local shouldContinue, runTasks = self:handleEvent(evt)
+        if not shouldContinue then
+            break
+        end
+        if runTasks then
+            self:updateTasks()
+        end
+        self:broadcastUpdatedItems()
+    end
+    self:closeNetwork()
 end
 
 return Server

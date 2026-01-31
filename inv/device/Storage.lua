@@ -17,11 +17,11 @@ function Storage:init(server, name, deviceType, config)
         end
     end
 
-    self.server.invManager:addInventory(self)
+    self.server.storageManager:addStorage(self)
 end
 
 function Storage:destroy()
-    self.server.invManager:removeInventory(self)
+    self.server.storageManager:removeStorage(self)
 end
 
 -- Returns true if the item can be stored in this Storage according to
@@ -36,23 +36,6 @@ function Storage:itemAllowed(item)
         return false
     end
     return true
-end
-
--- Lists items contained in this Storage.
-function Storage:list()
-    return self.interface.list()
-end
-
--- Pushes items from this Storage to another connected Device.
--- limit and toSlot are optional.
-function Storage:pushItems(toDevice, fromSlot, limit, toSlot)
-    return self.interface.pushItems(toDevice.location, fromSlot, limit, toSlot)
-end
-
--- Pulls items into this Storage from another connected Device.
--- limit and toSlot are optional.
-function Storage:pullItems(fromDevice, fromSlot, limit, toSlot)
-    return self.interface.pullItems(fromDevice.location, fromSlot, limit, toSlot)
 end
 
 return Storage

@@ -2,7 +2,6 @@ local Object = require 'object.Object'
 
 local Common = require 'inv.Common'
 local Storage = require 'inv.device.Storage'
-local Workbench = require 'inv.device.Workbench'
 local Machine = require 'inv.device.Machine'
 local ClientDevice = require 'inv.device.ClientDevice'
 
@@ -79,13 +78,30 @@ function DeviceManager:createDevice(name)
         end
     end
 
-    if deviceType == "turtle" then
-        return ClientDevice(self.server, name, deviceType)
-    elseif deviceType == "workbench" then
-        return Workbench(self.server, name, deviceType)
+    local config = self:getConfig(name, deviceType)
+    if deviceType == "workbench" then
+        if config.purpose == nil then
+            config.purpose = "crafting"
+        end
+        if config.backend == nil then
+            config.backend = "turtle"
+        end
+        if config.slots == nil then
+            config.slots = {
+                [1]=1,  [2]=2,  [3]=3,
+                [4]=5,  [5]=6,  [6]=7,
+                [7]=9,  [8]=10, [9]=11,
+                [10]=16
+            }
+        end
+        if config.craftOutputSlot == nil then
+            config.craftOutputSlot = 10
+        end
     end
 
-    local config = self:getConfig(name, deviceType)
+    if deviceType == "turtle" then
+        return ClientDevice(self.server, name, deviceType)
+    end
 
     if config.purpose == "crafting" then
         return Machine(self.server, name, deviceType, config)
@@ -93,6 +109,11 @@ function DeviceManager:createDevice(name)
         return Storage(self.server, name, deviceType, config)
     end
 
+    if deviceType then
+        print("[device] unconfigured device " .. name .. " type " .. deviceType)
+    else
+        print("[device] unconfigured device " .. name .. " (unknown type)")
+    end
     return nil
 end
 
@@ -100,7 +121,7 @@ end
 -- then adds it to the device table.
 function DeviceManager:addDevice(name)
     if self.devices[name] then
-        print("skipped double add device " .. name)
+        print("[device] skipped double add device " .. name)
         --self.devices[name]:destroy()
         return
     end
@@ -114,7 +135,7 @@ function DeviceManager:removeDevice(name)
         self.devices[name] = nil
         device:destroy()
     else
-        print("double remove device " .. name)
+        print("[device] double remove device " .. name)
     end
 end
 

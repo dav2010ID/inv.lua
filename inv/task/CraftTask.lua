@@ -1,6 +1,4 @@
 local Task = require 'inv.task.Task'
-local WaitTask = require 'inv.task.WaitTask'
-local Item = require 'inv.Item'
 
 -- Represents a crafting operation in progress.
 local CraftTask = Task:subclass()
@@ -17,34 +15,28 @@ function CraftTask:init(server, parent, recipe, dest, destSlot)
     self.dest = dest
     -- int: Optional. Slot within self.dest where items should be sent.
     self.destSlot = destSlot
+    self.dependenciesPlanned = false
 end
 
 function CraftTask:run()
+    if self.nSubTasks > 0 then
+        return false
+    end
     if not self.machine then
-        -- Check if any required input items are missing.
-        local rem = self.server.invManager:tryMatchAll(self.recipe.input)
-        if #rem > 0 then
-            -- Queue tasks to obtain any missing input items.
-            print("item dependencies required")
-            for i, item in ipairs(rem) do
-                local recipe = self.server.craftManager:findRecipe(item)
-                if recipe then
-                    self.server.taskManager:addTask(CraftTask(self.server, self, recipe))
-                else
-                    self.server.taskManager:addTask(WaitTask(self.server, self, item))
-                end
+        local missing = self.server.invManager:tryMatchAll(self.recipe.input)
+        if #missing > 0 then
+            if not self.dependenciesPlanned and self.server.craftManager.planner then
+                self.dependenciesPlanned = true
+                self.server.craftManager.planner:attachDependencies(self, self.recipe, 0, {})
             end
             return false
         end
-        print(self.recipe.machine)
         self.machine = self.server.craftManager:findMachine(self.recipe.machine)
         if not self.machine then
             return false
         end
-        print("crafting")
         self.machine:craft(self.recipe, self.dest, self.destSlot)
     end
-    print("pulling output")
     self.machine:pullOutput()
     if not self.machine:busy() then
         return true

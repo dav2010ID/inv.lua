@@ -31,7 +31,7 @@ function Common.getNameLocal()
 end
 
 function Common.shallowCopy(tab)
-    o = {}
+    local o = {}
     for k,v in pairs(tab) do
         o[k] = v
     end
@@ -62,7 +62,7 @@ end
 
 function Common.integerKeys(t)
     local x = {}
-    for k, v in t do
+    for k, v in pairs(t) do
         x[tonumber(k)] = v
     end
     return x

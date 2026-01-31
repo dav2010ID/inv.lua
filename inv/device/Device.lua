@@ -10,7 +10,7 @@ function Device:init(server, name, deviceType, config)
     self.name = name
     -- string: The location that the device actually occupies on the network,
     -- and the destination that items are sent to.
-    -- Equals name in most cases, but differs for Workbench peripherals.
+    -- Equals name in most cases, but may differ based on backend config.
     self.location = name
     -- table: The peripheral interface for this Device
     -- as returned by peripheral.wrap().
@@ -29,6 +29,23 @@ end
 -- May cause an error if not supported by the target Device.
 function Device:getItemDetail(slot)
     return self.interface.getItemDetail(slot)
+end
+
+-- Lists items contained in this Device.
+function Device:list()
+    return self.interface.list()
+end
+
+-- Pushes items from this Device to another connected Device.
+-- limit and toSlot are optional.
+function Device:pushItems(toDevice, fromSlot, limit, toSlot)
+    return self.interface.pushItems(toDevice.location, fromSlot, limit, toSlot)
+end
+
+-- Pulls items into this Device from another connected Device.
+-- limit and toSlot are optional.
+function Device:pullItems(fromDevice, fromSlot, limit, toSlot)
+    return self.interface.pullItems(fromDevice.location, fromSlot, limit, toSlot)
 end
 
 -- Destroys this device, cleaning up any attached state.
