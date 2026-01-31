@@ -81,11 +81,11 @@ function Machine:init(server, name, deviceType, config)
         self.location = self.backend.locationResolver(self)
     end
 
-    self.server.craftManager:addMachine(self)
+    self.server.craftRegistry:addMachine(self)
 end
 
 function Machine:destroy()
-    self.server.craftManager:removeMachine(self)
+    self.server.craftRegistry:removeMachine(self)
 end
 
 -- Maps a virtual slot number from a Recipe
@@ -126,7 +126,7 @@ function Machine:craft(recipe, dest, destSlot)
         self.remaining[slot] = item.count
     end
     for virtSlot, crit in pairs(self.recipe.input) do
-        local n = self.server.invManager:pushItemsTo(crit, self, self:mapSlot(virtSlot))
+        local n = self.server.inventoryIO:pushItemsTo(crit, self, self:mapSlot(virtSlot))
         assert(n == crit.count)
     end
     self:performCraft()
@@ -140,13 +140,13 @@ end
 -- Empties an output slot of the machine and counts any crafted items.
 function Machine:handleOutputSlot(item, virtSlot, realSlot)
     if item then
-        local n = self.server.invManager:pullItemsFrom(item, self, realSlot)
+        local n = self.server.inventoryIO:pullItemsFrom(item, self, realSlot)
         if self.recipe.output[virtSlot]:matches(item) then
             self.remaining[virtSlot] = self.remaining[virtSlot] - n
             if self.dest then
                 local outItem = self.recipe.output[virtSlot]:copy()
                 outItem.count = n
-                self.server.invManager:pushItemsTo(outItem, self.dest, self.destSlot)
+                self.server.inventoryIO:pushItemsTo(outItem, self.dest, self.destSlot)
             end
         else
             print("[machine] unexpected output " .. item.name .. " in " .. self.name)

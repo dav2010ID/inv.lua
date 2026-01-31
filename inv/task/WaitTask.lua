@@ -22,7 +22,7 @@ function WaitTask:print()
 end
 
 function WaitTask:run()
-    if #self.server.invManager:tryMatchAll({self.item}) == 0 then
+    if #self.server.inventoryIndex:tryMatchAll({self.item}) == 0 then
         return true
     end
     self:print()

@@ -6,7 +6,7 @@ local Machine = require 'inv.device.Machine'
 
 -- Manages network-attached devices, including storage and crafting machines.
 -- Specialized behavior is delegated by Devices to the appropriate class
--- (either InvManager or CraftManager).
+-- (either InventoryIO or CraftRegistry).
 local DeviceManager = Object:subclass()
 
 function DeviceManager:init(server, overrides)

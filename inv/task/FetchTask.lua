@@ -18,7 +18,7 @@ function FetchTask:run()
     if self.moved < self.criteria.count then
         local remaining = self.criteria:copy()
         remaining.count = self.criteria.count - self.moved
-        self.moved = self.moved + self.server.invManager:pushItemsTo(remaining, self.dest, self.destSlot)
+        self.moved = self.moved + self.server.inventoryIO:pushItemsTo(remaining, self.dest, self.destSlot)
     end
 
     if self.moved >= self.criteria.count then
@@ -29,7 +29,7 @@ function FetchTask:run()
         self.enqueued = true
         local remaining = self.criteria:copy()
         remaining.count = self.criteria.count - self.moved
-        local recipe = self.server.craftManager:findRecipe(remaining)
+        local recipe = self.server.craftRegistry:findRecipe(remaining)
         if recipe then
             local nOut = 0
             for slot, item in pairs(recipe.output) do

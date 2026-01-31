@@ -23,15 +23,15 @@ function CraftTask:run()
         return false
     end
     if not self.machine then
-        local missing = self.server.invManager:tryMatchAll(self.recipe.input)
+        local missing = self.server.inventoryIndex:tryMatchAll(self.recipe.input)
         if #missing > 0 then
-            if not self.dependenciesPlanned and self.server.craftManager.planner then
+            if not self.dependenciesPlanned and self.server.craftExecutor.planner then
                 self.dependenciesPlanned = true
-                self.server.craftManager.planner:attachDependencies(self, self.recipe, 0, {})
+                self.server.craftExecutor.planner:attachDependencies(self, self.recipe, 0, {})
             end
             return false
         end
-        self.machine = self.server.craftManager:findMachine(self.recipe.machine)
+        self.machine = self.server.craftRegistry:findMachine(self.recipe.machine)
         if not self.machine then
             return false
         end

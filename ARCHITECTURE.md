@@ -23,8 +23,10 @@
 - **Server**: bootstraps config, managers, recipes, devices; owns the main event loop.
 - **DeviceManager** (`inv/DeviceManager.lua`): scans peripherals, creates Device instances, applies config overrides.
 - **StorageManager** (`inv/StorageManager.lua`): tracks storage devices and sorting order.
-- **InvManager** (`inv/InvManager.lua`): authoritative item database; tracks counts/tags; push/pull items to storage.
-- **CraftManager** (`inv/CraftManager.lua`): stores recipes and crafting machines; queues crafts when items are missing.
+- **InventoryIndex** (`inv/InventoryIndex.lua`): authoritative item database; tracks counts/tags and update flags.
+- **InventoryIO** (`inv/InventoryIO.lua`): scanning and item push/pull across storage devices.
+- **CraftRegistry** (`inv/CraftRegistry.lua`): stores recipes and crafting machines.
+- **CraftExecutor** (`inv/CraftExecutor.lua`): fulfills requests using inventory IO and the planner.
 - **CraftPlanner** (`inv/CraftPlanner.lua`): builds dependency DAGs for crafting tasks.
 - **TaskManager** (`inv/TaskManager.lua`): schedules async tasks and handles sub-task dependencies.
 
@@ -46,7 +48,7 @@
 2. **Crafting requests**
    - CLI command queues crafting tasks if needed.
 3. **Inventory updates**
-   - `InvManager` tracks changed items for internal state.
+   - `InventoryIndex` tracks changed items for internal state.
 4. **Crafting tasks**
    - `CraftPlanner` builds a dependency tree; `CraftTask` executes once inputs are available.
    - Machines pull outputs back into storage, optionally forwarding to a destination.

@@ -1,8 +1,10 @@
 local Object = require 'object.Object'
 local Config = require 'inv.Config'
-local CraftManager = require 'inv.CraftManager'
+local CraftRegistry = require 'inv.CraftRegistry'
+local CraftExecutor = require 'inv.CraftExecutor'
 local DeviceManager = require 'inv.DeviceManager'
-local InvManager = require 'inv.InvManager'
+local InventoryIndex = require 'inv.InventoryIndex'
+local InventoryIO = require 'inv.InventoryIO'
 local StorageManager = require 'inv.StorageManager'
 local Item = require 'inv.Item'
 local TaskManager = require 'inv.TaskManager'
@@ -23,15 +25,17 @@ function Server:loadConfig()
 end
 
 function Server:setup(deviceConfig, recipeConfig)
-    self.invManager = InvManager(self)
+    self.inventoryIndex = InventoryIndex(self)
+    self.inventoryIO = InventoryIO(self, self.inventoryIndex)
     self.storageManager = StorageManager(self)
     self.deviceManager = DeviceManager(self, deviceConfig)
-    self.craftManager = CraftManager(self)
+    self.craftRegistry = CraftRegistry(self)
+    self.craftExecutor = CraftExecutor(self, self.craftRegistry)
     self.taskManager = TaskManager(self)
     self.taskTimer = nil
     self.running = true
 
-    self.craftManager:loadRecipes(recipeConfig)
+    self.craftRegistry:loadRecipes(recipeConfig)
     self.deviceManager:scanDevices()
 end
 
@@ -121,7 +125,7 @@ function Server:handleCommand(line)
             filter = filter:lower()
         end
         local lines = {}
-        for name, item in pairs(self.invManager.items) do
+        for name, item in pairs(self.inventoryIndex.items) do
             local label = item:getName()
             if not filter
                 or name:lower():find(filter, 1, true)
@@ -146,7 +150,7 @@ function Server:handleCommand(line)
             print("usage: count <item>")
             return
         end
-        local item = self.invManager.items[name]
+        local item = self.inventoryIndex.items[name]
         if item then
             print(name .. " x" .. tostring(item.count))
         else
@@ -162,14 +166,14 @@ function Server:handleCommand(line)
             print("usage: craft <item> <count>")
             return
         end
-        local existing = self.invManager.items[name]
+        local existing = self.inventoryIndex.items[name]
         local have = existing and existing.count or 0
         if have >= count then
             print("already have " .. tostring(have))
             return
         end
         local missing = count - have
-        local planned = self.craftManager.planner:plan(Item{name=name, count=missing}, nil, nil)
+        local planned = self.craftExecutor.planner:plan(Item{name=name, count=missing}, nil, nil)
         if planned == 0 then
             print("no recipe for " .. name)
         else
@@ -179,14 +183,14 @@ function Server:handleCommand(line)
     end
 
     if cmd == "scan" then
-        self.invManager:scanInventories()
+        self.inventoryIO:scanInventories()
         print("inventories scanned")
         return
     end
 
     if cmd == "devices" then
         self.deviceManager:scanDevices()
-        self.invManager:scanInventories()
+        self.inventoryIO:scanInventories()
         print("devices rescanned")
         return
     end
@@ -238,7 +242,7 @@ function Server:updateTasks()
 end
 
 function Server:broadcastUpdatedItems()
-    self.invManager:getUpdatedItems()
+    self.inventoryIndex:getUpdatedItems()
 end
 
 function Server:mainLoop()

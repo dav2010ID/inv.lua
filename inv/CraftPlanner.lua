@@ -35,7 +35,7 @@ local function findOutputCount(recipe, criteria)
 end
 
 function CraftPlanner:plan(criteria, dest, destSlot)
-    local recipe = self.server.craftManager:findRecipe(criteria)
+    local recipe = self.server.craftRegistry:findRecipe(criteria)
     if not recipe then
         return 0
     end
@@ -62,7 +62,7 @@ function CraftPlanner:attachDependencies(task, recipe, depth, visiting)
         return
     end
 
-    local missing = self.server.invManager:tryMatchAll(recipe.input)
+    local missing = self.server.inventoryIndex:tryMatchAll(recipe.input)
     if #missing == 0 then
         return
     end
@@ -74,7 +74,7 @@ function CraftPlanner:attachDependencies(task, recipe, depth, visiting)
             self.server.taskManager:addTask(WaitTask(self.server, task, item))
         else
             visiting[key] = true
-            local depRecipe = self.server.craftManager:findRecipe(item)
+            local depRecipe = self.server.craftRegistry:findRecipe(item)
             if depRecipe then
                 local nOut = findOutputCount(depRecipe, item)
                 if nOut > 0 then

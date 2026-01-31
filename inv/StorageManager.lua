@@ -16,8 +16,8 @@ end
 function StorageManager:addStorage(device)
     table.insert(self.storage, device)
     self.sorted = false
-    if self.server.invManager then
-        self.server.invManager:scanInventory(device)
+    if self.server.inventoryIO then
+        self.server.inventoryIO:scanInventory(device)
     end
 end
 
@@ -25,8 +25,8 @@ end
 function StorageManager:removeStorage(device)
     Common.removeItem(self.storage, device)
     self.sorted = false
-    if self.server.invManager then
-        self.server.invManager:scanInventories()
+    if self.server.inventoryIO then
+        self.server.inventoryIO:scanInventories()
     end
 end
 

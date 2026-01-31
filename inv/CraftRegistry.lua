@@ -1,25 +1,20 @@
 local Object = require 'object.Object'
-local CraftPlanner = require 'inv.CraftPlanner'
 local Recipe = require 'inv.Recipe'
 
-local expect = require "cc.expect"
-local expect, field = expect.expect, expect.field
+-- Stores recipes and known crafting machines.
+local CraftRegistry = Object:subclass()
 
--- Manages crafting machines, recipes, and queuing of crafting tasks.
-local CraftManager = Object:subclass()
-
-function CraftManager:init(server)
+function CraftRegistry:init(server)
     self.server = server
     -- table<string, Recipe>: Recipes known to this network, indexed by item ID.
     self.recipes = {}
     -- table<string, table<string, Machine>>: Crafting machines connected to
     -- this network, indexed by machine type and device name.
     self.machines = {}
-    self.planner = CraftPlanner(server)
 end
 
 -- Adds a crafting machine to the network, updating network state as necessary.
-function CraftManager:addMachine(device)
+function CraftRegistry:addMachine(device)
     local machineTable = self.machines[device.type]
     if not machineTable then
         machineTable = {}
@@ -29,14 +24,14 @@ function CraftManager:addMachine(device)
 end
 
 -- Removes a crafting machine from the network, updating network state as necessary.
-function CraftManager:removeMachine(device)
+function CraftRegistry:removeMachine(device)
     self.machines[device.type][device.name] = nil
 end
 
 -- Loads recipes from the given data.
 -- Data should consist of an array of tables, with each table
 -- in the format required by the Recipe class.
-function CraftManager:loadRecipes(data)
+function CraftRegistry:loadRecipes(data)
     for i, spec in ipairs(data) do
         local recipe = Recipe(spec)
         for slot, item in pairs(recipe.output) do
@@ -45,15 +40,15 @@ function CraftManager:loadRecipes(data)
                 self.recipes[item.name] = recipe
                 print("[craft] added recipe",item.name)
             end
-            local info = self.server.invManager.items[item.name]
+            local info = self.server.inventoryIndex.items[item.name]
             if not info then
-                info = self.server.invManager:addItem(item.name)
+                info = self.server.inventoryIndex:addItem(item.name)
             end
             if not info.detailed and item.tags then
                 for tag, v in pairs(item.tags) do
                     info.tags[tag] = v
                 end
-                self.server.invManager:updateTags(info.name)
+                self.server.inventoryIndex:updateTags(info.name)
             end
         end
     end
@@ -61,8 +56,8 @@ end
 
 -- Finds a recipe to produce the given item,
 -- returning nil if none is found.
-function CraftManager:findRecipe(item)
-    local results = self.server.invManager:resolveCriteria(item)
+function CraftRegistry:findRecipe(item)
+    local results = self.server.inventoryIndex:resolveCriteria(item)
     for name, v in pairs(results) do
         local recipe = self.recipes[name]
         if recipe then
@@ -75,7 +70,7 @@ end
 
 -- Finds a non-busy crafting machine of the given type,
 -- returning nil if none is found.
-function CraftManager:findMachine(machineType)
+function CraftRegistry:findMachine(machineType)
     local machinesOfType = self.machines[machineType]
     if machinesOfType then
         for name, machine in pairs(machinesOfType) do
@@ -89,17 +84,4 @@ function CraftManager:findMachine(machineType)
     return nil
 end
 
--- First attempts to pull the requested amount of items out of the network,
--- then attempts to craft any remaining requested items.
-function CraftManager:pushOrCraftItemsTo(criteria,dest,destSlot)
-    local n = self.server.invManager:pushItemsTo(criteria,dest,destSlot)
-
-    if n < criteria.count then
-        local remaining = criteria:copy()
-        remaining.count = criteria.count - n
-        self.planner:plan(remaining, dest, destSlot)
-    end
-    return n
-end
-
-return CraftManager
+return CraftRegistry
