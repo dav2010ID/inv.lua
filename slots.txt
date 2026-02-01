@@ -1,132 +1,23 @@
 1{
-  name = "minecraft:stick",
+  name = "gtceu:steel_nugget",
   itemGroups = {},
   tags = {
-    [ "forge:rods/wooden" ] = true,
-    [ "forge:rods" ] = true,
-    [ "forge:rods/wood" ] = true,
+    [ "forge:nuggets/steel" ] = true,
+    [ "forge:nuggets" ] = true,
   },
-  count = 7,
+  count = 2,
   maxCount = 64,
-  displayName = "Stick",
+  displayName = "Steel Nugget",
 }
 2{
-  name = "minecraft:stick",
+  name = "gtceu:steel_ingot",
   itemGroups = {},
   tags = {
-    [ "forge:rods/wooden" ] = true,
-    [ "forge:rods" ] = true,
-    [ "forge:rods/wood" ] = true,
+    [ "forge:ingots/steel" ] = true,
+    [ "forge:ingots" ] = true,
   },
-  count = 64,
+  count = 13,
   maxCount = 64,
-  displayName = "Stick",
+  displayName = "Steel Ingot",
 }
-3{
-  name = "minecraft:stick",
-  itemGroups = {},
-  tags = {
-    [ "forge:rods/wooden" ] = true,
-    [ "forge:rods" ] = true,
-    [ "forge:rods/wood" ] = true,
-  },
-  count = 7,
-  maxCount = 64,
-  displayName = "Stick",
-}
-4{
-  name = "minecraft:stick",
-  itemGroups = {},
-  tags = {
-    [ "forge:rods/wooden" ] = true,
-    [ "forge:rods" ] = true,
-    [ "forge:rods/wood" ] = true,
-  },
-  count = 7,
-  maxCount = 64,
-  displayName = "Stick",
-}
-5{
-  name = "minecraft:stick",
-  itemGroups = {},
-  tags = {
-    [ "forge:rods/wooden" ] = true,
-    [ "forge:rods" ] = true,
-    [ "forge:rods/wood" ] = true,
-  },
-  count = 7,
-  maxCount = 64,
-  displayName = "Stick",
-}
-6{
-  name = "minecraft:stick",
-  itemGroups = {},
-  tags = {
-    [ "forge:rods/wooden" ] = true,
-    [ "forge:rods" ] = true,
-    [ "forge:rods/wood" ] = true,
-  },
-  count = 7,
-  maxCount = 64,
-  displayName = "Stick",
-}
-7{
-  name = "minecraft:stick",
-  itemGroups = {},
-  tags = {
-    [ "forge:rods/wooden" ] = true,
-    [ "forge:rods" ] = true,
-    [ "forge:rods/wood" ] = true,
-  },
-  count = 7,
-  maxCount = 64,
-  displayName = "Stick",
-}
-8{
-  name = "minecraft:stick",
-  itemGroups = {},
-  tags = {
-    [ "forge:rods/wooden" ] = true,
-    [ "forge:rods" ] = true,
-    [ "forge:rods/wood" ] = true,
-  },
-  count = 7,
-  maxCount = 64,
-  displayName = "Stick",
-}
-9{
-  tags = {
-    [ "minecraft:planks" ] = true,
-  },
-  mapColour = 8476209,
-  name = "minecraft:spruce_planks",
-  itemGroups = {},
-  count = 4,
-  mapColor = 8476209,
-  maxCount = 64,
-  displayName = "Spruce Planks",
-}
-10{
-  tags = {
-    [ "minecraft:wooden_doors" ] = true,
-    [ "minecraft:doors" ] = true,
-  },
-  mapColour = 8476209,
-  name = "minecraft:spruce_door",
-  itemGroups = {},
-  count = 30,
-  mapColor = 8476209,
-  maxCount = 64,
-  displayName = "Spruce Door",
-}
-11{
-  tags = {
-    [ "gtceu:skip_item_detector" ] = true,
-  },
-  name = "gtceu:programmed_circuit",
-  itemGroups = {},
-  maxCount = 64,
-  count = 1,
-  nbt = "e61d93226ec25a873381f6f65e52ec9b",
-  displayName = "Programmed Circuit",
-}
+3 empty

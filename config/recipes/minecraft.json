@@ -101,16 +101,43 @@
             "3":{"name":"minecraft:iron_ingot","count":8}
         }
     },
-        {
+    {
         "machine":"gtceu:uv_assembler",
         "input":{
             "1":{"name":"gtceu:steel_plate","count":1},
             "2":{"name":"minecraft:oak_planks","count":3},
-            "3":{"name":"minecraft:cobblestone","count":3},
+            "3":{"name":"minecraft:cobblestone","count":4},
             "4":{"name":"minecraft:redstone","count":1}
         },
         "output":{
             "10":{"name":"minecraft:piston","count":2}
+        }
+    },
+    {
+        "machine":"gtceu:uv_bender",
+        "input":{
+            "1":{"name":"gtceu:steel_ingot","count":1}
+        },
+        "output":{
+            "3":{"name":"gtceu:steel_plate","count":1}
+        }
+    },
+    {
+        "machine":"gtceu:uv_compressor",
+        "input":{
+            "1":{"name":"gtceu:steel_nugget","count":9}
+        },
+        "output":{
+            "2":{"name":"gtceu:steel_ingot","count":1}
+        }
+    },
+    {
+        "machine":"gtceu:uv_electric_furnace",
+        "input":{
+            "1":{"name":"gtceu:raw_redstone","count":1}
+        },
+        "output":{
+            "2":{"name":"minecraft:redstone","count":5}
         }
     }
 ]
