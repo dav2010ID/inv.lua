@@ -50,6 +50,7 @@ function CraftPlanner:plan(criteria, dest, destSlot)
     Log.info("[planner] plan", crafts, "craft(s) on", recipe.machine, "at", string.format("%.2fs", os.clock()))
     local summary = self.server.taskManager:createSummary(criteria, crafts)
     self:queueTasks(recipe, crafts, summary, nil, dest, destSlot, 0, {})
+    self:setCriticalMachine()
     self:logMachineSummary()
     return crafts
 end
@@ -137,6 +138,26 @@ function CraftPlanner:logMachineSummary()
             tostring(entry.waiting_inputs) .. " waiting_inputs"
         )
     end
+end
+
+function CraftPlanner:setCriticalMachine()
+    if not self.server or not self.server.taskManager or not self.server.craftRegistry then
+        return
+    end
+    local stats = self.server.taskManager:getMachineStats()
+    local critical = nil
+    local criticalRatio = -1
+    for machineType, entry in pairs(stats) do
+        local count = self.server.craftRegistry:countMachines(machineType)
+        if count > 0 then
+            local ratio = entry.total / count
+            if ratio > criticalRatio then
+                criticalRatio = ratio
+                critical = machineType
+            end
+        end
+    end
+    self.server.taskManager.currentCriticalMachine = critical
 end
 
 return CraftPlanner

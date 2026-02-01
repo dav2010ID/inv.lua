@@ -16,6 +16,7 @@ function TaskManager:init(server)
     self.lastID = 0
     self.summaries = {}
     self.nextSummaryId = 0
+    self.currentCriticalMachine = nil
 end
 
 -- Returns the next available task ID for creating a new task.
@@ -68,7 +69,8 @@ function TaskManager:createSummary(criteria, crafts)
         startTime = os.clock(),
         tasksTotal = 0,
         tasksDone = 0,
-        machineStats = {}
+        machineStats = {},
+        inputBlockers = {}
     }
     self.summaries[summary.id] = summary
     return summary
@@ -85,7 +87,18 @@ end
 local function getMachineEntry(summary, machineType)
     local entry = summary.machineStats[machineType]
     if not entry then
-        entry = {waitSum=0, waitCount=0, waitMax=0, runSum=0}
+        entry = {
+            waitSum=0,
+            waitCount=0,
+            waitMax=0,
+            waitMachineSum=0,
+            waitMachineCount=0,
+            waitMachineMax=0,
+            waitInputsSum=0,
+            waitInputsCount=0,
+            waitInputsMax=0,
+            runSum=0
+        }
         summary.machineStats[machineType] = entry
     end
     return entry
@@ -101,6 +114,44 @@ function TaskManager:recordTaskStart(summaryId, machineType, waitSeconds)
     entry.waitCount = entry.waitCount + 1
     if waitSeconds > entry.waitMax then
         entry.waitMax = waitSeconds
+    end
+end
+
+function TaskManager:recordWait(summaryId, machineType, reason, waitSeconds)
+    local summary = summaryId and self.summaries[summaryId] or nil
+    if not summary then
+        return
+    end
+    local entry = getMachineEntry(summary, machineType)
+    if reason == "waiting_machine" then
+        entry.waitMachineSum = entry.waitMachineSum + waitSeconds
+        entry.waitMachineCount = entry.waitMachineCount + 1
+        if waitSeconds > entry.waitMachineMax then
+            entry.waitMachineMax = waitSeconds
+        end
+    elseif reason == "waiting_inputs" then
+        entry.waitInputsSum = entry.waitInputsSum + waitSeconds
+        entry.waitInputsCount = entry.waitInputsCount + 1
+        if waitSeconds > entry.waitInputsMax then
+            entry.waitInputsMax = waitSeconds
+        end
+    end
+end
+
+function TaskManager:recordInputBlocker(summaryId, machineType, itemName, waitSeconds)
+    local summary = summaryId and self.summaries[summaryId] or nil
+    if not summary or not itemName then
+        return
+    end
+    summary.inputBlockers[machineType] = summary.inputBlockers[machineType] or {}
+    local entry = summary.inputBlockers[machineType][itemName]
+    if not entry then
+        entry = {sum=0, max=0}
+        summary.inputBlockers[machineType][itemName] = entry
+    end
+    entry.sum = entry.sum + waitSeconds
+    if waitSeconds > entry.max then
+        entry.max = waitSeconds
     end
 end
 
@@ -120,13 +171,22 @@ end
 
 function TaskManager:logSummary(summary)
     local totalTime = os.clock() - summary.startTime
+    local craftRegistry = self.server and self.server.craftRegistry or nil
     local criticalMachine = nil
-    local criticalWait = -1
+    local criticalUtil = -1
+    local theoreticalMin = 0
     for machineType, entry in pairs(summary.machineStats) do
-        local avgWait = entry.waitCount > 0 and (entry.waitSum / entry.waitCount) or 0
-        if avgWait > criticalWait then
-            criticalWait = avgWait
-            criticalMachine = machineType
+        local count = craftRegistry and craftRegistry:countMachines(machineType) or 0
+        if count > 0 then
+            local util = (entry.runSum / (totalTime * count)) * 100
+            if util > criticalUtil then
+                criticalUtil = util
+                criticalMachine = machineType
+            end
+            local minTime = entry.runSum / count
+            if minTime > theoreticalMin then
+                theoreticalMin = minTime
+            end
         end
     end
     Log.info("[summary] craft", summary.name, "x" .. tostring(summary.count))
@@ -134,9 +194,15 @@ function TaskManager:logSummary(summary)
     if criticalMachine then
         Log.info("  critical_machine:", criticalMachine)
     end
+    if theoreticalMin > 0 then
+        Log.info("  theoretical_min:", string.format("%.2fs", theoreticalMin))
+        local efficiency = (theoreticalMin / totalTime) * 100
+        Log.info("  efficiency:", string.format("%.0f%%", efficiency))
+    end
     Log.info("  utilization:")
     for machineType, entry in pairs(summary.machineStats) do
-        local util = totalTime > 0 and (entry.runSum / totalTime) * 100 or 0
+        local count = craftRegistry and craftRegistry:countMachines(machineType) or 0
+        local util = (count > 0 and totalTime > 0) and (entry.runSum / (totalTime * count)) * 100 or 0
         Log.info("    " .. machineType .. ":", string.format("%.0f%%", util))
     end
     Log.info("  waits:")
@@ -147,6 +213,39 @@ function TaskManager:logSummary(summary)
             "avg " .. string.format("%.2fs", avgWait) .. ",",
             "max " .. string.format("%.2fs", entry.waitMax)
         )
+    end
+    Log.info("  wait_reasons:")
+    for machineType, entry in pairs(summary.machineStats) do
+        local avgMachine = entry.waitMachineCount > 0 and (entry.waitMachineSum / entry.waitMachineCount) or 0
+        local avgInputs = entry.waitInputsCount > 0 and (entry.waitInputsSum / entry.waitInputsCount) or 0
+        Log.info(
+            "    " .. machineType .. ":",
+            "machine avg " .. string.format("%.2fs", avgMachine) .. ",",
+            "max " .. string.format("%.2fs", entry.waitMachineMax) .. ";",
+            "inputs avg " .. string.format("%.2fs", avgInputs) .. ",",
+            "max " .. string.format("%.2fs", entry.waitInputsMax)
+        )
+    end
+    Log.info("  input_blockers:")
+    for machineType, items in pairs(summary.inputBlockers) do
+        local topName = nil
+        local topSum = -1
+        local topMax = 0
+        for name, entry in pairs(items) do
+            if entry.sum > topSum then
+                topSum = entry.sum
+                topMax = entry.max
+                topName = name
+            end
+        end
+        if topName then
+            Log.info(
+                "    " .. machineType .. ":",
+                topName,
+                "sum " .. string.format("%.2fs", topSum) .. ",",
+                "max " .. string.format("%.2fs", topMax)
+            )
+        end
     end
 end
 

@@ -25,6 +25,8 @@ function CraftTask:init(server, parent, recipe, dest, destSlot, craftCount, summ
     self.status = "waiting_inputs"
     self.queuedForMachine = false
     self.summaryId = summary and summary.id or nil
+    self.lastStatusAt = self.createdAt
+    self.lastMissing = nil
 end
 
 function CraftTask:scaledInputs()
@@ -44,12 +46,12 @@ function CraftTask:assignMachine(machine)
     self.machine = machine
     if self.machine:craft(self.recipe, self.dest, self.destSlot, self.craftCount) == false then
         self.machine = nil
-        self.status = "waiting_inputs"
+        self:setStatus("waiting_inputs")
         self.nextAttempt = os.clock() + 1
         return false
     end
     self.startedAt = os.clock()
-    self.status = "running"
+    self:setStatus("running")
     local waitSeconds = self.startedAt - self.createdAt
     if self.summaryId then
         self.server.taskManager:recordTaskStart(self.summaryId, self.machineType, waitSeconds)
@@ -66,6 +68,25 @@ function CraftTask:assignMachine(machine)
     return true
 end
 
+function CraftTask:setStatus(newStatus)
+    if self.status == newStatus then
+        return
+    end
+    if self.summaryId and (self.status == "waiting_machine" or self.status == "waiting_inputs") then
+        local now = os.clock()
+        local waited = now - self.lastStatusAt
+        self.server.taskManager:recordWait(self.summaryId, self.machineType, self.status, waited)
+        if self.status == "waiting_inputs" and self.lastMissing then
+            self.server.taskManager:recordInputBlocker(self.summaryId, self.machineType, self.lastMissing, waited)
+            self.lastMissing = nil
+        end
+        self.lastStatusAt = now
+    else
+        self.lastStatusAt = os.clock()
+    end
+    self.status = newStatus
+end
+
 function CraftTask:run()
     if self.nextAttempt and os.clock() < self.nextAttempt then
         return false
@@ -79,7 +100,20 @@ function CraftTask:run()
     if not self.machine then
         local missing = self.server.inventoryIndex:tryMatchAll(self:scaledInputs())
         if #missing > 0 then
-            self.status = "waiting_inputs"
+            self:setStatus("waiting_inputs")
+            local blocker = missing[1]
+            if blocker and self.summaryId then
+                local name = blocker.name
+                if not name and blocker.tags then
+                    for tag, _ in pairs(blocker.tags) do
+                        name = "tag:" .. tag
+                        break
+                    end
+                end
+                if name then
+                    self.lastMissing = name
+                end
+            end
             if not self.dependenciesPlanned and self.server.craftExecutor.planner then
                 self.dependenciesPlanned = true
                 self.server.craftExecutor.planner:attachDependencies(self, self.recipe, 0, {}, self.craftCount)
@@ -88,7 +122,7 @@ function CraftTask:run()
         end
         local machine = self.server.craftRegistry:requestMachine(self)
         if not machine then
-            self.status = "waiting_machine"
+            self:setStatus("waiting_machine")
             self.server.craftRegistry:logSaturation(self.recipe.machine)
             self.nextAttempt = os.clock() + 1
             return false
@@ -99,7 +133,7 @@ function CraftTask:run()
     end
     self.machine:pullOutput()
     if not self.machine:busy() then
-        self.status = "done"
+        self:setStatus("done")
         local endAt = os.clock()
         local runSeconds = self.startedAt and (endAt - self.startedAt) or 0
         local totalSeconds = endAt - self.createdAt

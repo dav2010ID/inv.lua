@@ -42,7 +42,13 @@ function CraftRegistry:enqueueTask(machineType, task)
     if not self.waitingTasks[machineType] then
         self.waitingTasks[machineType] = {}
     end
-    table.insert(self.waitingTasks[machineType], task)
+    local queue = self.waitingTasks[machineType]
+    local critical = self.server and self.server.taskManager and self.server.taskManager.currentCriticalMachine
+    if critical and critical == machineType then
+        table.insert(queue, 1, task)
+    else
+        table.insert(queue, task)
+    end
 end
 
 function CraftRegistry:requestMachine(task)
