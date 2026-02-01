@@ -35,7 +35,10 @@ function CraftTask:run()
         if not self.machine then
             return false
         end
-        self.machine:craft(self.recipe, self.dest, self.destSlot)
+        if self.machine:craft(self.recipe, self.dest, self.destSlot) == false then
+            self.machine = nil
+            return false
+        end
     end
     self.machine:pullOutput()
     if not self.machine:busy() then

@@ -3,6 +3,7 @@ local Object = require 'object.Object'
 local Common = require 'inv.Common'
 local Storage = require 'inv.device.Storage'
 local Machine = require 'inv.device.Machine'
+local Log = require 'inv.Log'
 
 -- Manages network-attached devices, including storage and crafting machines.
 -- Specialized behavior is delegated by Devices to the appropriate class
@@ -98,16 +99,24 @@ function DeviceManager:createDevice(name)
         end
     end
 
+    if config.purpose == "crafting" and not deviceType then
+        deviceType = config.machineType or config.type
+    end
+
     if config.purpose == "crafting" then
+        if not deviceType then
+            Log.warn("[device] crafting device missing type", name)
+            return nil
+        end
         return Machine(self.server, name, deviceType, config)
     elseif config.purpose == "storage" or genericTypes["inventory"] then
         return Storage(self.server, name, deviceType, config)
     end
 
     if deviceType then
-        print("[device] unconfigured device " .. name .. " type " .. deviceType)
+        Log.warn("[device] unconfigured device", name, "type", deviceType)
     else
-        print("[device] unconfigured device " .. name .. " (unknown type)")
+        Log.warn("[device] unconfigured device", name, "(unknown type)")
     end
     return nil
 end
@@ -116,7 +125,7 @@ end
 -- then adds it to the device table.
 function DeviceManager:addDevice(name)
     if self.devices[name] then
-        print("[device] skipped double add device " .. name)
+        Log.info("[device] skipped double add device", name)
         --self.devices[name]:destroy()
         return
     end
@@ -130,7 +139,7 @@ function DeviceManager:removeDevice(name)
         self.devices[name] = nil
         device:destroy()
     else
-        print("[device] double remove device " .. name)
+        Log.warn("[device] double remove device", name)
     end
 end
 

@@ -8,6 +8,7 @@ local InventoryIO = require 'inv.InventoryIO'
 local StorageManager = require 'inv.StorageManager'
 local Item = require 'inv.Item'
 local TaskManager = require 'inv.TaskManager'
+local Log = require 'inv.Log'
 
 local Server = Object:subclass()
 
@@ -56,7 +57,7 @@ function Server:initCLI()
     self.cliPrompt = "> "
     self.cliBuffer = ""
     self:drawPrompt()
-    print("[cli] type 'help' for commands")
+    Log.cli("[cli] type 'help' for commands")
     self:drawPrompt()
 end
 
@@ -89,7 +90,7 @@ function Server:cliOnKey(key)
         local w, h = term.getSize()
         term.setCursorPos(1, h)
         term.clearLine()
-        print(self.cliPrompt .. line)
+        Log.cli(self.cliPrompt .. line)
         self:handleCommand(line)
         self:drawPrompt()
     end
@@ -107,15 +108,15 @@ function Server:handleCommand(line)
     cmd = cmd:lower()
 
     if cmd == "help" then
-        print("commands:")
-        print("  help")
-        print("  list [filter]")
-        print("  count <item>")
-        print("  craft <item> <count>")
-        print("  scan")
-        print("  devices")
-        print("  status")
-        print("  quit")
+        Log.cli("commands:")
+        Log.cli("  help")
+        Log.cli("  list [filter]")
+        Log.cli("  count <item>")
+        Log.cli("  craft <item> <count>")
+        Log.cli("  scan")
+        Log.cli("  devices")
+        Log.cli("  status")
+        Log.cli("  quit")
         return
     end
 
@@ -138,7 +139,7 @@ function Server:handleCommand(line)
             textutils.pagedPrint(table.concat(lines, "\n"))
         else
             for i, line in ipairs(lines) do
-                print(line)
+                Log.cli(line)
             end
         end
         return
@@ -147,14 +148,14 @@ function Server:handleCommand(line)
     if cmd == "count" then
         local name = args[2]
         if not name then
-            print("usage: count <item>")
+            Log.cli("usage: count <item>")
             return
         end
         local item = self.inventoryIndex.items[name]
         if item then
-            print(name .. " x" .. tostring(item.count))
+            Log.cli(name .. " x" .. tostring(item.count))
         else
-            print(name .. " x0")
+            Log.cli(name .. " x0")
         end
         return
     end
@@ -163,40 +164,40 @@ function Server:handleCommand(line)
         local name = args[2]
         local count = tonumber(args[3]) or 1
         if not name then
-            print("usage: craft <item> <count>")
+            Log.cli("usage: craft <item> <count>")
             return
         end
         local existing = self.inventoryIndex.items[name]
         local have = existing and existing.count or 0
         if have >= count then
-            print("already have " .. tostring(have))
+            Log.cli("already have " .. tostring(have))
             return
         end
         local missing = count - have
         local planned = self.craftExecutor.planner:plan(Item{name=name, count=missing}, nil, nil)
         if planned == 0 then
-            print("no recipe for " .. name)
+            Log.warn("no recipe for", name)
         else
-            print("planned " .. tostring(planned) .. " craft(s)")
+            Log.info("planned", planned, "craft(s)")
         end
         return
     end
 
     if cmd == "scan" then
         self.inventoryIO:scanInventories()
-        print("inventories scanned")
+        Log.info("inventories scanned")
         return
     end
 
     if cmd == "devices" then
         self.deviceManager:scanDevices()
         self.inventoryIO:scanInventories()
-        print("devices rescanned")
+        Log.info("devices rescanned")
         return
     end
 
     if cmd == "status" then
-        print("active tasks: " .. tostring(#self.taskManager.active))
+        Log.info("active tasks:", #self.taskManager.active)
         return
     end
 
@@ -205,7 +206,7 @@ function Server:handleCommand(line)
         return
     end
 
-    print("unknown command: " .. cmd)
+    Log.warn("unknown command:", cmd)
 end
 
 function Server:handleEvent(evt)
@@ -233,7 +234,7 @@ end
 function Server:updateTasks()
     if self.taskManager:update() then
         self.taskTimer = os.startTimer(1)
-        print("[server] active tasks:", #self.taskManager.active)
+        Log.info("[server] active tasks:", #self.taskManager.active)
         --for i,t in pairs(self.taskManager.sleeping) do
         --    print("sleeping",i)
         --end

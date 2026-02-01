@@ -16,27 +16,47 @@ end
 -- Scans all connected inventories, adding their stored items to the database.
 -- Resets any preexisting item counts to 0 beforehand.
 function InventoryIO:scanInventories()
-    for k, v in pairs(self.index.items) do
-        v.count = 0
+    local oldCounts = {}
+    for name, item in pairs(self.index.items) do
+        oldCounts[name] = item.count
+        item.count = 0
     end
 
     local storageManager = self:getStorageManager()
     for i, device in ipairs(storageManager.storage) do
-        self:scanInventory(device)
+        self:scanInventory(device, false)
+    end
+
+    for name, item in pairs(self.index.items) do
+        if oldCounts[name] ~= item.count then
+            self.index:markUpdated(name)
+        end
     end
 end
 
 -- Scans a connected inventory and adds its stored items to the database.
-function InventoryIO:scanInventory(device)
+function InventoryIO:scanInventory(device, markUpdates)
+    if markUpdates == nil then
+        markUpdates = true
+    end
     local items = device:list()
 
     for slot, item in pairs(items) do
         local entry = self.index.items[item.name]
-        if not entry or not entry.detailed then
-            local detail = device:getItemDetail(slot)
-            self.index:updateDB(detail)
+        if not entry then
+            entry = self.index:addItem(item.name)
         end
-        self.index.items[item.name].count = self.index.items[item.name].count + item.count
+        if not entry.detailed then
+            local detail = device:getItemDetail(slot)
+            if detail then
+                self.index:updateDB(detail)
+                entry = self.index.items[item.name] or entry
+            end
+        end
+        entry.count = entry.count + item.count
+        if markUpdates then
+            self.index:markUpdated(item.name)
+        end
     end
 end
 

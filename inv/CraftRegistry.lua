@@ -1,5 +1,6 @@
 local Object = require 'object.Object'
 local Recipe = require 'inv.Recipe'
+local Log = require 'inv.Log'
 
 -- Stores recipes and known crafting machines.
 local CraftRegistry = Object:subclass()
@@ -15,6 +16,10 @@ end
 
 -- Adds a crafting machine to the network, updating network state as necessary.
 function CraftRegistry:addMachine(device)
+    if not device.type then
+        Log.warn("[craft] skipped machine with unknown type", device.name)
+        return
+    end
     local machineTable = self.machines[device.type]
     if not machineTable then
         machineTable = {}
@@ -25,7 +30,10 @@ end
 
 -- Removes a crafting machine from the network, updating network state as necessary.
 function CraftRegistry:removeMachine(device)
-    self.machines[device.type][device.name] = nil
+    local machineTable = device.type and self.machines[device.type] or nil
+    if machineTable then
+        machineTable[device.name] = nil
+    end
 end
 
 -- Loads recipes from the given data.
@@ -38,7 +46,7 @@ function CraftRegistry:loadRecipes(data)
             assert(item.name) -- output should not be generic
             if not self.recipes[item.name] then
                 self.recipes[item.name] = recipe
-                print("[craft] added recipe",item.name)
+                Log.info("[craft] added recipe",item.name)
             end
             local info = self.server.inventoryIndex.items[item.name]
             if not info then
@@ -61,7 +69,7 @@ function CraftRegistry:findRecipe(item)
     for name, v in pairs(results) do
         local recipe = self.recipes[name]
         if recipe then
-            print("[craft] recipe found",name)
+            Log.info("[craft] recipe found",name)
             return recipe
         end
     end
@@ -77,10 +85,10 @@ function CraftRegistry:findMachine(machineType)
             if not machine:busy() then
                 return machine
             end
-            print("[craft]",name,"busy")
+            Log.info("[craft]",name,"busy")
         end
     end
-    print("[craft] no",machineType,"found")
+    Log.warn("[craft] no",machineType,"found")
     return nil
 end
 

@@ -1,6 +1,7 @@
 local Object = require 'object.Object'
 local CraftTask = require 'inv.task.CraftTask'
 local WaitTask = require 'inv.task.WaitTask'
+local Log = require 'inv.Log'
 
 -- Builds a dependency tree (DAG) of crafting tasks before execution.
 local CraftPlanner = Object:subclass()
@@ -58,7 +59,7 @@ end
 
 function CraftPlanner:attachDependencies(task, recipe, depth, visiting)
     if depth > self.maxDepth then
-        print("[planner] max depth exceeded for recipe " .. tostring(recipe.machine))
+        Log.warn("[planner] max depth exceeded for recipe", recipe.machine)
         return
     end
 
@@ -70,7 +71,7 @@ function CraftPlanner:attachDependencies(task, recipe, depth, visiting)
     for i, item in ipairs(missing) do
         local key = criteriaKey(item)
         if visiting[key] then
-            print("[planner] cycle detected at " .. key)
+            Log.warn("[planner] cycle detected at", key)
             self.server.taskManager:addTask(WaitTask(self.server, task, item))
         else
             visiting[key] = true

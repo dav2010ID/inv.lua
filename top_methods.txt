@@ -1,4 +1,4 @@
-gtceu:uv_assembler
+gtceu:mv_assembler
 parsePlaceholders
 setWorkingEnabled
 getEnergyStored

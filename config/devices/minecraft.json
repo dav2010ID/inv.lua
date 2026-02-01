@@ -4,19 +4,19 @@
         "purpose":"crafting"
     },
     {
-        "type":"gtceu:uv_assembler",
+        "type":"gtceu:mv_assembler",
         "purpose":"crafting"
     },
     {
-        "type":"gtceu:uv_bender",
+        "type":"gtceu:mv_bender",
         "purpose":"crafting"
     },
     {
-        "type":"gtceu:uv_compressor",
+        "type":"gtceu:mv_compressor",
         "purpose":"crafting"
     },
     {
-        "type":"gtceu:uv_electric_furnace",
+        "type":"gtceu:mv_electric_furnace",
         "purpose":"crafting"
     }
 ]

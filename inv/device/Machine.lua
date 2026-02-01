@@ -1,5 +1,6 @@
 local Device = require 'inv.device.Device'
 local Common = require 'inv.Common'
+local Log = require 'inv.Log'
 
 -- Represents a crafting machine.
 local Machine = Device:subclass()
@@ -114,6 +115,22 @@ function Machine:performCraft()
     end
 end
 
+function Machine:rollbackInputs(pushed)
+    for virtSlot, n in pairs(pushed) do
+        if n and n > 0 then
+            local realSlot = self:mapSlot(virtSlot)
+            local detail = self:getItemDetail(realSlot)
+            if detail then
+                detail.count = math.min(detail.count or n, n)
+                local moved = self.server.inventoryIO:pullItemsFrom(detail, self, realSlot)
+                if moved < detail.count then
+                Log.warn("[machine] rollback incomplete", self.name, detail.name or "unknown")
+                end
+            end
+        end
+    end
+end
+
 -- Starts a crafting operation.
 -- dest and destSlot are optional.
 function Machine:craft(recipe, dest, destSlot)
@@ -125,11 +142,23 @@ function Machine:craft(recipe, dest, destSlot)
     for slot, item in pairs(self.recipe.output) do
         self.remaining[slot] = item.count
     end
+    local pushed = {}
     for virtSlot, crit in pairs(self.recipe.input) do
-        local n = self.server.inventoryIO:pushItemsTo(crit, self, self:mapSlot(virtSlot))
-        assert(n == crit.count)
+        local realSlot = self:mapSlot(virtSlot)
+        local n = self.server.inventoryIO:pushItemsTo(crit, self, realSlot)
+        pushed[virtSlot] = n
+        if n < crit.count then
+            Log.warn("[machine] insufficient input for", self.name)
+            self:rollbackInputs(pushed)
+            self.recipe = nil
+            self.dest = nil
+            self.destSlot = nil
+            self.remaining = {}
+            return false
+        end
     end
     self:performCraft()
+    return true
 end
 
 -- Returns true if this machine is currently crafting.
@@ -149,7 +178,7 @@ function Machine:handleOutputSlot(item, virtSlot, realSlot)
                 self.server.inventoryIO:pushItemsTo(outItem, self.dest, self.destSlot)
             end
         else
-            print("[machine] unexpected output " .. item.name .. " in " .. self.name)
+            Log.warn("[machine] unexpected output", item.name, "in", self.name)
         end
     end
 end

@@ -28,6 +28,9 @@ end
 -- Given a detail specification for an item, adds or updates the associated
 -- item in the database if necessary.
 function InventoryIndex:updateDB(detail)
+    if not detail or not detail.name then
+        return
+    end
     local info = self.items[detail.name]
 
     if not info then
