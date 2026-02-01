@@ -13,6 +13,7 @@
 [warn] [device] unconfigured device back type peripheral_hub
 [cli] type 'help' for commands
 [info] executing CLI command: craft minecraft:piston 20
+[info] [planner] plan 10 craft(s) on gtceu:mv_assembler
 [info] planned 10 craft(s)
 [info] [craft] gtceu:mv_compressor_0 busy
 [info] [craft] gtceu:mv_compressor_1 busy
@@ -23,48 +24,36 @@
 [info] [craft] gtceu:mv_compressor_1 busy
 [warn] [craft] no gtceu:mv_compressor found
 [info] [craft] gtceu:mv_compressor_0 busy
+[info] [craft] gtceu:mv_compressor_2 busy
 [info] [craft] gtceu:mv_compressor_1 busy
 [warn] [craft] no gtceu:mv_compressor found
 [info] [server] active tasks: 8
 [info] [craft] gtceu:mv_compressor_0 busy
+[info] [craft] gtceu:mv_compressor_3 busy
+[info] [craft] gtceu:mv_compressor_2 busy
 [info] [craft] gtceu:mv_compressor_1 busy
 [warn] [craft] no gtceu:mv_compressor found
 [info] [server] active tasks: 7
 [info] [craft] gtceu:mv_compressor_0 busy
+[info] [craft] gtceu:mv_compressor_3 busy
+[info] [craft] gtceu:mv_compressor_2 busy
 [info] [craft] gtceu:mv_compressor_1 busy
 [warn] [craft] no gtceu:mv_compressor found
 [info] [craft] gtceu:mv_compressor_0 busy
-[info] [craft] gtceu:mv_compressor_1 busy
-[warn] [craft] no gtceu:mv_compressor found
-[info] [server] active tasks: 7
-[info] [craft] gtceu:mv_compressor_0 busy
+[info] [craft] gtceu:mv_compressor_3 busy
+[info] [craft] gtceu:mv_compressor_2 busy
 [info] [craft] gtceu:mv_compressor_1 busy
 [warn] [craft] no gtceu:mv_compressor found
 [info] [server] active tasks: 6
 [info] [craft] gtceu:mv_compressor_0 busy
-[info] [craft] gtceu:mv_compressor_1 busy
-[warn] [craft] no gtceu:mv_compressor found
-[info] [craft] gtceu:mv_compressor_0 busy
-[info] [craft] gtceu:mv_compressor_1 busy
-[warn] [craft] no gtceu:mv_compressor found
+[info] [craft] gtceu:mv_compressor_3 busy
+[info] [craft] gtceu:mv_bender_0 busy
 [info] [server] active tasks: 5
-[info] [craft] gtceu:mv_compressor_0 busy
-[info] [craft] gtceu:mv_compressor_1 busy
-[warn] [craft] no gtceu:mv_compressor found
-[info] [craft] gtceu:mv_compressor_0 busy
-[info] [craft] gtceu:mv_compressor_1 busy
-[warn] [craft] no gtceu:mv_compressor found
-[info] [server] active tasks: 5
-[info] [craft] gtceu:mv_compressor_0 busy
-[info] [craft] gtceu:mv_compressor_1 busy
-[warn] [craft] no gtceu:mv_compressor found
-[info] [craft] gtceu:mv_compressor_0 busy
-[info] [craft] gtceu:mv_compressor_1 busy
-[warn] [craft] no gtceu:mv_compressor found
 [info] [server] active tasks: 4
-[info] [server] active tasks: 4
+[info] [craft] gtceu:mv_bender_0 busy
 [info] [server] active tasks: 3
 [info] [server] active tasks: 2
-[info] [server] active tasks: 1
+[info] [craft] gtceu:mv_assembler_0 busy
+[info] [server] active tasks: 2
 [info] [server] active tasks: 1
 [info] [server] active tasks: 1

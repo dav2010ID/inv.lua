@@ -47,7 +47,7 @@ function CraftPlanner:plan(criteria, dest, destSlot)
     end
 
     local crafts = math.ceil(criteria.count / nOut)
-    Log.info("[planner] plan", crafts, "craft(s) on", recipe.machine)
+    Log.info("[planner] plan", crafts, "craft(s) on", recipe.machine, "at", string.format("%.2fs", os.clock()))
     self:queueTasks(recipe, crafts, nil, dest, destSlot, 0, {})
     return crafts
 end

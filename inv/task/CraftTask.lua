@@ -19,6 +19,8 @@ function CraftTask:init(server, parent, recipe, dest, destSlot, craftCount)
     self.dependenciesPlanned = false
     self.craftCount = craftCount or 1
     self.nextAttempt = nil
+    self.createdAt = os.clock()
+    self.startedAt = nil
 end
 
 function CraftTask:scaledInputs()
@@ -57,9 +59,34 @@ function CraftTask:run()
             self.nextAttempt = os.clock() + 1
             return false
         end
+        self.startedAt = os.clock()
+        local waitSeconds = self.startedAt - self.createdAt
+        Log.info(
+            "[task] started",
+            self.recipe.machine,
+            "x" .. tostring(self.craftCount),
+            "on",
+            self.machine.name,
+            "wait",
+            string.format("%.2fs", waitSeconds)
+        )
     end
     self.machine:pullOutput()
     if not self.machine:busy() then
+        local endAt = os.clock()
+        local runSeconds = self.startedAt and (endAt - self.startedAt) or 0
+        local totalSeconds = endAt - self.createdAt
+        Log.info(
+            "[task] completed",
+            self.recipe.machine,
+            "x" .. tostring(self.craftCount),
+            "on",
+            self.machine.name,
+            "run",
+            string.format("%.2fs", runSeconds),
+            "total",
+            string.format("%.2fs", totalSeconds)
+        )
         return true
     end
     return false
