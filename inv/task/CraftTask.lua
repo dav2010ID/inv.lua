@@ -1,5 +1,5 @@
 local Task = require 'inv.task.Task'
-
+local Log = require 'inv.Log'
 -- Represents a crafting operation in progress.
 local CraftTask = Task:subclass()
 
@@ -21,6 +21,8 @@ function CraftTask:init(server, parent, recipe, dest, destSlot, craftCount)
     self.nextAttempt = nil
     self.createdAt = os.clock()
     self.startedAt = nil
+    self.machineType = recipe.machine
+    self.status = "waiting_inputs"
 end
 
 function CraftTask:scaledInputs()
@@ -43,6 +45,7 @@ function CraftTask:run()
     if not self.machine then
         local missing = self.server.inventoryIndex:tryMatchAll(self:scaledInputs())
         if #missing > 0 then
+            self.status = "waiting_inputs"
             if not self.dependenciesPlanned and self.server.craftExecutor.planner then
                 self.dependenciesPlanned = true
                 self.server.craftExecutor.planner:attachDependencies(self, self.recipe, 0, {}, self.craftCount)
@@ -51,17 +54,20 @@ function CraftTask:run()
         end
         self.machine = self.server.craftRegistry:findMachine(self.recipe.machine)
         if not self.machine then
+            self.status = "waiting_machine"
             self.nextAttempt = os.clock() + 1
             return false
         end
         if self.machine:craft(self.recipe, self.dest, self.destSlot, self.craftCount) == false then
             self.machine = nil
+            self.status = "waiting_inputs"
             self.nextAttempt = os.clock() + 1
             return false
         end
         self.startedAt = os.clock()
+        self.status = "running"
         local waitSeconds = self.startedAt - self.createdAt
-        Log.info(
+        Log.debug(
             "[task] started",
             self.recipe.machine,
             "x" .. tostring(self.craftCount),
@@ -73,10 +79,11 @@ function CraftTask:run()
     end
     self.machine:pullOutput()
     if not self.machine:busy() then
+        self.status = "done"
         local endAt = os.clock()
         local runSeconds = self.startedAt and (endAt - self.startedAt) or 0
         local totalSeconds = endAt - self.createdAt
-        Log.info(
+        Log.debug(
             "[task] completed",
             self.recipe.machine,
             "x" .. tostring(self.craftCount),

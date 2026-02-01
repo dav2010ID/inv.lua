@@ -54,4 +54,40 @@ function TaskManager:addTask(task)
     table.insert(self.active, task)
 end
 
+function TaskManager:getMachineStats()
+    local stats = {}
+
+    local function add(task)
+        if not task or not task.machineType or not task.status then
+            return
+        end
+        local entry = stats[task.machineType]
+        if not entry then
+            entry = {waiting_inputs=0, waiting_machine=0, running=0, waiting_subtasks=0, total=0}
+            stats[task.machineType] = entry
+        end
+        entry.total = entry.total + 1
+        if task.nSubTasks and task.nSubTasks > 0 then
+            entry.waiting_subtasks = entry.waiting_subtasks + 1
+            return
+        end
+        if task.status == "waiting_inputs" then
+            entry.waiting_inputs = entry.waiting_inputs + 1
+        elseif task.status == "waiting_machine" then
+            entry.waiting_machine = entry.waiting_machine + 1
+        elseif task.status == "running" then
+            entry.running = entry.running + 1
+        end
+    end
+
+    for _, task in ipairs(self.active) do
+        add(task)
+    end
+    for _, task in pairs(self.sleeping) do
+        add(task)
+    end
+
+    return stats
+end
+
 return TaskManager

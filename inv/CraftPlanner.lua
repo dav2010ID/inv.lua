@@ -49,6 +49,7 @@ function CraftPlanner:plan(criteria, dest, destSlot)
     local crafts = math.ceil(criteria.count / nOut)
     Log.info("[planner] plan", crafts, "craft(s) on", recipe.machine, "at", string.format("%.2fs", os.clock()))
     self:queueTasks(recipe, crafts, nil, dest, destSlot, 0, {})
+    self:logMachineSummary()
     return crafts
 end
 
@@ -113,6 +114,26 @@ function CraftPlanner:attachDependencies(task, recipe, depth, visiting, craftCou
             end
             visiting[key] = nil
         end
+    end
+end
+
+function CraftPlanner:logMachineSummary()
+    if not self.server or not self.server.taskManager or not self.server.craftRegistry then
+        return
+    end
+    local stats = self.server.taskManager:getMachineStats()
+    Log.info("[planner] machines:")
+    for machineType, entry in pairs(stats) do
+        local total = self.server.craftRegistry:countMachines(machineType)
+        local available = self.server.craftRegistry:countAvailableMachines(machineType)
+        Log.info(
+            "  " .. machineType .. ":",
+            tostring(available) .. " available,",
+            tostring(total) .. " total,",
+            tostring(entry.total) .. " tasks,",
+            tostring(entry.waiting_machine) .. " waiting_machine,",
+            tostring(entry.waiting_inputs) .. " waiting_inputs"
+        )
     end
 end
 

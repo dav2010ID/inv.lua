@@ -107,14 +107,42 @@ end
 function CraftRegistry:findMachine(machineType)
     local machinesOfType = self.machines[machineType]
     if machinesOfType then
-        for name, machine in pairs(machinesOfType) do
+        local total = 0
+        local busy = 0
+        for _, machine in pairs(machinesOfType) do
+            total = total + 1
             if not machine:busy() then
                 return machine
             end
-            Log.throttle("craft_busy_" .. name, 2, Log.levels.info, "[info] ", "[craft]", name, "busy")
+            busy = busy + 1
         end
+        local waiting = 0
+        if self.server and self.server.taskManager then
+            local stats = self.server.taskManager:getMachineStats()
+            local entry = stats[machineType]
+            waiting = entry and entry.waiting_machine or 0
+        end
+        Log.throttle(
+            "craft_saturated_" .. tostring(machineType),
+            2,
+            Log.levels.warn,
+            "[warn] ",
+            "[craft]",
+            machineType,
+            "saturated",
+            "(" .. tostring(busy) .. "/" .. tostring(total) .. " busy, " .. tostring(waiting) .. " waiting)"
+        )
+        return nil
     end
-    Log.throttle("craft_none_" .. tostring(machineType), 2, Log.levels.warn, "[warn] ", "[craft] no", machineType, "found")
+    Log.throttle(
+        "craft_none_" .. tostring(machineType),
+        2,
+        Log.levels.warn,
+        "[warn] ",
+        "[craft] no",
+        machineType,
+        "found"
+    )
     return nil
 end
 

@@ -1,59 +1,94 @@
-[info] [craft] added recipe minecraft:oak_planks
-[info] [craft] added recipe minecraft:stick
-[info] [craft] added recipe minecraft:wooden_pickaxe
-[info] [craft] added recipe minecraft:stone_pickaxe
-[info] [craft] added recipe minecraft:iron_pickaxe
-[info] [craft] added recipe minecraft:furnace
-[info] [craft] added recipe minecraft:stone
-[info] [craft] added recipe minecraft:iron_ingot
-[info] [craft] added recipe minecraft:piston
-[info] [craft] added recipe gtceu:steel_plate
-[info] [craft] added recipe gtceu:steel_ingot
-[info] [craft] added recipe minecraft:redstone
 [warn] [device] unconfigured device back type peripheral_hub
+[warn] [device] unconfigured device gtceu:creative_energy_1 type gtceu:creative_energy
+[warn] [device] unconfigured device gtceu:creative_energy_0 type gtceu:creative_energy
 [cli] type 'help' for commands
-[info] executing CLI command: craft minecraft:piston 20
-[info] [planner] plan 10 craft(s) on gtceu:mv_assembler
-[info] planned 10 craft(s)
+[info] executing CLI command: craft minecraft:piston 21
+[info] [planner] plan 11 craft(s) on gtceu:mv_assembler at 744.90s
+[info] planned 11 craft(s)
+[info] [task] started gtceu:mv_compressor x1 on gtceu:mv_compressor_0 wait 1.20s
 [info] [craft] gtceu:mv_compressor_0 busy
+[info] [task] started gtceu:mv_compressor x1 on gtceu:mv_compressor_5 wait 1.35s
+[info] [craft] gtceu:mv_compressor_5 busy
+[info] [task] started gtceu:mv_compressor x1 on gtceu:mv_compressor_4 wait 1.50s
+[info] [craft] gtceu:mv_compressor_4 busy
+[info] [task] started gtceu:mv_compressor x1 on gtceu:mv_compressor_1 wait 1.65s
 [info] [craft] gtceu:mv_compressor_1 busy
 [warn] [craft] no gtceu:mv_compressor found
+[info] [task] started gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_2 wait 1.80s
 [info] [craft] gtceu:mv_electric_furnace_2 busy
-[info] [server] active tasks: 10
+[info] [task] started gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_0 wait 1.95s
+[info] [craft] gtceu:mv_electric_furnace_0 busy
+[info] [task] started gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_1 wait 2.10s
+[info] [server] active tasks: 14
 [info] [craft] gtceu:mv_compressor_0 busy
+[info] [craft] gtceu:mv_compressor_5 busy
+[info] [craft] gtceu:mv_compressor_4 busy
 [info] [craft] gtceu:mv_compressor_1 busy
 [warn] [craft] no gtceu:mv_compressor found
 [info] [craft] gtceu:mv_compressor_0 busy
-[info] [craft] gtceu:mv_compressor_2 busy
+[info] [craft] gtceu:mv_compressor_5 busy
+[info] [craft] gtceu:mv_compressor_4 busy
 [info] [craft] gtceu:mv_compressor_1 busy
 [warn] [craft] no gtceu:mv_compressor found
+[info] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_2 run 5.75s total 7.55s
+[info] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_0 run 5.75s total 7.70s
+[info] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_1 run 5.75s total 7.85s
+[info] [server] active tasks: 11
+[info] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_0 run 7.80s total 9.00s
+[info] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_5 run 7.80s total 9.15s
+[info] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_4 run 7.80s total 9.30s
+[info] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_1 run 7.80s total 9.45s
+[info] [task] started gtceu:mv_compressor x1 on gtceu:mv_compressor_0 wait 9.55s
+[info] [craft] gtceu:mv_compressor_0 busy
+[info] [task] started gtceu:mv_compressor x1 on gtceu:mv_compressor_5 wait 9.70s
+[info] [craft] gtceu:mv_compressor_5 busy
+[info] [task] started gtceu:mv_compressor x1 on gtceu:mv_compressor_4 wait 9.85s
+[info] [craft] gtceu:mv_compressor_4 busy
+[info] [task] started gtceu:mv_compressor x1 on gtceu:mv_compressor_1 wait 10.00s
+[info] [craft] gtceu:mv_compressor_1 busy
+[warn] [craft] no gtceu:mv_compressor found
+[info] [task] started gtceu:mv_bender x3 on gtceu:mv_bender_0 wait 10.20s
 [info] [server] active tasks: 8
 [info] [craft] gtceu:mv_compressor_0 busy
-[info] [craft] gtceu:mv_compressor_3 busy
-[info] [craft] gtceu:mv_compressor_2 busy
+[info] [craft] gtceu:mv_compressor_5 busy
+[info] [craft] gtceu:mv_compressor_4 busy
 [info] [craft] gtceu:mv_compressor_1 busy
 [warn] [craft] no gtceu:mv_compressor found
+[info] [craft] gtceu:mv_compressor_0 busy
+[info] [craft] gtceu:mv_compressor_5 busy
+[info] [craft] gtceu:mv_compressor_4 busy
+[info] [craft] gtceu:mv_compressor_1 busy
+[warn] [craft] no gtceu:mv_compressor found
+[info] [task] completed gtceu:mv_bender x3 on gtceu:mv_bender_0 run 5.35s total 15.55s
 [info] [server] active tasks: 7
+[info] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_0 run 8.35s total 17.90s
+[info] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_5 run 8.35s total 18.05s
+[info] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_4 run 8.35s total 18.20s
+[info] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_1 run 8.35s total 18.35s
+[info] [task] started gtceu:mv_compressor x1 on gtceu:mv_compressor_0 wait 18.45s
 [info] [craft] gtceu:mv_compressor_0 busy
-[info] [craft] gtceu:mv_compressor_3 busy
-[info] [craft] gtceu:mv_compressor_2 busy
-[info] [craft] gtceu:mv_compressor_1 busy
-[warn] [craft] no gtceu:mv_compressor found
-[info] [craft] gtceu:mv_compressor_0 busy
-[info] [craft] gtceu:mv_compressor_3 busy
-[info] [craft] gtceu:mv_compressor_2 busy
-[info] [craft] gtceu:mv_compressor_1 busy
-[warn] [craft] no gtceu:mv_compressor found
-[info] [server] active tasks: 6
-[info] [craft] gtceu:mv_compressor_0 busy
-[info] [craft] gtceu:mv_compressor_3 busy
-[info] [craft] gtceu:mv_bender_0 busy
-[info] [server] active tasks: 5
+[info] [task] started gtceu:mv_compressor x1 on gtceu:mv_compressor_5 wait 18.60s
+[info] [craft] gtceu:mv_compressor_5 busy
+[info] [task] started gtceu:mv_compressor x1 on gtceu:mv_compressor_4 wait 18.75s
+[info] [task] started gtceu:mv_bender x3 on gtceu:mv_bender_0 wait 18.95s
 [info] [server] active tasks: 4
+[info] [task] completed gtceu:mv_bender x3 on gtceu:mv_bender_0 run 5.15s total 24.10s
+[info] [task] started gtceu:mv_assembler x6 on gtceu:mv_assembler_0 wait 24.60s
+[info] [server] active tasks: 4
+[info] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_0 run 8.55s total 27.00s
+[info] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_5 run 8.55s total 27.15s
+[info] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_4 run 8.55s total 27.30s
+[info] [task] started gtceu:mv_bender x3 on gtceu:mv_bender_0 wait 27.60s
 [info] [craft] gtceu:mv_bender_0 busy
+[info] [task] started gtceu:mv_bender x2 on gtceu:mv_bender_1 wait 27.80s
 [info] [server] active tasks: 3
+[info] [task] completed gtceu:mv_bender x2 on gtceu:mv_bender_1 run 4.00s total 31.80s
 [info] [server] active tasks: 2
+[info] [task] completed gtceu:mv_bender x3 on gtceu:mv_bender_0 run 5.50s total 33.10s
 [info] [craft] gtceu:mv_assembler_0 busy
+[info] [task] started gtceu:mv_assembler x5 on gtceu:mv_assembler_1 wait 33.60s
 [info] [server] active tasks: 2
+[info] [task] completed gtceu:mv_assembler x6 on gtceu:mv_assembler_0 run 15.85s total 40.45s
 [info] [server] active tasks: 1
 [info] [server] active tasks: 1
+[info] [task] completed gtceu:mv_assembler x5 on gtceu:mv_assembler_1 run 13.35s total 46.95s
