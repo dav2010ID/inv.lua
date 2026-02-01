@@ -23,6 +23,7 @@ function CraftTask:init(server, parent, recipe, dest, destSlot, craftCount)
     self.startedAt = nil
     self.machineType = recipe.machine
     self.status = "waiting_inputs"
+    self.queuedForMachine = false
 end
 
 function CraftTask:scaledInputs()
@@ -35,8 +36,37 @@ function CraftTask:scaledInputs()
     return inputs
 end
 
+function CraftTask:assignMachine(machine)
+    if not machine then
+        return false
+    end
+    self.machine = machine
+    if self.machine:craft(self.recipe, self.dest, self.destSlot, self.craftCount) == false then
+        self.machine = nil
+        self.status = "waiting_inputs"
+        self.nextAttempt = os.clock() + 1
+        return false
+    end
+    self.startedAt = os.clock()
+    self.status = "running"
+    local waitSeconds = self.startedAt - self.createdAt
+    Log.debug(
+        "[task] started",
+        self.recipe.machine,
+        "x" .. tostring(self.craftCount),
+        "on",
+        self.machine.name,
+        "wait",
+        string.format("%.2fs", waitSeconds)
+    )
+    return true
+end
+
 function CraftTask:run()
     if self.nextAttempt and os.clock() < self.nextAttempt then
+        return false
+    end
+    if self.queuedForMachine then
         return false
     end
     if self.nSubTasks > 0 then
@@ -52,30 +82,16 @@ function CraftTask:run()
             end
             return false
         end
-        self.machine = self.server.craftRegistry:findMachine(self.recipe.machine)
-        if not self.machine then
+        local machine = self.server.craftRegistry:requestMachine(self)
+        if not machine then
             self.status = "waiting_machine"
+            self.server.craftRegistry:logSaturation(self.recipe.machine)
             self.nextAttempt = os.clock() + 1
             return false
         end
-        if self.machine:craft(self.recipe, self.dest, self.destSlot, self.craftCount) == false then
-            self.machine = nil
-            self.status = "waiting_inputs"
-            self.nextAttempt = os.clock() + 1
+        if not self:assignMachine(machine) then
             return false
         end
-        self.startedAt = os.clock()
-        self.status = "running"
-        local waitSeconds = self.startedAt - self.createdAt
-        Log.debug(
-            "[task] started",
-            self.recipe.machine,
-            "x" .. tostring(self.craftCount),
-            "on",
-            self.machine.name,
-            "wait",
-            string.format("%.2fs", waitSeconds)
-        )
     end
     self.machine:pullOutput()
     if not self.machine:busy() then
@@ -94,6 +110,7 @@ function CraftTask:run()
             "total",
             string.format("%.2fs", totalSeconds)
         )
+        self.server.craftRegistry:notifyMachineFree(self.recipe.machine)
         return true
     end
     return false

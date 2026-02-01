@@ -12,6 +12,8 @@ function CraftRegistry:init(server)
     -- table<string, table<string, Machine>>: Crafting machines connected to
     -- this network, indexed by machine type and device name.
     self.machines = {}
+    -- table<string, table<int, CraftTask>>: Queues per machine type.
+    self.waitingTasks = {}
 end
 
 -- Adds a crafting machine to the network, updating network state as necessary.
@@ -34,6 +36,91 @@ function CraftRegistry:removeMachine(device)
     if machineTable then
         machineTable[device.name] = nil
     end
+end
+
+function CraftRegistry:enqueueTask(machineType, task)
+    if not self.waitingTasks[machineType] then
+        self.waitingTasks[machineType] = {}
+    end
+    table.insert(self.waitingTasks[machineType], task)
+end
+
+function CraftRegistry:requestMachine(task)
+    local machineType = task.machineType
+    local machinesOfType = self.machines[machineType]
+    if machinesOfType then
+        for _, machine in pairs(machinesOfType) do
+            if not machine:busy() then
+                return machine
+            end
+        end
+    end
+    if not task.queuedForMachine then
+        self:enqueueTask(machineType, task)
+        task.queuedForMachine = true
+    end
+    return nil
+end
+
+function CraftRegistry:notifyMachineFree(machineType)
+    local queue = self.waitingTasks[machineType]
+    if not queue or #queue == 0 then
+        return
+    end
+    local machinesOfType = self.machines[machineType]
+    if not machinesOfType then
+        return
+    end
+    for _, machine in pairs(machinesOfType) do
+        if not machine:busy() then
+            local task = table.remove(queue, 1)
+            if task then
+                task.queuedForMachine = false
+                task:assignMachine(machine)
+            end
+            return
+        end
+    end
+end
+
+function CraftRegistry:logSaturation(machineType)
+    local machinesOfType = self.machines[machineType]
+    if not machinesOfType then
+        Log.throttle(
+            "craft_none_" .. tostring(machineType),
+            2,
+            Log.levels.warn,
+            "[warn] ",
+            "[craft] no",
+            machineType,
+            "found"
+        )
+        return
+    end
+    local total = 0
+    local busy = 0
+    for _, machine in pairs(machinesOfType) do
+        total = total + 1
+        if machine:busy() then
+            busy = busy + 1
+        end
+    end
+    local waiting = 0
+    if self.server and self.server.taskManager then
+        local stats = self.server.taskManager:getMachineStats()
+        local entry = stats[machineType]
+        waiting = entry and entry.waiting_machine or 0
+    end
+    Log.throttle(
+        "craft_saturated_" .. tostring(machineType),
+        2,
+        Log.levels.warn,
+        "[warn] ",
+        "[craft]",
+        machineType,
+        "saturated",
+        "(" .. tostring(busy) .. "/" .. tostring(total) .. " busy, " .. tostring(waiting) .. " waiting)"
+    )
 end
 
 function CraftRegistry:countMachines(machineType)
@@ -107,42 +194,12 @@ end
 function CraftRegistry:findMachine(machineType)
     local machinesOfType = self.machines[machineType]
     if machinesOfType then
-        local total = 0
-        local busy = 0
         for _, machine in pairs(machinesOfType) do
-            total = total + 1
             if not machine:busy() then
                 return machine
             end
-            busy = busy + 1
         end
-        local waiting = 0
-        if self.server and self.server.taskManager then
-            local stats = self.server.taskManager:getMachineStats()
-            local entry = stats[machineType]
-            waiting = entry and entry.waiting_machine or 0
-        end
-        Log.throttle(
-            "craft_saturated_" .. tostring(machineType),
-            2,
-            Log.levels.warn,
-            "[warn] ",
-            "[craft]",
-            machineType,
-            "saturated",
-            "(" .. tostring(busy) .. "/" .. tostring(total) .. " busy, " .. tostring(waiting) .. " waiting)"
-        )
-        return nil
     end
-    Log.throttle(
-        "craft_none_" .. tostring(machineType),
-        2,
-        Log.levels.warn,
-        "[warn] ",
-        "[craft] no",
-        machineType,
-        "found"
-    )
     return nil
 end
 
