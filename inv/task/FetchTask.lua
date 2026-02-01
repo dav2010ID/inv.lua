@@ -42,7 +42,7 @@ function FetchTask:run()
                 local toMake = remaining.count
                 local crafts = math.ceil(toMake / nOut)
                 for i=1,crafts do
-                    self.server.taskManager:addTask(CraftTask(self.server, self, recipe, self.dest, self.destSlot))
+                    self.server.taskManager:addTask(CraftTask(self.server, self, recipe, self.dest, self.destSlot, 1, nil))
                 end
             else
                 self.server.taskManager:addTask(WaitTask(self.server, self, remaining))

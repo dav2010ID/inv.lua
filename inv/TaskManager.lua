@@ -1,4 +1,5 @@
 local Object = require 'object.Object'
+local Log = require 'inv.Log'
 
 -- Asynchronously manages crafting tasks
 local TaskManager = Object:subclass()
@@ -13,6 +14,8 @@ function TaskManager:init(server)
     self.sleeping = {}
     -- The last ID assigned to a task.
     self.lastID = 0
+    self.summaries = {}
+    self.nextSummaryId = 0
 end
 
 -- Returns the next available task ID for creating a new task.
@@ -52,6 +55,99 @@ end
 -- Adds a new task, and designates it as active.
 function TaskManager:addTask(task)
     table.insert(self.active, task)
+end
+
+function TaskManager:createSummary(criteria, crafts)
+    self.nextSummaryId = self.nextSummaryId + 1
+    local name = criteria and (criteria.name or "unknown") or "unknown"
+    local count = criteria and criteria.count or crafts or 0
+    local summary = {
+        id = self.nextSummaryId,
+        name = name,
+        count = count,
+        startTime = os.clock(),
+        tasksTotal = 0,
+        tasksDone = 0,
+        machineStats = {}
+    }
+    self.summaries[summary.id] = summary
+    return summary
+end
+
+function TaskManager:registerTask(summary, task)
+    if not summary then
+        return
+    end
+    summary.tasksTotal = summary.tasksTotal + 1
+    task.summaryId = summary.id
+end
+
+local function getMachineEntry(summary, machineType)
+    local entry = summary.machineStats[machineType]
+    if not entry then
+        entry = {waitSum=0, waitCount=0, waitMax=0, runSum=0}
+        summary.machineStats[machineType] = entry
+    end
+    return entry
+end
+
+function TaskManager:recordTaskStart(summaryId, machineType, waitSeconds)
+    local summary = summaryId and self.summaries[summaryId] or nil
+    if not summary then
+        return
+    end
+    local entry = getMachineEntry(summary, machineType)
+    entry.waitSum = entry.waitSum + waitSeconds
+    entry.waitCount = entry.waitCount + 1
+    if waitSeconds > entry.waitMax then
+        entry.waitMax = waitSeconds
+    end
+end
+
+function TaskManager:recordTaskComplete(summaryId, machineType, runSeconds)
+    local summary = summaryId and self.summaries[summaryId] or nil
+    if not summary then
+        return
+    end
+    local entry = getMachineEntry(summary, machineType)
+    entry.runSum = entry.runSum + runSeconds
+    summary.tasksDone = summary.tasksDone + 1
+    if summary.tasksDone >= summary.tasksTotal then
+        self:logSummary(summary)
+        self.summaries[summary.id] = nil
+    end
+end
+
+function TaskManager:logSummary(summary)
+    local totalTime = os.clock() - summary.startTime
+    local criticalMachine = nil
+    local criticalWait = -1
+    for machineType, entry in pairs(summary.machineStats) do
+        local avgWait = entry.waitCount > 0 and (entry.waitSum / entry.waitCount) or 0
+        if avgWait > criticalWait then
+            criticalWait = avgWait
+            criticalMachine = machineType
+        end
+    end
+    Log.info("[summary] craft", summary.name, "x" .. tostring(summary.count))
+    Log.info("  total_time:", string.format("%.2fs", totalTime))
+    if criticalMachine then
+        Log.info("  critical_machine:", criticalMachine)
+    end
+    Log.info("  utilization:")
+    for machineType, entry in pairs(summary.machineStats) do
+        local util = totalTime > 0 and (entry.runSum / totalTime) * 100 or 0
+        Log.info("    " .. machineType .. ":", string.format("%.0f%%", util))
+    end
+    Log.info("  waits:")
+    for machineType, entry in pairs(summary.machineStats) do
+        local avgWait = entry.waitCount > 0 and (entry.waitSum / entry.waitCount) or 0
+        Log.info(
+            "    " .. machineType .. ":",
+            "avg " .. string.format("%.2fs", avgWait) .. ",",
+            "max " .. string.format("%.2fs", entry.waitMax)
+        )
+    end
 end
 
 function TaskManager:getMachineStats()

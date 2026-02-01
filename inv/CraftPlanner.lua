@@ -48,12 +48,13 @@ function CraftPlanner:plan(criteria, dest, destSlot)
 
     local crafts = math.ceil(criteria.count / nOut)
     Log.info("[planner] plan", crafts, "craft(s) on", recipe.machine, "at", string.format("%.2fs", os.clock()))
-    self:queueTasks(recipe, crafts, nil, dest, destSlot, 0, {})
+    local summary = self.server.taskManager:createSummary(criteria, crafts)
+    self:queueTasks(recipe, crafts, summary, nil, dest, destSlot, 0, {})
     self:logMachineSummary()
     return crafts
 end
 
-function CraftPlanner:queueTasks(recipe, crafts, parent, dest, destSlot, depth, visiting)
+function CraftPlanner:queueTasks(recipe, crafts, summary, parent, dest, destSlot, depth, visiting)
     local machineCount = self.server.craftRegistry:countAvailableMachines(recipe.machine)
     local batches = crafts
     if machineCount > 0 then
@@ -64,8 +65,9 @@ function CraftPlanner:queueTasks(recipe, crafts, parent, dest, destSlot, depth, 
     local remaining = crafts
     for i = 1, batches do
         local batch = math.ceil(remaining / (batches - i + 1))
-        local task = CraftTask(self.server, parent, recipe, dest, destSlot, batch)
-        self:attachDependencies(task, recipe, depth, visiting, batch)
+        local task = CraftTask(self.server, parent, recipe, dest, destSlot, batch, summary)
+        self.server.taskManager:registerTask(summary, task)
+        self:attachDependencies(task, recipe, depth, visiting, batch, summary)
         self.server.taskManager:addTask(task)
         remaining = remaining - batch
     end
@@ -81,7 +83,7 @@ local function scaledInputs(recipe, craftCount)
     return inputs
 end
 
-function CraftPlanner:attachDependencies(task, recipe, depth, visiting, craftCount)
+function CraftPlanner:attachDependencies(task, recipe, depth, visiting, craftCount, summary)
     if depth > self.maxDepth then
         Log.warn("[planner] max depth exceeded for recipe", recipe.machine)
         return
@@ -105,7 +107,7 @@ function CraftPlanner:attachDependencies(task, recipe, depth, visiting, craftCou
                 local nOut = findOutputCount(depRecipe, item)
                 if nOut > 0 then
                     local crafts = math.ceil(item.count / nOut)
-                    self:queueTasks(depRecipe, crafts, task, nil, nil, depth + 1, visiting)
+                    self:queueTasks(depRecipe, crafts, summary, task, nil, nil, depth + 1, visiting)
                 else
                     self.server.taskManager:addTask(WaitTask(self.server, task, item))
                 end
