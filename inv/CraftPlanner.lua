@@ -47,23 +47,47 @@ function CraftPlanner:plan(criteria, dest, destSlot)
     end
 
     local crafts = math.ceil(criteria.count / nOut)
-    local planned = 0
-    for i=1,crafts do
-        local task = CraftTask(self.server, nil, recipe, dest, destSlot)
-        self:attachDependencies(task, recipe, 0, {})
-        self.server.taskManager:addTask(task)
-        planned = planned + 1
-    end
-    return planned
+    Log.info("[planner] plan", crafts, "craft(s) on", recipe.machine)
+    self:queueTasks(recipe, crafts, nil, dest, destSlot, 0, {})
+    return crafts
 end
 
-function CraftPlanner:attachDependencies(task, recipe, depth, visiting)
+function CraftPlanner:queueTasks(recipe, crafts, parent, dest, destSlot, depth, visiting)
+    local machineCount = self.server.craftRegistry:countAvailableMachines(recipe.machine)
+    local batches = crafts
+    if machineCount > 0 then
+        batches = math.min(crafts, machineCount)
+    else
+        batches = 1
+    end
+    local remaining = crafts
+    for i = 1, batches do
+        local batch = math.ceil(remaining / (batches - i + 1))
+        local task = CraftTask(self.server, parent, recipe, dest, destSlot, batch)
+        self:attachDependencies(task, recipe, depth, visiting, batch)
+        self.server.taskManager:addTask(task)
+        remaining = remaining - batch
+    end
+end
+
+local function scaledInputs(recipe, craftCount)
+    local inputs = {}
+    for _, item in pairs(recipe.input) do
+        local copy = item:copy()
+        copy.count = copy.count * craftCount
+        table.insert(inputs, copy)
+    end
+    return inputs
+end
+
+function CraftPlanner:attachDependencies(task, recipe, depth, visiting, craftCount)
     if depth > self.maxDepth then
         Log.warn("[planner] max depth exceeded for recipe", recipe.machine)
         return
     end
 
-    local missing = self.server.inventoryIndex:tryMatchAll(recipe.input)
+    local count = craftCount or 1
+    local missing = self.server.inventoryIndex:tryMatchAll(scaledInputs(recipe, count))
     if #missing == 0 then
         return
     end
@@ -80,11 +104,7 @@ function CraftPlanner:attachDependencies(task, recipe, depth, visiting)
                 local nOut = findOutputCount(depRecipe, item)
                 if nOut > 0 then
                     local crafts = math.ceil(item.count / nOut)
-                    for j=1,crafts do
-                        local child = CraftTask(self.server, task, depRecipe)
-                        self:attachDependencies(child, depRecipe, depth + 1, visiting)
-                        self.server.taskManager:addTask(child)
-                    end
+                    self:queueTasks(depRecipe, crafts, task, nil, nil, depth + 1, visiting)
                 else
                     self.server.taskManager:addTask(WaitTask(self.server, task, item))
                 end

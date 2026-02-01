@@ -35,6 +35,8 @@ function Server:setup(deviceConfig, recipeConfig)
     self.taskManager = TaskManager(self)
     self.taskTimer = nil
     self.running = true
+    self.lastActiveCount = nil
+    self.lastActiveLogTime = 0
 
     self.craftRegistry:loadRecipes(recipeConfig)
     self.deviceManager:scanDevices()
@@ -117,6 +119,7 @@ function Server:handleCommand(line)
         Log.cli("  devices")
         Log.cli("  status")
         Log.cli("  quit")
+        Log.cli("  test")
         return
     end
 
@@ -234,7 +237,13 @@ end
 function Server:updateTasks()
     if self.taskManager:update() then
         self.taskTimer = os.startTimer(1)
-        Log.info("[server] active tasks:", #self.taskManager.active)
+        local activeCount = #self.taskManager.active
+        local now = os.clock()
+        if self.lastActiveCount ~= activeCount or (now - self.lastActiveLogTime) > 5 then
+            Log.info("[server] active tasks:", activeCount)
+            self.lastActiveCount = activeCount
+            self.lastActiveLogTime = now
+        end
         --for i,t in pairs(self.taskManager.sleeping) do
         --    print("sleeping",i)
         --end

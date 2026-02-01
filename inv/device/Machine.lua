@@ -19,7 +19,7 @@ backends.peripheral = {
     getItemDetail = function(machine, slot)
         return machine.interface.getItemDetail(slot)
     end,
-    craft = function(machine) end,
+    craft = function(machine, count) end,
     locationResolver = function(machine)
         return machine.name
     end
@@ -31,12 +31,19 @@ backends.turtle = {
     getItemDetail = function(machine, slot)
         return turtle.getItemDetail(slot, true)
     end,
-    craft = function(machine)
+    craft = function(machine, count)
         local outSlot = machine:getCraftOutputSlot()
         if outSlot then
             turtle.select(outSlot)
         end
-        turtle.craft()
+        local times = count or 1
+        for i = 1, times do
+            local ok = turtle.craft()
+            if not ok then
+                Log.warn("[machine] craft failed", machine.name)
+                break
+            end
+        end
     end,
     locationResolver = function(machine)
         return Common.getNameLocal()
@@ -109,9 +116,9 @@ function Machine:getItemDetail(slot)
     return Machine.superClass.getItemDetail(self, slot)
 end
 
-function Machine:performCraft()
+function Machine:performCraft(count)
     if self.backend and self.backend.craft then
-        self.backend.craft(self)
+        self.backend.craft(self, count)
     end
 end
 
@@ -133,21 +140,24 @@ end
 
 -- Starts a crafting operation.
 -- dest and destSlot are optional.
-function Machine:craft(recipe, dest, destSlot)
+function Machine:craft(recipe, dest, destSlot, craftCount)
     if self:busy() then error("machine " .. self.name .. " busy") end
+    local count = craftCount or 1
     self.recipe = recipe
     self.dest = dest
     self.destSlot = destSlot
     self.remaining = {}
     for slot, item in pairs(self.recipe.output) do
-        self.remaining[slot] = item.count
+        self.remaining[slot] = item.count * count
     end
     local pushed = {}
     for virtSlot, crit in pairs(self.recipe.input) do
         local realSlot = self:mapSlot(virtSlot)
-        local n = self.server.inventoryIO:pushItemsTo(crit, self, realSlot)
+        local needed = crit:copy()
+        needed.count = crit.count * count
+        local n = self.server.inventoryIO:pushItemsTo(needed, self, realSlot)
         pushed[virtSlot] = n
-        if n < crit.count then
+        if n < needed.count then
             Log.warn("[machine] insufficient input for", self.name)
             self:rollbackInputs(pushed)
             self.recipe = nil
@@ -157,7 +167,7 @@ function Machine:craft(recipe, dest, destSlot)
             return false
         end
     end
-    self:performCraft()
+    self:performCraft(count)
     return true
 end
 

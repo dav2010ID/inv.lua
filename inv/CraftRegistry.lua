@@ -36,6 +36,32 @@ function CraftRegistry:removeMachine(device)
     end
 end
 
+function CraftRegistry:countMachines(machineType)
+    local machinesOfType = self.machines[machineType]
+    if not machinesOfType then
+        return 0
+    end
+    local n = 0
+    for _, _ in pairs(machinesOfType) do
+        n = n + 1
+    end
+    return n
+end
+
+function CraftRegistry:countAvailableMachines(machineType)
+    local machinesOfType = self.machines[machineType]
+    if not machinesOfType then
+        return 0
+    end
+    local n = 0
+    for _, machine in pairs(machinesOfType) do
+        if not machine:busy() then
+            n = n + 1
+        end
+    end
+    return n
+end
+
 -- Loads recipes from the given data.
 -- Data should consist of an array of tables, with each table
 -- in the format required by the Recipe class.
@@ -69,7 +95,7 @@ function CraftRegistry:findRecipe(item)
     for name, v in pairs(results) do
         local recipe = self.recipes[name]
         if recipe then
-            Log.info("[craft] recipe found",name)
+            Log.debug("[craft] recipe found",name)
             return recipe
         end
     end
@@ -85,10 +111,10 @@ function CraftRegistry:findMachine(machineType)
             if not machine:busy() then
                 return machine
             end
-            Log.info("[craft]",name,"busy")
+            Log.throttle("craft_busy_" .. name, 2, Log.levels.info, "[info] ", "[craft]", name, "busy")
         end
     end
-    Log.warn("[craft] no",machineType,"found")
+    Log.throttle("craft_none_" .. tostring(machineType), 2, Log.levels.warn, "[warn] ", "[craft] no", machineType, "found")
     return nil
 end
 
