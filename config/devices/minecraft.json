@@ -2,5 +2,9 @@
     {
         "type":"minecraft:furnace",
         "purpose":"crafting"
+    },
+    {
+        "type":"gtceu:uv_assembler",
+        "purpose":"crafting"
     }
 ]

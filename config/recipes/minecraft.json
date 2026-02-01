@@ -100,5 +100,17 @@
         "output":{
             "3":{"name":"minecraft:iron_ingot","count":8}
         }
+    },
+        {
+        "machine":"gtceu:uv_assembler",
+        "input":{
+            "1":{"name":"gtceu:steel_plate","count":1},
+            "2":{"name":"minecraft:oak_planks","count":3},
+            "3":{"name":"minecraft:cobblestone","count":3},
+            "4":{"name":"minecraft:redstone","count":1}
+        },
+        "output":{
+            "10":{"name":"minecraft:piston","count":2}
+        }
     }
 ]
