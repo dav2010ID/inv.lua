@@ -2,6 +2,7 @@ local Log = {}
 
 Log.levels = {debug=10, info=20, warn=30, error=40}
 Log.level = Log.levels.info
+Log.runId = nil
 
 local lastByKey = {}
 

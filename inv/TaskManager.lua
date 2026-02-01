@@ -17,6 +17,7 @@ function TaskManager:init(server)
     self.summaries = {}
     self.nextSummaryId = 0
     self.currentCriticalMachine = nil
+    self.currentRunId = nil
 end
 
 -- Returns the next available task ID for creating a new task.
@@ -55,7 +56,11 @@ end
 
 -- Adds a new task, and designates it as active.
 function TaskManager:addTask(task)
-    table.insert(self.active, task)
+    if task.nSubTasks and task.nSubTasks > 0 then
+        self.sleeping[task.id] = task
+    else
+        table.insert(self.active, task)
+    end
 end
 
 function TaskManager:createSummary(criteria, crafts)
@@ -67,10 +72,13 @@ function TaskManager:createSummary(criteria, crafts)
         name = name,
         count = count,
         startTime = os.clock(),
+        firstTaskStartedAt = nil,
+        criticalPathStartedAt = nil,
         tasksTotal = 0,
         tasksDone = 0,
         machineStats = {},
-        inputBlockers = {}
+        inputBlockers = {},
+        runId = self.currentRunId
     }
     self.summaries[summary.id] = summary
     return summary
@@ -108,6 +116,14 @@ function TaskManager:recordTaskStart(summaryId, machineType, waitSeconds)
     local summary = summaryId and self.summaries[summaryId] or nil
     if not summary then
         return
+    end
+    if not summary.firstTaskStartedAt then
+        summary.firstTaskStartedAt = os.clock()
+        Log.info("[phase] first_task_started at +" .. string.format("%.2fs", summary.firstTaskStartedAt - summary.startTime))
+    end
+    if summary.criticalPathStartedAt == nil and self.currentCriticalMachine == machineType then
+        summary.criticalPathStartedAt = os.clock()
+        Log.info("[phase] critical_path_started at +" .. string.format("%.2fs", summary.criticalPathStartedAt - summary.startTime))
     end
     local entry = getMachineEntry(summary, machineType)
     entry.waitSum = entry.waitSum + waitSeconds
@@ -175,6 +191,9 @@ function TaskManager:logSummary(summary)
     local criticalMachine = nil
     local criticalUtil = -1
     local theoreticalMin = 0
+    local totalWaitInputs = 0
+    local totalWaitMachine = 0
+    local totalRun = 0
     for machineType, entry in pairs(summary.machineStats) do
         local count = craftRegistry and craftRegistry:countMachines(machineType) or 0
         if count > 0 then
@@ -188,6 +207,19 @@ function TaskManager:logSummary(summary)
                 theoreticalMin = minTime
             end
         end
+        totalWaitInputs = totalWaitInputs + entry.waitInputsSum
+        totalWaitMachine = totalWaitMachine + entry.waitMachineSum
+        totalRun = totalRun + entry.runSum
+    end
+    local overhead = totalTime - theoreticalMin
+    if overhead < 0 then
+        overhead = 0
+    end
+    local overheadPct = totalTime > 0 and (overhead / totalTime) * 100 or 0
+    local lostTotal = totalWaitInputs + totalWaitMachine
+    local idle = totalTime - (totalRun / math.max(1, (criticalMachine and craftRegistry:countMachines(criticalMachine) or 1)))
+    if idle < 0 then
+        idle = 0
     end
     Log.info("[summary] craft", summary.name, "x" .. tostring(summary.count))
     Log.info("  total_time:", string.format("%.2fs", totalTime))
@@ -198,6 +230,7 @@ function TaskManager:logSummary(summary)
         Log.info("  theoretical_min:", string.format("%.2fs", theoreticalMin))
         local efficiency = (theoreticalMin / totalTime) * 100
         Log.info("  efficiency:", string.format("%.0f%%", efficiency))
+        Log.info("  overhead:", "+" .. string.format("%.2fs", overhead), "(" .. string.format("%.0f%%", overheadPct) .. ")")
     end
     Log.info("  utilization:")
     for machineType, entry in pairs(summary.machineStats) do
@@ -226,6 +259,13 @@ function TaskManager:logSummary(summary)
             "max " .. string.format("%.2fs", entry.waitInputsMax)
         )
     end
+    Log.info("  lost_time:")
+    if lostTotal > 0 then
+        Log.info("    waiting_inputs:", string.format("%.0f%%", (totalWaitInputs / lostTotal) * 100))
+        Log.info("    waiting_machine:", string.format("%.0f%%", (totalWaitMachine / lostTotal) * 100))
+        local idlePct = totalTime > 0 and (idle / totalTime) * 100 or 0
+        Log.info("    idle:", string.format("%.0f%%", idlePct))
+    end
     Log.info("  input_blockers:")
     for machineType, items in pairs(summary.inputBlockers) do
         local topName = nil
@@ -239,13 +279,25 @@ function TaskManager:logSummary(summary)
             end
         end
         if topName then
-            Log.info(
-                "    " .. machineType .. ":",
-                topName,
-                "sum " .. string.format("%.2fs", topSum) .. ",",
-                "max " .. string.format("%.2fs", topMax)
-            )
+            local impactPct = totalTime > 0 and (topSum / totalTime) * 100 or 0
+            Log.info("    " .. machineType .. ":")
+            Log.info("      primary_blocker:", topName)
+            Log.info("      impact:", string.format("%.2fs", topSum), "(" .. string.format("%.0f%%", impactPct) .. ")")
         end
+    end
+    if criticalMachine and craftRegistry then
+        local count = craftRegistry:countMachines(criticalMachine)
+        if count > 0 then
+            local criticalEntry = summary.machineStats[criticalMachine]
+            local newMin = criticalEntry and (criticalEntry.runSum / (count + 1)) or 0
+            if newMin > 0 then
+                Log.info("[hint] bottleneck detected:", criticalMachine)
+                Log.info("[hint] adding +1 machine reduces theoretical_min to", string.format("%.2fs", newMin))
+            end
+        end
+    end
+    if summary.runId then
+        Log.info("[run] id=" .. summary.runId .. " completed in " .. string.format("%.2fs", totalTime))
     end
 end
 

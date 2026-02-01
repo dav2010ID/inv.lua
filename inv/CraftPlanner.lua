@@ -49,13 +49,13 @@ function CraftPlanner:plan(criteria, dest, destSlot)
     local crafts = math.ceil(criteria.count / nOut)
     Log.info("[planner] plan", crafts, "craft(s) on", recipe.machine, "at", string.format("%.2fs", os.clock()))
     local summary = self.server.taskManager:createSummary(criteria, crafts)
-    self:queueTasks(recipe, crafts, summary, nil, dest, destSlot, 0, {})
+    self:queueTasks(recipe, crafts, summary, nil, dest, destSlot, 0, {}, false)
     self:setCriticalMachine()
     self:logMachineSummary()
     return crafts
 end
 
-function CraftPlanner:queueTasks(recipe, crafts, summary, parent, dest, destSlot, depth, visiting)
+function CraftPlanner:queueTasks(recipe, crafts, summary, parent, dest, destSlot, depth, visiting, skipDependencies)
     local machineCount = self.server.craftRegistry:countAvailableMachines(recipe.machine)
     local batches = crafts
     if machineCount > 0 then
@@ -66,9 +66,13 @@ function CraftPlanner:queueTasks(recipe, crafts, summary, parent, dest, destSlot
     local remaining = crafts
     for i = 1, batches do
         local batch = math.ceil(remaining / (batches - i + 1))
-        local task = CraftTask(self.server, parent, recipe, dest, destSlot, batch, summary)
+        local priority = -(depth or 0)
+        local task = CraftTask(self.server, parent, recipe, dest, destSlot, batch, summary, priority)
         self.server.taskManager:registerTask(summary, task)
-        self:attachDependencies(task, recipe, depth, visiting, batch, summary)
+        if not skipDependencies then
+            self:attachDependencies(task, recipe, depth, visiting, batch, summary)
+            task.dependenciesPlanned = true
+        end
         self.server.taskManager:addTask(task)
         remaining = remaining - batch
     end
@@ -108,7 +112,7 @@ function CraftPlanner:attachDependencies(task, recipe, depth, visiting, craftCou
                 local nOut = findOutputCount(depRecipe, item)
                 if nOut > 0 then
                     local crafts = math.ceil(item.count / nOut)
-                    self:queueTasks(depRecipe, crafts, summary, task, nil, nil, depth + 1, visiting)
+                    self:queueTasks(depRecipe, crafts, summary, task, nil, nil, depth + 1, visiting, false)
                 else
                     self.server.taskManager:addTask(WaitTask(self.server, task, item))
                 end
@@ -119,6 +123,7 @@ function CraftPlanner:attachDependencies(task, recipe, depth, visiting, craftCou
         end
     end
 end
+
 
 function CraftPlanner:logMachineSummary()
     if not self.server or not self.server.taskManager or not self.server.craftRegistry then

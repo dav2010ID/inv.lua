@@ -33,6 +33,9 @@ function Server:setup(deviceConfig, recipeConfig)
     self.craftRegistry = CraftRegistry(self)
     self.craftExecutor = CraftExecutor(self, self.craftRegistry)
     self.taskManager = TaskManager(self)
+    if Log and Log.runId then
+        self.taskManager.currentRunId = Log.runId
+    end
     self.taskTimer = nil
     self.running = true
     self.lastActiveCount = nil

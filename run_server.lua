@@ -23,6 +23,9 @@ end
 
 function run()
     initLogging("CraftOSTest.log")
+    local runId = os.date("!%Y-%m-%dT%H:%MZ")
+    Log.info("[run] id=" .. runId, "goal=" .. table.concat(args, " "))
+    Log.runId = runId
     local s = Server()
     if #args > 0 then
         local command = table.concat(args, " ")

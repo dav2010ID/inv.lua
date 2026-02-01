@@ -44,9 +44,19 @@ function CraftRegistry:enqueueTask(machineType, task)
     end
     local queue = self.waitingTasks[machineType]
     local critical = self.server and self.server.taskManager and self.server.taskManager.currentCriticalMachine
-    if critical and critical == machineType then
-        table.insert(queue, 1, task)
-    else
+    local bonus = (critical and critical == machineType) and 1000 or 0
+    local priority = (task.priority or 0) + bonus
+    local inserted = false
+    for i = 1, #queue do
+        local other = queue[i]
+        local otherPriority = (other.priority or 0) + ((critical and critical == machineType) and 1000 or 0)
+        if priority > otherPriority then
+            table.insert(queue, i, task)
+            inserted = true
+            break
+        end
+    end
+    if not inserted then
         table.insert(queue, task)
     end
 end

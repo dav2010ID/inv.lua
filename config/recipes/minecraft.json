@@ -139,5 +139,14 @@
         "output":{
             "2":{"name":"minecraft:redstone","count":5}
         }
+    },
+    {
+        "machine":"gtceu:mv_forge_hammer",
+        "input":{
+            "1":{"name":"gtceu:raw_redstone_block","count":1}
+        },
+        "output":{
+            "2":{"name":"gtceu:raw_redstone","count":9}
+        }
     }
 ]

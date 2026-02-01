@@ -5,7 +5,8 @@ local CraftTask = Task:subclass()
 
 -- dest and destSlot are optional.
 -- craftCount defaults to 1.
-function CraftTask:init(server, parent, recipe, dest, destSlot, craftCount, summary)
+-- priority defaults to 0 (higher runs first).
+function CraftTask:init(server, parent, recipe, dest, destSlot, craftCount, summary, priority)
     CraftTask.superClass.init(self, server, parent)
     -- Machine: What is currently crafting this Task's recipe.
     -- nil if we're waiting to find a machine.
@@ -27,6 +28,7 @@ function CraftTask:init(server, parent, recipe, dest, destSlot, craftCount, summ
     self.summaryId = summary and summary.id or nil
     self.lastStatusAt = self.createdAt
     self.lastMissing = nil
+    self.priority = priority or 0
 end
 
 function CraftTask:scaledInputs()
@@ -56,14 +58,16 @@ function CraftTask:assignMachine(machine)
     if self.summaryId then
         self.server.taskManager:recordTaskStart(self.summaryId, self.machineType, waitSeconds)
     end
+    local blocker = self.lastMissing
+    self.lastMissing = nil
     Log.debug(
-        "[task] started",
+        "[task] start",
         self.recipe.machine,
         "x" .. tostring(self.craftCount),
-        "on",
-        self.machine.name,
-        "wait",
-        string.format("%.2fs", waitSeconds)
+        "reason: inputs_ready",
+        "waited",
+        string.format("%.2fs", waitSeconds),
+        blocker and ("blocked_by " .. blocker) or ""
     )
     return true
 end

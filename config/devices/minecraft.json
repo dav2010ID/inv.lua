@@ -18,5 +18,10 @@
     {
         "type":"gtceu:mv_electric_furnace",
         "purpose":"crafting"
+    },
+    {
+        "type":"gtceu:mv_forge_hammer",
+        "purpose":"crafting"
     }
+
 ]
