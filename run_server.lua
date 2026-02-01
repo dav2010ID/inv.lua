@@ -1,4 +1,7 @@
 local Server = require 'inv.Server'
+local Log = require 'inv.Log'
+
+local args = {...}
 
 local function initLogging(path)
     local log = fs.open(path, "a")
@@ -21,6 +24,15 @@ end
 function run()
     initLogging("CraftOSTest.log")
     local s = Server()
+    if #args > 0 then
+        local command = table.concat(args, " ")
+        Log.info("executing CLI command:", command)
+        s.cliEnabled = false
+        s.cliBuffer = ""
+        s:handleCommand(command)
+        s.cliEnabled = true
+        s:drawPrompt()
+    end
     s:mainLoop()
 end
 
