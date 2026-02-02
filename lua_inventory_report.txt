@@ -1,3 +1,11 @@
+FILE: inv\core\Object.lua
+REQUIRES:
+  require "cc.expect"
+FUNCTIONS:
+  Object:init
+  Object:subclass
+  Object:instanceof
+
 FILE: inv\craft\CraftDependencyGraph.lua
 REQUIRES: (none)
 FUNCTIONS:
@@ -6,7 +14,7 @@ FUNCTIONS:
 
 FILE: inv\craft\CraftExecutor.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
   require 'inv.craft.CraftPlanner'
   require 'inv.craft.TaskFactory'
 FUNCTIONS:
@@ -15,7 +23,7 @@ FUNCTIONS:
 
 FILE: inv\craft\CraftPlanner.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
   require 'inv.craft.CraftDependencyGraph'
 FUNCTIONS:
   CraftPlanner:init
@@ -23,7 +31,7 @@ FUNCTIONS:
 
 FILE: inv\craft\TaskFactory.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
   require 'inv.domain.CraftTask'
   require 'inv.domain.BlockedTask'
   require 'inv.craft.CraftDependencyGraph'
@@ -56,7 +64,7 @@ FUNCTIONS:
 
 FILE: inv\domain\Item.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
 FUNCTIONS:
   Item:init
   Item:matches
@@ -69,7 +77,7 @@ FUNCTIONS:
 
 FILE: inv\domain\Recipe.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
   require 'inv.domain.Item'
 FUNCTIONS:
   Recipe:init
@@ -85,7 +93,7 @@ FUNCTIONS:
 
 FILE: inv\domain\Task.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
 FUNCTIONS:
   Task:init
   Task:run
@@ -101,7 +109,7 @@ FUNCTIONS:
 
 FILE: inv\infrastructure\device\Device.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
 FUNCTIONS:
   Device:init
   Device:getItemDetail
@@ -139,7 +147,7 @@ FUNCTIONS:
 
 FILE: inv\infrastructure\DeviceCatalog.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
   require 'inv.infrastructure.util.Net'
   require 'inv.infrastructure.device.Storage'
   require 'inv.infrastructure.device.Machine'
@@ -156,7 +164,7 @@ FUNCTIONS:
 
 FILE: inv\infrastructure\InventoryIO.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
 FUNCTIONS:
   InventoryIO:init
   InventoryIO:getStorageRegistry
@@ -178,7 +186,7 @@ FUNCTIONS:
 
 FILE: inv\infrastructure\MachineRegistry.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
 FUNCTIONS:
   MachineRegistry:init
   MachineRegistry:addMachine
@@ -190,7 +198,7 @@ FUNCTIONS:
 
 FILE: inv\infrastructure\StorageRegistry.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
   require 'inv.infrastructure.util.Table'
 FUNCTIONS:
   StorageRegistry:init
@@ -216,7 +224,7 @@ FUNCTIONS:
 
 FILE: inv\runtime\CliController.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
   require 'inv.domain.Item'
 FUNCTIONS:
   CliController:init
@@ -229,7 +237,7 @@ FUNCTIONS:
 
 FILE: inv\runtime\EventDispatcher.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
 FUNCTIONS:
   EventDispatcher:init
   EventDispatcher:handlePeripheralAttach
@@ -238,7 +246,7 @@ FUNCTIONS:
 
 FILE: inv\runtime\RuntimeLoop.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
 FUNCTIONS:
   RuntimeLoop:init
   RuntimeLoop:stop
@@ -248,7 +256,7 @@ FUNCTIONS:
 
 FILE: inv\runtime\Server.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
   require 'inv.infrastructure.Config'
   require 'inv.services.MachineScheduler'
   require 'inv.craft.CraftExecutor'
@@ -270,7 +278,7 @@ FUNCTIONS:
 
 FILE: inv\services\InventoryIndex.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
   require 'inv.domain.Item'
 FUNCTIONS:
   InventoryIndex:init
@@ -284,7 +292,7 @@ FUNCTIONS:
 
 FILE: inv\services\InventoryService.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
   require 'inv.services.InventoryIndex'
   require 'inv.infrastructure.InventoryIO'
 FUNCTIONS:
@@ -306,7 +314,7 @@ FUNCTIONS:
 
 FILE: inv\services\MachineScheduler.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
 FUNCTIONS:
   MachineScheduler:init
   MachineScheduler:enqueueTask
@@ -318,7 +326,7 @@ FUNCTIONS:
 
 FILE: inv\services\RecipeStore.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
   require 'inv.domain.Recipe'
 FUNCTIONS:
   RecipeStore:init
@@ -327,7 +335,7 @@ FUNCTIONS:
 
 FILE: inv\services\TaskScheduler.lua
 REQUIRES:
-  require 'inv.core.Object'
+  require 'inv.core.Class'
 FUNCTIONS:
   TaskScheduler:init
   TaskScheduler:nextID
@@ -344,19 +352,14 @@ FUNCTIONS:
   TaskScheduler:logSummary
   TaskScheduler:getMachineStats
 
-FILE: object\Object.lua
-REQUIRES:
-  require "cc.expect"
-FUNCTIONS:
-  Object:init
-  Object:subclass
-  Object:instanceof
-
 FILE: run_server.lua
 REQUIRES:
   require 'inv.runtime.Server'
   require 'inv.infrastructure.Log'
 FUNCTIONS:
   run
+
+
+
 
 

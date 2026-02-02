@@ -2,7 +2,7 @@ local expect = require "cc.expect"
 
 local function instanceToString(self)
     local class = rawget(self, "class")
-    local className = class and rawget(class, "__name") or "Object"
+    local className = class and rawget(class, "__name") or "Class"
     local name = rawget(self, "name") or rawget(self, "id")
     if name ~= nil then
         return string.format("%s(%s)", className, tostring(name))
@@ -30,7 +30,7 @@ local function makeClass(class, superClass)
     class.class = class
     class.superClass = superClass
     if not class.__name then
-        class.__name = (superClass and superClass.__name) or "Object"
+        class.__name = (superClass and superClass.__name) or "Class"
     end
     class.instanceMeta = {
         __index = class,
@@ -42,30 +42,30 @@ local function makeClass(class, superClass)
 end
 
 -- Implements basic inheritance features.
-local Object = {}
+local Class = {}
 
-makeClass(Object)
+makeClass(Class)
 
--- Object constructor.
+-- Class constructor.
 --
--- To create an instance of an Object, call Object(args), which will instantiate
--- the class and then call the Object's constructor to set up the instance.
--- The process works the same way for subclasses: just replace Object with the
+-- To create an instance of a Class, call Class(args), which will instantiate
+-- the class and then call the Class's constructor to set up the instance.
+-- The process works the same way for subclasses: just replace Class with the
 -- name of the class you are instantiating.
 --
--- Internally, the constructor is named Object:init(...). Override this init
--- method to specify initialization behavior for an Object subclass. An object's
+-- Internally, the constructor is named Class:init(...). Override this init
+-- method to specify initialization behavior for a Class subclass. A class's
 -- init() method may call its super class's init() if desired
 -- (use ClassName.superClass.init(self,...))
-function Object:init(...) end
+function Class:init(...) end
 
 -- Creates a subclass of an existing class.
-function Object:subclass()
+function Class:subclass()
     return makeClass({}, self)
 end
 
--- Returns true if the Object is an instance of the provided class or a subclass.
-function Object:instanceof(class)
+-- Returns true if the Class is an instance of the provided class or a subclass.
+function Class:instanceof(class)
     expect(1, class, "table")
     local c = self.class
     while c ~= nil do
@@ -77,4 +77,4 @@ function Object:instanceof(class)
     return false
 end
 
-return Object
+return Class

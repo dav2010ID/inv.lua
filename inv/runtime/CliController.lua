@@ -1,7 +1,7 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 local Item = require 'inv.domain.Item'
 
-local CliController = Object:subclass()
+local CliController = Class:subclass()
 
 function CliController:init(server)
     self.server = server
@@ -89,7 +89,7 @@ function CliController:handleCommand(line)
             filter = filter:lower()
         end
         local lines = {}
-        for name, item in pairs(self.server.inventoryService:getItems()) do
+        for name, item in pairs(self.server.inventoryQuery:getItems()) do
             local label = item:getName()
             if not filter
                 or name:lower():find(filter, 1, true)
@@ -114,7 +114,7 @@ function CliController:handleCommand(line)
             self.logger.cli("usage: count <item>")
             return
         end
-        local count = self.server.inventoryService:getItemCount(name)
+        local count = self.server.inventoryQuery:getItemCount(name)
         self.logger.cli(name .. " x" .. tostring(count))
         return
     end
@@ -126,7 +126,7 @@ function CliController:handleCommand(line)
             self.logger.cli("usage: craft <item> <count>")
             return
         end
-        local have = self.server.inventoryService:getItemCount(name)
+        local have = self.server.inventoryQuery:getItemCount(name)
         if have >= count then
             self.logger.cli("already have " .. tostring(have))
             return
@@ -136,21 +136,21 @@ function CliController:handleCommand(line)
         if not plan then
             self.logger.warn("no recipe for", name)
         else
-            self.server.craftExecutor.factory:queuePlan(plan, nil, nil)
+            self.server.craftExecutor.taskQueue:queuePlan(plan, nil, nil)
             self.logger.info("planned", plan.crafts, "craft(s)")
         end
         return
     end
 
     if cmd == "scan" then
-        self.server.inventoryService:scanInventories()
+        self.server.inventoryMutator:scanInventories()
         self.logger.info("inventories scanned")
         return
     end
 
     if cmd == "devices" then
         self.server.deviceCatalog:scanDevices()
-        self.server.inventoryService:scanInventories()
+        self.server.inventoryMutator:scanInventories()
         self.logger.info("devices rescanned")
         return
     end
@@ -193,4 +193,6 @@ function CliController:handleCommand(line)
 end
 
 return CliController
+
+
 

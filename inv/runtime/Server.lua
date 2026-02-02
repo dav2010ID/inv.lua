@@ -1,4 +1,4 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 local Config = require 'inv.infrastructure.Config'
 local MachineScheduler = require 'inv.services.MachineScheduler'
 local CraftExecutor = require 'inv.craft.CraftExecutor'
@@ -12,7 +12,7 @@ local CliController = require 'inv.runtime.CliController'
 local EventDispatcher = require 'inv.runtime.EventDispatcher'
 local RuntimeLoop = require 'inv.runtime.RuntimeLoop'
 
-local Server = Object:subclass()
+local Server = Class:subclass()
 
 function Server:init(logger)
     self.logger = logger or require 'inv.infrastructure.Log'
@@ -31,7 +31,9 @@ function Server:loadConfig()
 end
 
 function Server:setup(deviceConfig, recipeConfig)
-    self.inventoryService = InventoryService(self)
+    local index = InventoryService.InventoryIndex(self)
+    self.inventoryQuery = InventoryService.InventoryQuery(self, index)
+    self.inventoryMutator = InventoryService.InventoryMutator(self, index)
     self.storageRegistry = StorageRegistry(self)
     self.deviceCatalog = DeviceCatalog(self, deviceConfig)
     self.recipeStore = RecipeStore(self)
@@ -52,4 +54,6 @@ function Server:run()
 end
 
 return Server
+
+
 

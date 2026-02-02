@@ -1,6 +1,6 @@
 local Task = require 'inv.domain.Task'
 local CraftTask = require 'inv.domain.CraftTask'
-local BlockedTask = require 'inv.domain.BlockedTask'
+local WaitTask = require 'inv.domain.WaitTask'
 
 -- Fetches or crafts items from the network.
 local SupplyTask = Task:subclass()
@@ -18,7 +18,7 @@ function SupplyTask:run()
     if self.moved < self.criteria.count then
         local remaining = self.criteria:copy()
         remaining.count = self.criteria.count - self.moved
-        self.moved = self.moved + self.server.inventoryService:push(self.dest, remaining, remaining.count, self.destSlot)
+        self.moved = self.moved + self.server.inventoryMutator:push(self.dest, remaining, remaining.count, self.destSlot)
     end
 
     if self.moved >= self.criteria.count then
@@ -45,10 +45,10 @@ function SupplyTask:run()
                     self.server.taskScheduler:addTask(CraftTask(self.server, self, recipe, self.dest, self.destSlot, 1, nil, 0))
                 end
             else
-                self.server.taskScheduler:addTask(BlockedTask(self.server, self, remaining))
+                self.server.taskScheduler:addTask(WaitTask(self.server, self, remaining))
             end
         else
-            self.server.taskScheduler:addTask(BlockedTask(self.server, self, remaining))
+            self.server.taskScheduler:addTask(WaitTask(self.server, self, remaining))
         end
     end
 

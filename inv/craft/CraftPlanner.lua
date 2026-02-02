@@ -1,8 +1,8 @@
-local Object = require 'inv.core.Object'
-local CraftDependencyGraph = require 'inv.craft.CraftDependencyGraph'
+local Class = require 'inv.core.Class'
+local CraftGraph = require 'inv.domain.CraftGraph'
 
 -- Builds a dependency tree (DAG) of crafting tasks before execution.
-local CraftPlanner = Object:subclass()
+local CraftPlanner = Class:subclass()
 
 function CraftPlanner:init(server)
     self.server = server
@@ -15,7 +15,7 @@ function CraftPlanner:plan(criteria)
         return nil
     end
 
-    local nOut = CraftDependencyGraph.findOutputCount(recipe, criteria)
+    local nOut = CraftGraph.countProduced(recipe, criteria)
     if nOut <= 0 then
         return nil
     end
@@ -26,4 +26,6 @@ function CraftPlanner:plan(criteria)
 end
 
 return CraftPlanner
+
+
 

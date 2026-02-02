@@ -1,8 +1,8 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 local Recipe = require 'inv.domain.Recipe'
 
 -- Stores recipes and helps resolve outputs to crafting recipes.
-local RecipeStore = Object:subclass()
+local RecipeStore = Class:subclass()
 
 function RecipeStore:init(server)
     self.server = server
@@ -23,15 +23,15 @@ function RecipeStore:loadRecipes(data)
                 self.recipes[item.name] = recipe
                 self.logger.info("[craft] added recipe", item.name)
             end
-            local info = self.server.inventoryService:getItem(item.name)
+            local info = self.server.inventoryQuery:getItem(item.name)
             if not info then
-                info = self.server.inventoryService:addItem(item.name)
+                info = self.server.inventoryMutator:addItem(item.name)
             end
             if not info.detailed and item.tags then
                 for tag, v in pairs(item.tags) do
                     info.tags[tag] = v
                 end
-                self.server.inventoryService:updateTags(info.name)
+                self.server.inventoryMutator:updateTags(info.name)
             end
         end
     end
@@ -40,7 +40,7 @@ end
 -- Finds a recipe to produce the given item,
 -- returning nil if none is found.
 function RecipeStore:findRecipe(item)
-    local results = self.server.inventoryService:resolveCriteria(item)
+    local results = self.server.inventoryQuery:resolveCriteria(item)
     for name, v in pairs(results) do
         local recipe = self.recipes[name]
         if recipe then
@@ -52,4 +52,6 @@ function RecipeStore:findRecipe(item)
 end
 
 return RecipeStore
+
+
 

@@ -1,7 +1,7 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 
 -- Handles IO operations against storage devices and updates the index.
-local InventoryIO = Object:subclass()
+local InventoryIO = Class:subclass()
 
 function InventoryIO:init(server, index)
     self.server = server
@@ -131,4 +131,6 @@ function InventoryIO:pull(sourceDevice, item, count, sourceSlot)
 end
 
 return InventoryIO
+
+
 

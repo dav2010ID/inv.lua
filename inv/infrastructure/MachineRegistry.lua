@@ -1,7 +1,7 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 
 -- Stores known crafting machines and their availability.
-local MachineRegistry = Object:subclass()
+local MachineRegistry = Class:subclass()
 
 function MachineRegistry:init(server)
     self.server = server
@@ -77,4 +77,6 @@ function MachineRegistry:findMachine(machineType)
 end
 
 return MachineRegistry
+
+
 

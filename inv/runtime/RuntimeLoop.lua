@@ -1,6 +1,6 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 
-local RuntimeLoop = Object:subclass()
+local RuntimeLoop = Class:subclass()
 
 function RuntimeLoop:init(server, dispatcher, cli)
     self.server = server
@@ -16,8 +16,8 @@ function RuntimeLoop:stop()
     self.running = false
 end
 
-function RuntimeLoop:updateTasks()
-    if self.server.taskScheduler:update() then
+function RuntimeLoop:tick()
+    if self.server.taskScheduler:tick() then
         self.taskTimer = os.startTimer(1)
         local activeCount = #self.server.taskScheduler.active
         local now = os.clock()
@@ -30,7 +30,7 @@ function RuntimeLoop:updateTasks()
 end
 
 function RuntimeLoop:broadcastUpdatedItems()
-    self.server.inventoryService:getUpdatedItems()
+    self.server.inventoryMutator:getUpdatedItems()
 end
 
 function RuntimeLoop:run()
@@ -48,7 +48,7 @@ function RuntimeLoop:run()
             runTasks = false
         end
         if runTasks then
-            self:updateTasks()
+            self:tick()
         end
         self:broadcastUpdatedItems()
         if self.cli then
@@ -58,4 +58,6 @@ function RuntimeLoop:run()
 end
 
 return RuntimeLoop
+
+
 

@@ -1,7 +1,7 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 
 -- Asynchronously manages crafting tasks
-local TaskScheduler = Object:subclass()
+local TaskScheduler = Class:subclass()
 
 function TaskScheduler:init(server)
     self.server = server
@@ -28,7 +28,7 @@ end
 
 -- Updates all running tasks, sleeping parent tasks when they create sub-tasks
 -- and resuming them when the sub-tasks complete.
-function TaskScheduler:update()
+function TaskScheduler:tick()
     --print("calling update")
     local i = 1
     while i <= #self.active do
@@ -121,28 +121,28 @@ function TaskScheduler:recordWaitProgress(task)
         return
     end
     self:recordWait(task.summaryId, task.machineType, reason, waited)
-    if reason == "waiting_inputs" and task.lastMissing then
-        self:recordInputBlocker(task.summaryId, task.machineType, task.lastMissing, waited)
+    if reason == "waiting_inputs" and task.blockedBy then
+        self:recordInputBlocker(task.summaryId, task.machineType, task.blockedBy, waited)
     end
     task.lastStatusAt = now
 end
 
-function TaskScheduler:setStatus(task, newStatus, reason)
+function TaskScheduler:setStatus(task, newStatus, reason, blockedBy)
     if not task then
         return
     end
-    if task.status == newStatus and task.statusReason == reason then
+    if task.status == newStatus and task.statusReason == reason and task.blockedBy == blockedBy then
         return
     end
     local prevStatus = task.status
     local prevReason = task.statusReason
     if task.summaryId then
         self:recordWaitProgress(task)
-        if prevStatus == "blocked" and prevReason == "inputs" and task.lastMissing then
-            task.lastMissing = nil
+        if prevStatus == "blocked" and prevReason == "inputs" then
+            task.blockedBy = nil
         end
     end
-    task:setStatus(newStatus, reason)
+    task:setStatus(newStatus, reason, nil, blockedBy)
 end
 
 local function getMachineEntry(summary, machineType)
@@ -395,4 +395,6 @@ function TaskScheduler:getMachineStats()
 end
 
 return TaskScheduler
+
+
 

@@ -1,10 +1,10 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 
 -- Represents various types of items, including optional details such as name,
 -- display name, and Ore Dictionary tags.
 -- Used for both tracking counts of stored items and setting criteria for
 -- operations such as crafting and item retrieval.
-local Item = Object:subclass()
+local Item = Class:subclass()
 
 function Item:init(spec)
     -- string: The name (item ID) of the item, e.g. "minecraft:cobblestone".
@@ -123,4 +123,6 @@ function Item:serialize()
 end
 
 return Item
+
+
 

@@ -1,8 +1,8 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 
 -- Represents a network-attached device, and
 -- acts as a proxy for CC peripheral methods.
-local Device = Object:subclass()
+local Device = Class:subclass()
 
 function Device:init(server, name, deviceType, config)
     self.server = server
@@ -52,4 +52,6 @@ end
 function Device:destroy() end
 
 return Device
+
+
 

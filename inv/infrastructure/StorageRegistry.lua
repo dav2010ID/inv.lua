@@ -1,8 +1,8 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 local Table = require 'inv.infrastructure.util.Table'
 
 -- Manages storage devices and their ordering.
-local StorageRegistry = Object:subclass()
+local StorageRegistry = Class:subclass()
 
 function StorageRegistry:init(server)
     self.server = server
@@ -16,8 +16,8 @@ end
 function StorageRegistry:addStorage(device)
     table.insert(self.storage, device)
     self.sorted = false
-    if self.server.inventoryService then
-        self.server.inventoryService:scanInventory(device)
+    if self.server.inventoryMutator then
+        self.server.inventoryMutator:scanInventory(device)
     end
 end
 
@@ -25,8 +25,8 @@ end
 function StorageRegistry:removeStorage(device)
     Table.removeItem(self.storage, device)
     self.sorted = false
-    if self.server.inventoryService then
-        self.server.inventoryService:scanInventories()
+    if self.server.inventoryMutator then
+        self.server.inventoryMutator:scanInventories()
     end
 end
 
@@ -48,4 +48,6 @@ function StorageRegistry:ensureSorted()
 end
 
 return StorageRegistry
+
+
 

@@ -1,4 +1,4 @@
-local CraftDependencyGraph = {}
+local CraftGraph = {}
 
 local function criteriaKey(item)
     if item.name then
@@ -25,7 +25,7 @@ local function scaledInputs(recipe, craftCount)
     return inputs
 end
 
-function CraftDependencyGraph.findOutputCount(recipe, criteria)
+function CraftGraph.countProduced(recipe, criteria)
     for _, item in pairs(recipe.output) do
         if criteria:matches(item) then
             return item.count
@@ -34,14 +34,14 @@ function CraftDependencyGraph.findOutputCount(recipe, criteria)
     return 0
 end
 
-function CraftDependencyGraph.attachDependencies(factory, task, recipe, depth, visiting, craftCount, summaryId)
-    if depth > factory.maxDepth then
-        factory.logger.warn("[planner] max depth exceeded for recipe", recipe.machine)
+function CraftGraph.link(builder, task, recipe, depth, visiting, craftCount, summaryId)
+    if depth > builder.maxDepth then
+        builder.logger.warn("[planner] max depth exceeded for recipe", recipe.machine)
         return
     end
 
     local count = craftCount or 1
-    local missing = factory.server.inventoryService:tryMatchAll(scaledInputs(recipe, count))
+    local missing = builder.server.inventoryQuery:tryMatchAll(scaledInputs(recipe, count))
     if #missing == 0 then
         return
     end
@@ -49,25 +49,25 @@ function CraftDependencyGraph.attachDependencies(factory, task, recipe, depth, v
     for _, item in ipairs(missing) do
         local key = criteriaKey(item)
         if visiting[key] then
-            factory.logger.warn("[planner] cycle detected at", key)
-            factory:addBlockedTask(task, item, summaryId)
+            builder.logger.warn("[planner] cycle detected at", key)
+            builder:addWaitTask(task, item, summaryId)
         else
             visiting[key] = true
-            local depRecipe = factory.server.recipeStore:findRecipe(item)
+            local depRecipe = builder.server.recipeStore:findRecipe(item)
             if depRecipe then
-                local nOut = CraftDependencyGraph.findOutputCount(depRecipe, item)
+                local nOut = CraftGraph.countProduced(depRecipe, item)
                 if nOut > 0 then
                     local crafts = math.ceil(item.count / nOut)
-                    factory:queueRecipe(depRecipe, crafts, summaryId, task, nil, nil, depth + 1, visiting, false)
+                    builder.queue:enqueueRecipe(depRecipe, crafts, summaryId, task, nil, nil, depth + 1, visiting, false)
                 else
-                    factory:addBlockedTask(task, item, summaryId)
+                    builder:addWaitTask(task, item, summaryId)
                 end
             else
-                factory:addBlockedTask(task, item, summaryId)
+                builder:addWaitTask(task, item, summaryId)
             end
             visiting[key] = nil
         end
     end
 end
 
-return CraftDependencyGraph
+return CraftGraph

@@ -1,4 +1,4 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 
 local Net = require 'inv.infrastructure.util.Net'
 local Storage = require 'inv.infrastructure.device.Storage'
@@ -7,7 +7,7 @@ local Machine = require 'inv.infrastructure.device.Machine'
 -- Manages network-attached devices, including storage and crafting machines.
 -- Specialized behavior is delegated by Devices to the appropriate class
 -- (either InventoryIO or MachineScheduler).
-local DeviceCatalog = Object:subclass()
+local DeviceCatalog = Class:subclass()
 
 function DeviceCatalog:init(server, overrides)
     self.server = server
@@ -163,4 +163,6 @@ function DeviceCatalog:removeDevice(name)
 end
 
 return DeviceCatalog
+
+
 

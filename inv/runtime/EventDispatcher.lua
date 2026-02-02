@@ -1,6 +1,6 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 
-local EventDispatcher = Object:subclass()
+local EventDispatcher = Class:subclass()
 
 function EventDispatcher:init(server, cli)
     self.server = server
@@ -44,4 +44,6 @@ function EventDispatcher:handleEvent(evt)
 end
 
 return EventDispatcher
+
+
 

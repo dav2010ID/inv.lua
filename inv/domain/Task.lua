@@ -1,7 +1,7 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 
 -- Represents an asynchronous operation performed by the network.
-local Task = Object:subclass()
+local Task = Class:subclass()
 
 Task.statuses = {
     created = true,
@@ -28,6 +28,10 @@ function Task:init(server, parent)
     self.status = "created"
     -- string|nil: reason for current status (e.g. "inputs", "machine", "subtasks").
     self.statusReason = nil
+    -- string|nil: reason for blocked status.
+    self.blockReason = nil
+    -- string|nil: item or tag currently blocking this task.
+    self.blockedBy = nil
     -- number: time when status last changed.
     self.lastStatusAt = os.clock()
     
@@ -44,10 +48,19 @@ function Task:run()
 end
 
 -- Updates the task status. Intended for use by TaskScheduler.
-function Task:setStatus(newStatus, reason, at)
+function Task:setStatus(newStatus, reason, at, blockedBy)
     assert(Task.statuses[newStatus], "unknown task status: " .. tostring(newStatus))
     self.status = newStatus
     self.statusReason = reason
+    if newStatus == "blocked" then
+        self.blockReason = reason
+        if blockedBy ~= nil then
+            self.blockedBy = blockedBy
+        end
+    else
+        self.blockReason = nil
+        self.blockedBy = nil
+    end
     self.lastStatusAt = at or os.clock()
 end
 
@@ -60,4 +73,6 @@ function Task:destroy()
 end
 
 return Task
+
+
 

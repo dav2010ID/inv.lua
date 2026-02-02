@@ -104,7 +104,7 @@ function Machine:rollbackInputs(pushed)
             local detail = self:getItemDetail(realSlot)
             if detail then
                 detail.count = math.min(detail.count or n, n)
-                local moved = self.server.inventoryService:pull(self, detail, detail.count, realSlot)
+                local moved = self.server.inventoryMutator:pull(self, detail, detail.count, realSlot)
                 if moved < detail.count then
                     self.server.logger.warn("[machine] rollback incomplete", self.name, detail.name or "unknown")
                 end
@@ -130,7 +130,7 @@ function Machine:craft(recipe, dest, destSlot, craftCount)
         local realSlot = self:mapSlot(virtSlot)
         local needed = crit:copy()
         needed.count = crit.count * count
-        local n = self.server.inventoryService:push(self, needed, needed.count, realSlot)
+        local n = self.server.inventoryMutator:push(self, needed, needed.count, realSlot)
         pushed[virtSlot] = n
         if n < needed.count then
             self.server.logger.warn("[machine] insufficient input for", self.name)
@@ -154,13 +154,13 @@ end
 -- Empties an output slot of the machine and counts any crafted items.
 function Machine:processOutputSlot(item, virtSlot, realSlot)
     if item then
-        local n = self.server.inventoryService:pull(self, item, item.count, realSlot)
+        local n = self.server.inventoryMutator:pull(self, item, item.count, realSlot)
         if self.recipe.output[virtSlot]:matches(item) then
             self.remaining[virtSlot] = self.remaining[virtSlot] - n
             if self.dest then
                 local outItem = self.recipe.output[virtSlot]:copy()
                 outItem.count = n
-                self.server.inventoryService:push(self.dest, outItem, outItem.count, self.destSlot)
+                self.server.inventoryMutator:push(self.dest, outItem, outItem.count, self.destSlot)
             end
         else
             self.server.logger.warn("[machine] unexpected output", item.name, "in", self.name)

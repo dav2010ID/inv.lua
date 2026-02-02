@@ -24,7 +24,6 @@ function CraftTask:init(server, parent, recipe, dest, destSlot, craftCount, summ
     self.machineType = recipe.machine
     self.queuedForMachine = false
     self.summaryId = summary and summary.id or nil
-    self.lastMissing = nil
     self.priority = priority or 0
 end
 
@@ -50,13 +49,12 @@ function CraftTask:assignMachine(machine)
         return false
     end
     self.startedAt = os.clock()
+    local blocker = self.blockedBy
     self.server.taskScheduler:setStatus(self, "running")
     local waitSeconds = self.startedAt - self.createdAt
     if self.summaryId then
         self.server.taskScheduler:recordTaskStart(self.summaryId, self.machineType, waitSeconds)
     end
-    local blocker = self.lastMissing
-    self.lastMissing = nil
     self.server.logger.debug(
         "[task] start",
         self.recipe.machine,
@@ -82,12 +80,12 @@ function CraftTask:run()
         return false
     end
     if not self.machine then
-        local missing = self.server.inventoryService:tryMatchAll(self:scaledInputs())
+        local missing = self.server.inventoryQuery:tryMatchAll(self:scaledInputs())
         if #missing > 0 then
             self.server.taskScheduler:recordWaitProgress(self)
-            self.server.taskScheduler:setStatus(self, "blocked", "inputs")
             local blocker = missing[1]
-            if blocker and self.summaryId then
+            local blockedBy = nil
+            if blocker then
                 local name = blocker.name
                 if not name and blocker.tags then
                     for tag, _ in pairs(blocker.tags) do
@@ -96,12 +94,13 @@ function CraftTask:run()
                     end
                 end
                 if name then
-                    self.lastMissing = name
+                    blockedBy = name
                 end
             end
-            if not self.dependenciesPlanned and self.server.craftExecutor and self.server.craftExecutor.factory then
+            self.server.taskScheduler:setStatus(self, "blocked", "inputs", blockedBy)
+            if not self.dependenciesPlanned and self.server.craftExecutor and self.server.craftExecutor.taskGraphBuilder then
                 self.dependenciesPlanned = true
-                self.server.craftExecutor.factory:attachDependencies(self, self.recipe, 0, {}, self.craftCount, self.summaryId)
+                self.server.craftExecutor.taskGraphBuilder:link(self, self.recipe, 0, {}, self.craftCount, self.summaryId)
             end
             return false
         end

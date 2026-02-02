@@ -1,35 +1,40 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 local InventoryIndex = require 'inv.services.InventoryIndex'
 local InventoryIO = require 'inv.infrastructure.InventoryIO'
 
--- Facade for inventory index and transfer logic.
-local InventoryService = Object:subclass()
+local InventoryQuery = Class:subclass()
+local InventoryMutator = Class:subclass()
 
-function InventoryService:init(server)
+function InventoryQuery:init(server, index)
     self.server = server
-    self.index = InventoryIndex(server)
-    self.transfer = InventoryIO(server, self.index)
+    self.index = index
 end
 
-function InventoryService:getItems()
+function InventoryQuery:getItems()
     return self.index.items
 end
 
-function InventoryService:getItem(name)
+function InventoryQuery:getItem(name)
     return self.index.items[name]
 end
 
-function InventoryService:getItemCount(name)
+function InventoryQuery:getItemCount(name)
     local item = self.index.items[name]
     return item and item.count or 0
 end
 
-function InventoryService:scanInventories()
-    return self.transfer:scanInventories()
+function InventoryQuery:resolveCriteria(criteria)
+    return self.index:resolveCriteria(criteria)
 end
 
-function InventoryService:scanInventory(device, markUpdates)
-    return self.transfer:scanInventory(device, markUpdates)
+function InventoryQuery:tryMatchAll(items)
+    return self.index:tryMatchAll(items)
+end
+
+function InventoryMutator:init(server, index)
+    self.server = server
+    self.index = index
+    self.transfer = InventoryIO(server, self.index)
 end
 
 local function normalizeCriteria(criteria, count)
@@ -43,45 +48,51 @@ end
 
 -- Pushes items from storage to a target device.
 -- count and targetSlot are optional (falls back to item.count if omitted).
-function InventoryService:push(target, item, count, targetSlot)
+function InventoryMutator:push(target, item, count, targetSlot)
     local criteria = normalizeCriteria(item, count)
     return self.transfer:push(target, criteria, criteria.count, targetSlot)
 end
 
 -- Pulls items from a source device into storage.
 -- count and sourceSlot are optional (falls back to item.count if omitted).
-function InventoryService:pull(source, item, count, sourceSlot)
+function InventoryMutator:pull(source, item, count, sourceSlot)
     local criteria = normalizeCriteria(item, count)
     return self.transfer:pull(source, criteria, criteria.count, sourceSlot)
 end
 
-function InventoryService:resolveCriteria(criteria)
-    return self.index:resolveCriteria(criteria)
+function InventoryMutator:scanInventories()
+    return self.transfer:scanInventories()
 end
 
-function InventoryService:tryMatchAll(items)
-    return self.index:tryMatchAll(items)
+function InventoryMutator:scanInventory(device, markUpdates)
+    return self.transfer:scanInventory(device, markUpdates)
 end
 
-function InventoryService:addItem(name)
+function InventoryMutator:addItem(name)
     return self.index:addItem(name)
 end
 
-function InventoryService:updateTags(name)
+function InventoryMutator:updateTags(name)
     return self.index:updateTags(name)
 end
 
-function InventoryService:updateDB(detail)
+function InventoryMutator:updateDB(detail)
     return self.index:updateDB(detail)
 end
 
-function InventoryService:markUpdated(name)
+function InventoryMutator:markUpdated(name)
     return self.index:markUpdated(name)
 end
 
-function InventoryService:getUpdatedItems()
+function InventoryMutator:getUpdatedItems()
     return self.index:getUpdatedItems()
 end
 
-return InventoryService
+return {
+    InventoryIndex = InventoryIndex,
+    InventoryQuery = InventoryQuery,
+    InventoryMutator = InventoryMutator
+}
+
+
 

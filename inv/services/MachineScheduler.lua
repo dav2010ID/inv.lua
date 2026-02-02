@@ -1,7 +1,7 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 
 -- Schedules tasks onto machines and tracks saturation/queues.
-local MachineScheduler = Object:subclass()
+local MachineScheduler = Class:subclass()
 
 function MachineScheduler:init(server, machineRegistry)
     self.server = server
@@ -11,7 +11,7 @@ function MachineScheduler:init(server, machineRegistry)
     self.waitingTasks = {}
 end
 
-function MachineScheduler:enqueueTask(machineType, task)
+function MachineScheduler:schedule(machineType, task)
     if not self.waitingTasks[machineType] then
         self.waitingTasks[machineType] = {}
     end
@@ -45,7 +45,7 @@ function MachineScheduler:requestMachine(task)
         end
     end
     if not task.queuedForMachine then
-        self:enqueueTask(machineType, task)
+        self:schedule(machineType, task)
         task.queuedForMachine = true
     end
     return nil
@@ -153,4 +153,6 @@ function MachineScheduler:setCriticalMachine()
 end
 
 return MachineScheduler
+
+
 

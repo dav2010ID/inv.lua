@@ -1,8 +1,8 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 local Item = require 'inv.domain.Item'
 
 -- Indexes items and tags for the inventory system.
-local InventoryIndex = Object:subclass()
+local InventoryIndex = Class:subclass()
 
 function InventoryIndex:init()
     -- table<string, Item>: The items stored in this network.
@@ -118,4 +118,6 @@ function InventoryIndex:getUpdatedItems()
 end
 
 return InventoryIndex
+
+
 

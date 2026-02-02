@@ -1,8 +1,8 @@
-local Object = require 'inv.core.Object'
+local Class = require 'inv.core.Class'
 local Item = require 'inv.domain.Item'
 
 -- Describes a crafting recipe.
-local Recipe = Object:subclass()
+local Recipe = Class:subclass()
 
 function Recipe:init(spec)
     -- string: The type of machine that can craft this recipe.
@@ -25,4 +25,6 @@ function Recipe:init(spec)
 end
 
 return Recipe
+
+
 
