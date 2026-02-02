@@ -207,8 +207,9 @@ function Server:handleCommand(line)
 
     if cmd == "peripherals" then
         local lines = {}
-        for name, device in pairs(self.deviceManager.devices) do
-            local kind = (device and device.type) or "unknown"
+        for _, name in ipairs(peripheral.getNames()) do
+            local device = self.deviceManager.devices[name]
+            local kind = (device and device.type) or peripheral.getType(name) or "unknown"
             local purpose = "unknown"
             if device and device.config and device.config.purpose then
                 purpose = device.config.purpose

@@ -36,8 +36,26 @@ function Config.loadDirectory(directory)
                 table.insert(entries, entry)
             end
         elseif next(config) then
-            -- file contains a single entry
-            table.insert(entries, config)
+            -- file contains a single entry or a purpose-grouped map
+            local grouped = false
+            for key, value in pairs(config) do
+                if (key == "crafting" or key == "storage") and type(value) == "table" and value[1] then
+                    grouped = true
+                    for _, entry in ipairs(value) do
+                        if type(entry) == "string" then
+                            table.insert(entries, {type = entry, purpose = key})
+                        else
+                            if entry.purpose == nil then
+                                entry.purpose = key
+                            end
+                            table.insert(entries, entry)
+                        end
+                    end
+                end
+            end
+            if not grouped then
+                table.insert(entries, config)
+            end
         end
     end
     return entries

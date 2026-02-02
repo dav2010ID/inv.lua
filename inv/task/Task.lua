@@ -1,5 +1,4 @@
 local Object = require 'object.Object'
-local Common = require 'inv.Common'
 
 -- Represents an asynchronous operation performed by the network.
 local Task = Object:subclass()

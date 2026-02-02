@@ -1,0 +1,285 @@
+﻿FILE: inv\Common.lua
+REQUIRES: (none)
+FUNCTIONS:
+  Common.getModemSide
+  Common.getModem
+  Common.getNameLocal
+  Common.shallowCopy
+  Common.deepCopy
+  Common.removeItem
+  Common.integerKeys
+
+FILE: inv\Config.lua
+REQUIRES: (none)
+FUNCTIONS:
+  Config.convertPath
+  Config.loadJSON
+  Config.loadDirectory
+
+FILE: inv\CraftExecutor.lua
+REQUIRES:
+  require 'object.Object'
+  require 'inv.CraftPlanner'
+FUNCTIONS:
+  CraftExecutor:init
+  CraftExecutor:pushOrCraftItemsTo
+
+FILE: inv\CraftPlanner.lua
+REQUIRES:
+  require 'object.Object'
+  require 'inv.task.CraftTask'
+  require 'inv.task.WaitTask'
+  require 'inv.Log'
+FUNCTIONS:
+  CraftPlanner:init
+  CraftPlanner:plan
+  CraftPlanner:queueTasks
+  CraftPlanner:attachDependencies
+  CraftPlanner:logMachineSummary
+  CraftPlanner:setCriticalMachine
+
+FILE: inv\CraftRegistry.lua
+REQUIRES:
+  require 'object.Object'
+  require 'inv.Recipe'
+  require 'inv.Log'
+FUNCTIONS:
+  CraftRegistry:init
+  CraftRegistry:addMachine
+  CraftRegistry:removeMachine
+  CraftRegistry:enqueueTask
+  CraftRegistry:requestMachine
+  CraftRegistry:notifyMachineFree
+  CraftRegistry:logSaturation
+  CraftRegistry:countMachines
+  CraftRegistry:countAvailableMachines
+  CraftRegistry:loadRecipes
+  CraftRegistry:findRecipe
+  CraftRegistry:findMachine
+
+FILE: inv\device\Device.lua
+REQUIRES:
+  require 'object.Object'
+FUNCTIONS:
+  Device:init
+  Device:getItemDetail
+  Device:list
+  Device:pushItems
+  Device:pullItems
+  Device:destroy
+
+FILE: inv\device\Machine.lua
+REQUIRES:
+  require 'inv.device.Device'
+  require 'inv.Common'
+  require 'inv.Log'
+FUNCTIONS:
+  Machine:init
+  Machine:destroy
+  Machine:mapSlot
+  Machine:getCraftOutputSlot
+  Machine:getItemDetail
+  Machine:performCraft
+  Machine:rollbackInputs
+  Machine:craft
+  Machine:busy
+  Machine:handleOutputSlot
+  Machine:pullOutput
+
+FILE: inv\device\Storage.lua
+REQUIRES:
+  require 'inv.device.Device'
+  require 'inv.Common'
+  require 'inv.Item'
+FUNCTIONS:
+  Storage:init
+  Storage:destroy
+  Storage:itemAllowed
+
+FILE: inv\DeviceManager.lua
+REQUIRES:
+  require 'object.Object'
+  require 'inv.Common'
+  require 'inv.device.Storage'
+  require 'inv.device.Machine'
+  require 'inv.Log'
+FUNCTIONS:
+  DeviceManager:init
+  DeviceManager:scanDevices
+  DeviceManager:copyConfig
+  DeviceManager:getConfig
+  DeviceManager:createDevice
+  DeviceManager:addDevice
+  DeviceManager:removeDevice
+
+FILE: inv\InventoryIndex.lua
+REQUIRES:
+  require 'object.Object'
+  require 'inv.Item'
+FUNCTIONS:
+  InventoryIndex:init
+  InventoryIndex:addItem
+  InventoryIndex:updateDB
+  InventoryIndex:updateTags
+  InventoryIndex:tryMatchAll
+  InventoryIndex:resolveCriteria
+  InventoryIndex:markUpdated
+  InventoryIndex:getUpdatedItems
+
+FILE: inv\InventoryIO.lua
+REQUIRES:
+  require 'object.Object'
+FUNCTIONS:
+  InventoryIO:init
+  InventoryIO:getStorageManager
+  InventoryIO:scanInventories
+  InventoryIO:scanInventory
+  InventoryIO:pushItemsTo
+  InventoryIO:pullItemsFrom
+
+FILE: inv\Item.lua
+REQUIRES:
+  require 'object.Object'
+FUNCTIONS:
+  Item:init
+  Item:matches
+  Item:matchesCount
+  Item:copy
+  Item.stack
+  Item:setDetails
+  Item:getName
+  Item:serialize
+
+FILE: inv\Log.lua
+REQUIRES: (none)
+FUNCTIONS:
+  Log.setLevel
+  Log.throttle
+  Log.cli
+  Log.debug
+  Log.info
+  Log.warn
+  Log.error
+
+FILE: inv\Recipe.lua
+REQUIRES:
+  require 'object.Object'
+  require 'inv.Item'
+FUNCTIONS:
+  Recipe:init
+
+FILE: inv\Server.lua
+REQUIRES:
+  require 'object.Object'
+  require 'inv.Config'
+  require 'inv.CraftRegistry'
+  require 'inv.CraftExecutor'
+  require 'inv.DeviceManager'
+  require 'inv.InventoryIndex'
+  require 'inv.InventoryIO'
+  require 'inv.StorageManager'
+  require 'inv.Item'
+  require 'inv.TaskManager'
+  require 'inv.Log'
+FUNCTIONS:
+  Server:init
+  Server:loadConfig
+  Server:setup
+  Server:handlePeripheralAttach
+  Server:handlePeripheralDetach
+  Server:initCLI
+  Server:drawPrompt
+  Server:cliOnChar
+  Server:cliOnKey
+  Server:handleCommand
+  Server:handleEvent
+  Server:updateTasks
+  Server:broadcastUpdatedItems
+  Server:mainLoop
+
+FILE: inv\StorageManager.lua
+REQUIRES:
+  require 'object.Object'
+  require 'inv.Common'
+FUNCTIONS:
+  StorageManager:init
+  StorageManager:addStorage
+  StorageManager:removeStorage
+  StorageManager.deviceSort
+  StorageManager:ensureSorted
+
+FILE: inv\task\CraftTask.lua
+REQUIRES:
+  require 'inv.task.Task'
+  require 'inv.Log'
+FUNCTIONS:
+  CraftTask:init
+  CraftTask:scaledInputs
+  CraftTask:assignMachine
+  CraftTask:setStatus
+  CraftTask:run
+
+FILE: inv\task\FetchTask.lua
+REQUIRES:
+  require 'inv.task.Task'
+  require 'inv.task.CraftTask'
+  require 'inv.task.WaitTask'
+FUNCTIONS:
+  FetchTask:init
+  FetchTask:run
+
+FILE: inv\task\Task.lua
+REQUIRES:
+  require 'object.Object'
+  require 'inv.Common'
+FUNCTIONS:
+  Task:init
+  Task:run
+  Task:destroy
+
+FILE: inv\task\WaitTask.lua
+REQUIRES:
+  require 'inv.task.Task'
+  require 'inv.Log'
+FUNCTIONS:
+  WaitTask:init
+  WaitTask:print
+  WaitTask:run
+
+FILE: inv\TaskManager.lua
+REQUIRES:
+  require 'object.Object'
+  require 'inv.Log'
+FUNCTIONS:
+  TaskManager:init
+  TaskManager:nextID
+  TaskManager:update
+  TaskManager:addTask
+  TaskManager:createSummary
+  TaskManager:registerTask
+  TaskManager:recordTaskStart
+  TaskManager:recordWait
+  TaskManager:recordInputBlocker
+  TaskManager:recordTaskComplete
+  TaskManager:logSummary
+  TaskManager:getMachineStats
+
+FILE: object\Object.lua
+REQUIRES:
+  require "cc.expect"
+FUNCTIONS:
+  Object:init
+  Object:subclass
+  Object:instanceof
+
+FILE: run_server.lua
+REQUIRES:
+  require 'inv.Server'
+  require 'inv.Log'
+FUNCTIONS:
+  run
+
+FILE: test.lua
+REQUIRES: (none)
+FUNCTIONS: (none)
+

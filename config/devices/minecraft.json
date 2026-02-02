@@ -1,27 +1,17 @@
-[
-    {
-        "type":"minecraft:furnace",
-        "purpose":"crafting"
-    },
-    {
-        "type":"gtceu:mv_assembler",
-        "purpose":"crafting"
-    },
-    {
-        "type":"gtceu:mv_bender",
-        "purpose":"crafting"
-    },
-    {
-        "type":"gtceu:mv_compressor",
-        "purpose":"crafting"
-    },
-    {
-        "type":"gtceu:mv_electric_furnace",
-        "purpose":"crafting"
-    },
-    {
-        "type":"gtceu:mv_forge_hammer",
-        "purpose":"crafting"
-    }
-
-]
+{
+    "crafting": [
+        "minecraft:furnace",
+        "gtceu:mv_assembler",
+        "gtceu:mv_bender",
+        "gtceu:mv_compressor",
+        "gtceu:mv_electric_furnace",
+        "gtceu:mv_forge_hammer",
+        "gtceu:mv_extruder",
+        "gtceu:mv_lathe",
+        "gtceu:mv_polarizer",
+        "gtceu:mv_wiremill"
+    ],
+    "storage": [
+        "minecraft:chest"
+    ]
+}

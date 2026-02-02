@@ -1,5 +1,6 @@
 local Device = require 'inv.device.Device'
-local Common = require 'inv.Common'
+local Net = require 'inv.util.Net'
+local Table = require 'inv.util.Table'
 local Log = require 'inv.Log'
 
 -- Represents a crafting machine.
@@ -46,7 +47,7 @@ backends.turtle = {
         end
     end,
     locationResolver = function(machine)
-        return Common.getNameLocal()
+        return Net.getNameLocal()
     end
 }
 
@@ -76,9 +77,9 @@ function Machine:init(server, name, deviceType, config)
     self.backend = resolveBackend(self.backendName)
 
     if self.config.slots then
-        self.slots = Common.integerKeys(self.config.slots)
+        self.slots = Table.integerKeys(self.config.slots)
     elseif self.backend.defaultSlots then
-        self.slots = Common.deepCopy(self.backend.defaultSlots)
+        self.slots = Table.copyDeep(self.backend.defaultSlots)
     end
 
     self.craftOutputSlot = self.config.craftOutputSlot or 10

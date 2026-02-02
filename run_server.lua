@@ -23,7 +23,7 @@ end
 
 function run()
     initLogging("CraftOSTest.log")
-    Log.setLevel("debug")
+    Log.setLevel("info")
     local runId = os.date("!%Y-%m-%dT%H:%MZ")
     Log.info("[run] id=" .. runId, "goal=" .. table.concat(args, " "))
     Log.runId = runId

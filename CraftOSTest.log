@@ -1,0 +1,167 @@
+[info] [run] id=2026-02-02T18:19Z goal=peripherals
+[info] [craft] added recipe minecraft:oak_planks
+[info] [craft] added recipe minecraft:stick
+[info] [craft] added recipe minecraft:wooden_pickaxe
+[info] [craft] added recipe minecraft:stone_pickaxe
+[info] [craft] added recipe minecraft:iron_pickaxe
+[info] [craft] added recipe minecraft:furnace
+[info] [craft] added recipe minecraft:stone
+[info] [craft] added recipe minecraft:iron_ingot
+[info] [craft] added recipe minecraft:piston
+[info] [craft] added recipe gtceu:steel_plate
+[info] [craft] added recipe gtceu:steel_ingot
+[info] [craft] added recipe minecraft:redstone
+[info] [craft] added recipe gtceu:raw_redstone
+[warn] [device] unconfigured device back type peripheral_hub
+[warn] [device] unconfigured device gtceu:mv_lathe_0 type gtceu:mv_lathe
+[warn] [device] unconfigured device gtceu:mv_extruder_0 type gtceu:mv_extruder
+[warn] [device] unconfigured device gtceu:mv_extruder_1 type gtceu:mv_extruder
+[warn] [device] unconfigured device gtceu:mv_wiremill_0 type gtceu:mv_wiremill
+[warn] [device] unconfigured device gtceu:mv_polarizer_0 type gtceu:mv_polarizer
+[cli] type 'help' for commands
+[info] executing CLI command: peripherals
+back | type=modem | purpose=unknown
+gtceu:mv_assembler_0 | type=gtceu:mv_assembler | purpose=crafting
+gtceu:mv_assembler_1 | type=gtceu:mv_assembler | purpose=crafting
+gtceu:mv_bender_0 | type=gtceu:mv_bender | purpose=crafting
+gtceu:mv_bender_1 | type=gtceu:mv_bender | purpose=crafting
+gtceu:mv_compressor_0 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_compressor_1 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_compressor_4 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_compressor_5 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_electric_furnace_0 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_electric_furnace_1 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_electric_furnace_2 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_electric_furnace_3 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_extruder_0 | type=gtceu:mv_extruder | purpose=unknown
+gtceu:mv_extruder_1 | type=gtceu:mv_extruder | purpose=unknown
+gtceu:mv_forge_hammer_0 | type=gtceu:mv_forge_hammer | purpose=crafting
+gtceu:mv_forge_hammer_1 | type=gtceu:mv_forge_hammer | purpose=crafting
+gtceu:mv_lathe_0 | type=gtceu:mv_lathe | purpose=unknown
+gtceu:mv_polarizer_0 | type=gtceu:mv_polarizer | purpose=unknown
+gtceu:mv_wiremill_0 | type=gtceu:mv_wiremill | purpose=unknown
+minecraft:chest_10 | type=minecraft:chest | purpose=storage
+minecraft:chest_9 | type=minecraft:chest | purpose=storage
+[info] [run] id=2026-02-02T18:20Z goal=peripherals
+[info] [craft] added recipe minecraft:oak_planks
+[info] [craft] added recipe minecraft:stick
+[info] [craft] added recipe minecraft:wooden_pickaxe
+[info] [craft] added recipe minecraft:stone_pickaxe
+[info] [craft] added recipe minecraft:iron_pickaxe
+[info] [craft] added recipe minecraft:furnace
+[info] [craft] added recipe minecraft:stone
+[info] [craft] added recipe minecraft:iron_ingot
+[info] [craft] added recipe minecraft:piston
+[info] [craft] added recipe gtceu:steel_plate
+[info] [craft] added recipe gtceu:steel_ingot
+[info] [craft] added recipe minecraft:redstone
+[info] [craft] added recipe gtceu:raw_redstone
+[warn] [device] unconfigured device back type peripheral_hub
+[warn] [device] unconfigured device gtceu:mv_lathe_0 type gtceu:mv_lathe
+[warn] [device] unconfigured device gtceu:mv_extruder_0 type gtceu:mv_extruder
+[warn] [device] unconfigured device gtceu:mv_extruder_1 type gtceu:mv_extruder
+[warn] [device] unconfigured device gtceu:mv_wiremill_0 type gtceu:mv_wiremill
+[warn] [device] unconfigured device gtceu:mv_polarizer_0 type gtceu:mv_polarizer
+[cli] type 'help' for commands
+[info] executing CLI command: peripherals
+back | type=modem | purpose=unknown
+gtceu:mv_assembler_0 | type=gtceu:mv_assembler | purpose=crafting
+gtceu:mv_assembler_1 | type=gtceu:mv_assembler | purpose=crafting
+gtceu:mv_bender_0 | type=gtceu:mv_bender | purpose=crafting
+gtceu:mv_bender_1 | type=gtceu:mv_bender | purpose=crafting
+gtceu:mv_compressor_0 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_compressor_1 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_compressor_4 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_compressor_5 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_electric_furnace_0 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_electric_furnace_1 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_electric_furnace_2 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_electric_furnace_3 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_extruder_0 | type=gtceu:mv_extruder | purpose=unknown
+gtceu:mv_extruder_1 | type=gtceu:mv_extruder | purpose=unknown
+gtceu:mv_forge_hammer_0 | type=gtceu:mv_forge_hammer | purpose=crafting
+gtceu:mv_forge_hammer_1 | type=gtceu:mv_forge_hammer | purpose=crafting
+gtceu:mv_lathe_0 | type=gtceu:mv_lathe | purpose=unknown
+gtceu:mv_polarizer_0 | type=gtceu:mv_polarizer | purpose=unknown
+gtceu:mv_wiremill_0 | type=gtceu:mv_wiremill | purpose=unknown
+minecraft:chest_10 | type=minecraft:chest | purpose=storage
+minecraft:chest_9 | type=minecraft:chest | purpose=storage
+[info] [run] id=2026-02-02T18:27Z goal=peripherals
+[info] [craft] added recipe minecraft:oak_planks
+[info] [craft] added recipe minecraft:stick
+[info] [craft] added recipe minecraft:wooden_pickaxe
+[info] [craft] added recipe minecraft:stone_pickaxe
+[info] [craft] added recipe minecraft:iron_pickaxe
+[info] [craft] added recipe minecraft:furnace
+[info] [craft] added recipe minecraft:stone
+[info] [craft] added recipe minecraft:iron_ingot
+[info] [craft] added recipe minecraft:piston
+[info] [craft] added recipe gtceu:steel_plate
+[info] [craft] added recipe gtceu:steel_ingot
+[info] [craft] added recipe minecraft:redstone
+[info] [craft] added recipe gtceu:raw_redstone
+[warn] [device] unconfigured device back type peripheral_hub
+[warn] [device] unconfigured device gtceu:mv_polarizer_0 type gtceu:mv_polarizer
+[cli] type 'help' for commands
+[info] executing CLI command: peripherals
+back | type=modem | purpose=unknown
+gtceu:mv_assembler_0 | type=gtceu:mv_assembler | purpose=crafting
+gtceu:mv_assembler_1 | type=gtceu:mv_assembler | purpose=crafting
+gtceu:mv_bender_0 | type=gtceu:mv_bender | purpose=crafting
+gtceu:mv_bender_1 | type=gtceu:mv_bender | purpose=crafting
+gtceu:mv_compressor_0 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_compressor_1 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_compressor_4 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_compressor_5 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_electric_furnace_0 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_electric_furnace_1 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_electric_furnace_2 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_electric_furnace_3 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_extruder_0 | type=gtceu:mv_extruder | purpose=crafting
+gtceu:mv_extruder_1 | type=gtceu:mv_extruder | purpose=crafting
+gtceu:mv_forge_hammer_0 | type=gtceu:mv_forge_hammer | purpose=crafting
+gtceu:mv_forge_hammer_1 | type=gtceu:mv_forge_hammer | purpose=crafting
+gtceu:mv_lathe_0 | type=gtceu:mv_lathe | purpose=crafting
+gtceu:mv_polarizer_0 | type=gtceu:mv_polarizer | purpose=unknown
+gtceu:mv_wiremill_0 | type=gtceu:mv_wiremill | purpose=crafting
+minecraft:chest_10 | type=minecraft:chest | purpose=storage
+minecraft:chest_9 | type=minecraft:chest | purpose=storage
+[info] [run] id=2026-02-02T18:28Z goal=peripherals
+[info] [craft] added recipe minecraft:oak_planks
+[info] [craft] added recipe minecraft:stick
+[info] [craft] added recipe minecraft:wooden_pickaxe
+[info] [craft] added recipe minecraft:stone_pickaxe
+[info] [craft] added recipe minecraft:iron_pickaxe
+[info] [craft] added recipe minecraft:furnace
+[info] [craft] added recipe minecraft:stone
+[info] [craft] added recipe minecraft:iron_ingot
+[info] [craft] added recipe minecraft:piston
+[info] [craft] added recipe gtceu:steel_plate
+[info] [craft] added recipe gtceu:steel_ingot
+[info] [craft] added recipe minecraft:redstone
+[info] [craft] added recipe gtceu:raw_redstone
+[warn] [device] unconfigured device back type peripheral_hub
+[cli] type 'help' for commands
+[info] executing CLI command: peripherals
+back | type=modem | purpose=unknown
+gtceu:mv_assembler_0 | type=gtceu:mv_assembler | purpose=crafting
+gtceu:mv_assembler_1 | type=gtceu:mv_assembler | purpose=crafting
+gtceu:mv_bender_0 | type=gtceu:mv_bender | purpose=crafting
+gtceu:mv_bender_1 | type=gtceu:mv_bender | purpose=crafting
+gtceu:mv_compressor_0 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_compressor_1 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_compressor_4 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_compressor_5 | type=gtceu:mv_compressor | purpose=crafting
+gtceu:mv_electric_furnace_0 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_electric_furnace_1 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_electric_furnace_2 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_electric_furnace_3 | type=gtceu:mv_electric_furnace | purpose=crafting
+gtceu:mv_extruder_0 | type=gtceu:mv_extruder | purpose=crafting
+gtceu:mv_extruder_1 | type=gtceu:mv_extruder | purpose=crafting
+gtceu:mv_forge_hammer_0 | type=gtceu:mv_forge_hammer | purpose=crafting
+gtceu:mv_forge_hammer_1 | type=gtceu:mv_forge_hammer | purpose=crafting
+gtceu:mv_lathe_0 | type=gtceu:mv_lathe | purpose=crafting
+gtceu:mv_polarizer_0 | type=gtceu:mv_polarizer | purpose=crafting
+gtceu:mv_wiremill_0 | type=gtceu:mv_wiremill | purpose=crafting
+minecraft:chest_10 | type=minecraft:chest | purpose=storage
+minecraft:chest_9 | type=minecraft:chest | purpose=storage

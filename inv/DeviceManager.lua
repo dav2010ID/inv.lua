@@ -1,6 +1,6 @@
 local Object = require 'object.Object'
 
-local Common = require 'inv.Common'
+local Net = require 'inv.util.Net'
 local Storage = require 'inv.device.Storage'
 local Machine = require 'inv.device.Machine'
 local Log = require 'inv.Log'
@@ -64,25 +64,32 @@ end
 -- Creates the appropriate Device for the given network peripheral
 -- as specified in the server configuration.
 function DeviceManager:createDevice(name)
-    assert(name ~= Common.getNameLocal())
+    assert(name ~= Net.getNameLocal())
 
     local types = { peripheral.getType(name) }
     local deviceType = nil
-    local genericTypes = {}
 
     for k,v in pairs(types) do
         if v == "inventory" or v == "fluid_storage" or v == "energy_storage" then
-            genericTypes[v] = true
+            -- ignore generic types; purpose must be explicitly configured
         else
             deviceType = v
         end
     end
 
     local config = self:getConfig(name, deviceType)
-    if deviceType == "workbench" then
-        if config.purpose == nil then
-            config.purpose = "crafting"
-        end
+    local purpose = config.purpose
+
+    if not purpose then
+        Log.warn("[device] unconfigured device", name, "type", deviceType or "unknown")
+        return nil
+    end
+
+    if purpose == "crafting" and not deviceType then
+        deviceType = config.machineType or config.type
+    end
+
+    if deviceType == "workbench" and purpose == "crafting" then
         if config.backend == nil then
             config.backend = "turtle"
         end
@@ -99,11 +106,7 @@ function DeviceManager:createDevice(name)
         end
     end
 
-    if config.purpose == "crafting" and not deviceType then
-        deviceType = config.machineType or config.type
-    end
-
-    if config.purpose == "crafting" then
+    if purpose == "crafting" then
         if not deviceType then
             Log.warn("[device] crafting device missing type", name)
             return nil
@@ -111,7 +114,7 @@ function DeviceManager:createDevice(name)
         local machine = Machine(self.server, name, deviceType, config)
         Log.debug("[device] machine attached", name, "type", deviceType)
         return machine
-    elseif config.purpose == "storage" or genericTypes["inventory"] then
+    elseif purpose == "storage" then
         local storage = Storage(self.server, name, deviceType, config)
         Log.debug("[device] storage attached", name, "type", deviceType or "inventory")
         return storage

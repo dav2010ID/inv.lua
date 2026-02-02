@@ -1,5 +1,5 @@
 local Object = require 'object.Object'
-local Common = require 'inv.Common'
+local Table = require 'inv.util.Table'
 
 -- Manages storage devices and their ordering.
 local StorageManager = Object:subclass()
@@ -23,7 +23,7 @@ end
 
 -- Removes an inventory from the network, updating network state as necessary.
 function StorageManager:removeStorage(device)
-    Common.removeItem(self.storage, device)
+    Table.removeItem(self.storage, device)
     self.sorted = false
     if self.server.inventoryIO then
         self.server.inventoryIO:scanInventories()
