@@ -247,7 +247,7 @@ function TaskManager:logSummary(summary)
             "max " .. string.format("%.2fs", entry.waitMax)
         )
     end
-    Log.info("  wait_reasons:")
+    Log.info("  wait_reasons: (inputs = not in storage, machine = no free machine)")
     for machineType, entry in pairs(summary.machineStats) do
         local avgMachine = entry.waitMachineCount > 0 and (entry.waitMachineSum / entry.waitMachineCount) or 0
         local avgInputs = entry.waitInputsCount > 0 and (entry.waitInputsSum / entry.waitInputsCount) or 0
@@ -289,10 +289,14 @@ function TaskManager:logSummary(summary)
         local count = craftRegistry:countMachines(criticalMachine)
         if count > 0 then
             local criticalEntry = summary.machineStats[criticalMachine]
-            local newMin = criticalEntry and (criticalEntry.runSum / (count + 1)) or 0
-            if newMin > 0 then
-                Log.info("[hint] bottleneck detected:", criticalMachine)
-                Log.info("[hint] adding +1 machine reduces theoretical_min to", string.format("%.2fs", newMin))
+            local waitMachine = criticalEntry and criticalEntry.waitMachineSum or 0
+            local waitInputs = criticalEntry and criticalEntry.waitInputsSum or 0
+            if waitMachine > waitInputs then
+                local newMin = criticalEntry and (criticalEntry.runSum / (count + 1)) or 0
+                if newMin > 0 then
+                    Log.info("[hint] bottleneck detected:", criticalMachine)
+                    Log.info("[hint] adding +1 machine reduces theoretical_min to", string.format("%.2fs", newMin))
+                end
             end
         end
     end

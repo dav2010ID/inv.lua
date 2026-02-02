@@ -47,12 +47,14 @@ end
 
 function Server:handlePeripheralAttach(name)
     if peripheral.isPresent(name) then
+        Log.info("[event] peripheral attach", name)
         self.deviceManager:addDevice(name)
     end
 end
 
 function Server:handlePeripheralDetach(name)
     if not peripheral.isPresent(name) then
+        Log.info("[event] peripheral detach", name)
         self.deviceManager:removeDevice(name)
     end
 end

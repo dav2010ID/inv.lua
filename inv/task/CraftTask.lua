@@ -104,6 +104,17 @@ function CraftTask:run()
     if not self.machine then
         local missing = self.server.inventoryIndex:tryMatchAll(self:scaledInputs())
         if #missing > 0 then
+            local now = os.clock()
+            if self.summaryId and self.status == "waiting_inputs" then
+                local waited = now - self.lastStatusAt
+                if waited > 0 then
+                    self.server.taskManager:recordWait(self.summaryId, self.machineType, "waiting_inputs", waited)
+                    if self.lastMissing then
+                        self.server.taskManager:recordInputBlocker(self.summaryId, self.machineType, self.lastMissing, waited)
+                    end
+                    self.lastStatusAt = now
+                end
+            end
             self:setStatus("waiting_inputs")
             local blocker = missing[1]
             if blocker and self.summaryId then

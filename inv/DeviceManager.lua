@@ -108,9 +108,13 @@ function DeviceManager:createDevice(name)
             Log.warn("[device] crafting device missing type", name)
             return nil
         end
-        return Machine(self.server, name, deviceType, config)
+        local machine = Machine(self.server, name, deviceType, config)
+        Log.info("[device] machine attached", name, "type", deviceType)
+        return machine
     elseif config.purpose == "storage" or genericTypes["inventory"] then
-        return Storage(self.server, name, deviceType, config)
+        local storage = Storage(self.server, name, deviceType, config)
+        Log.info("[device] storage attached", name, "type", deviceType or "inventory")
+        return storage
     end
 
     if deviceType then
@@ -129,6 +133,7 @@ function DeviceManager:addDevice(name)
         --self.devices[name]:destroy()
         return
     end
+    Log.info("[device] attach event", name)
     self.devices[name] = self:createDevice(name)
 end
 
@@ -136,6 +141,7 @@ end
 function DeviceManager:removeDevice(name)
     local device = self.devices[name]
     if device then
+        Log.info("[device] detach event", name, "type", device.type or "unknown")
         self.devices[name] = nil
         device:destroy()
     else
