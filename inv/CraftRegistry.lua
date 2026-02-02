@@ -1,12 +1,12 @@
 local Object = require 'object.Object'
 local Recipe = require 'inv.Recipe'
-local Log = require 'inv.Log'
 
 -- Stores recipes and known crafting machines.
 local CraftRegistry = Object:subclass()
 
 function CraftRegistry:init(server)
     self.server = server
+    self.logger = server.logger
     -- table<string, Recipe>: Recipes known to this network, indexed by item ID.
     self.recipes = {}
     -- table<string, table<string, Machine>>: Crafting machines connected to
@@ -19,7 +19,7 @@ end
 -- Adds a crafting machine to the network, updating network state as necessary.
 function CraftRegistry:addMachine(device)
     if not device.type then
-        Log.warn("[craft] skipped machine with unknown type", device.name)
+        self.logger.warn("[craft] skipped machine with unknown type", device.name)
         return
     end
     local machineTable = self.machines[device.type]
@@ -102,10 +102,10 @@ end
 function CraftRegistry:logSaturation(machineType)
     local machinesOfType = self.machines[machineType]
     if not machinesOfType then
-        Log.throttle(
+        self.logger.throttle(
             "craft_none_" .. tostring(machineType),
             2,
-            Log.levels.warn,
+            self.logger.levels.warn,
             "[warn] ",
             "[craft] no",
             machineType,
@@ -127,10 +127,10 @@ function CraftRegistry:logSaturation(machineType)
         local entry = stats[machineType]
         waiting = entry and entry.waiting_machine or 0
     end
-    Log.throttle(
+    self.logger.throttle(
         "craft_saturated_" .. tostring(machineType),
         2,
-        Log.levels.warn,
+        self.logger.levels.warn,
         "[warn] ",
         "[craft]",
         machineType,
@@ -175,7 +175,7 @@ function CraftRegistry:loadRecipes(data)
             assert(item.name) -- output should not be generic
             if not self.recipes[item.name] then
                 self.recipes[item.name] = recipe
-                Log.info("[craft] added recipe",item.name)
+                self.logger.info("[craft] added recipe",item.name)
             end
             local info = self.server.inventoryIndex.items[item.name]
             if not info then
@@ -198,7 +198,7 @@ function CraftRegistry:findRecipe(item)
     for name, v in pairs(results) do
         local recipe = self.recipes[name]
         if recipe then
-            Log.debug("[craft] recipe found",name)
+            self.logger.debug("[craft] recipe found",name)
             return recipe
         end
     end

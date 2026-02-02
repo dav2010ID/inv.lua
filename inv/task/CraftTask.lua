@@ -1,5 +1,4 @@
 local Task = require 'inv.task.Task'
-local Log = require 'inv.Log'
 -- Represents a crafting operation in progress.
 local CraftTask = Task:subclass()
 
@@ -60,7 +59,7 @@ function CraftTask:assignMachine(machine)
     end
     local blocker = self.lastMissing
     self.lastMissing = nil
-    Log.debug(
+    self.server.logger.debug(
         "[task] start",
         self.recipe.machine,
         "x" .. tostring(self.craftCount),
@@ -155,7 +154,7 @@ function CraftTask:run()
         if self.summaryId then
             self.server.taskManager:recordTaskComplete(self.summaryId, self.machineType, runSeconds)
         end
-        Log.debug(
+        self.server.logger.debug(
             "[task] completed",
             self.recipe.machine,
             "x" .. tostring(self.craftCount),

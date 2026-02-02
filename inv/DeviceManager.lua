@@ -3,7 +3,6 @@ local Object = require 'object.Object'
 local Net = require 'inv.util.Net'
 local Storage = require 'inv.device.Storage'
 local Machine = require 'inv.device.Machine'
-local Log = require 'inv.Log'
 
 -- Manages network-attached devices, including storage and crafting machines.
 -- Specialized behavior is delegated by Devices to the appropriate class
@@ -12,6 +11,7 @@ local DeviceManager = Object:subclass()
 
 function DeviceManager:init(server, overrides)
     self.server = server
+    self.logger = server.logger
     -- table<string, Device>: Devices connected to this network.
     self.devices = {}
 
@@ -40,6 +40,11 @@ function DeviceManager:scanDevices()
     for i,name in ipairs(peripheral.getNames()) do
         self:addDevice(name)
     end
+end
+
+-- Alias for scanDevices (new naming)
+function DeviceManager:discoverDevices()
+    return self:scanDevices()
 end
 
 -- Copies configuration entries to the given table.
@@ -81,7 +86,7 @@ function DeviceManager:createDevice(name)
     local purpose = config.purpose
 
     if not purpose then
-        Log.warn("[device] unconfigured device", name, "type", deviceType or "unknown")
+        self.logger.warn("[device] unconfigured device", name, "type", deviceType or "unknown")
         return nil
     end
 
@@ -108,35 +113,40 @@ function DeviceManager:createDevice(name)
 
     if purpose == "crafting" then
         if not deviceType then
-            Log.warn("[device] crafting device missing type", name)
+            self.logger.warn("[device] crafting device missing type", name)
             return nil
         end
         local machine = Machine(self.server, name, deviceType, config)
-        Log.debug("[device] machine attached", name, "type", deviceType)
+        self.logger.debug("[device] machine attached", name, "type", deviceType)
         return machine
     elseif purpose == "storage" then
         local storage = Storage(self.server, name, deviceType, config)
-        Log.debug("[device] storage attached", name, "type", deviceType or "inventory")
+        self.logger.debug("[device] storage attached", name, "type", deviceType or "inventory")
         return storage
     end
 
     if deviceType then
-        Log.warn("[device] unconfigured device", name, "type", deviceType)
+        self.logger.warn("[device] unconfigured device", name, "type", deviceType)
     else
-        Log.warn("[device] unconfigured device", name, "(unknown type)")
+        self.logger.warn("[device] unconfigured device", name, "(unknown type)")
     end
     return nil
+end
+
+-- Alias for createDevice (new naming)
+function DeviceManager:instantiateDevice(name)
+    return self:createDevice(name)
 end
 
 -- Creates the appropriate Device for the given network peripheral,
 -- then adds it to the device table.
 function DeviceManager:addDevice(name)
     if self.devices[name] then
-        Log.info("[device] skipped double add device", name)
+        self.logger.info("[device] skipped double add device", name)
         --self.devices[name]:destroy()
         return
     end
-    Log.debug("[device] attach event", name)
+    self.logger.debug("[device] attach event", name)
     self.devices[name] = self:createDevice(name)
 end
 
@@ -144,11 +154,11 @@ end
 function DeviceManager:removeDevice(name)
     local device = self.devices[name]
     if device then
-        Log.debug("[device] detach event", name, "type", device.type or "unknown")
+        self.logger.debug("[device] detach event", name, "type", device.type or "unknown")
         self.devices[name] = nil
         device:destroy()
     else
-        Log.warn("[device] double remove device", name)
+        self.logger.warn("[device] double remove device", name)
     end
 end
 

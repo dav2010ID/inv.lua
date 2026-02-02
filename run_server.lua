@@ -1,5 +1,5 @@
 local Server = require 'inv.Server'
-local Log = require 'inv.Log'
+local Logger = require 'inv.Log'
 
 local args = {...}
 
@@ -23,14 +23,14 @@ end
 
 function run()
     initLogging("CraftOSTest.log")
-    Log.setLevel("info")
+    Logger.setLevel("info")
     local runId = os.date("!%Y-%m-%dT%H:%MZ")
-    Log.info("[run] id=" .. runId, "goal=" .. table.concat(args, " "))
-    Log.runId = runId
-    local s = Server()
+    Logger.info("[run] id=" .. runId, "goal=" .. table.concat(args, " "))
+    Logger.runId = runId
+    local s = Server(Logger)
     if #args > 0 then
         local command = table.concat(args, " ")
-        Log.info("executing CLI command:", command)
+        Logger.info("executing CLI command:", command)
         s.cliEnabled = false
         s.cliBuffer = ""
         s:handleCommand(command)

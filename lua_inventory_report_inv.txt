@@ -1,55 +1,55 @@
-﻿FILE: inv\Config.lua
+﻿FILE: Config.lua
 REQUIRES: (none)
 FUNCTIONS:
   Config.convertPath
   Config.loadJSON
   Config.loadDirectory
 
-FILE: inv\core\InventoryIndex.lua
+FILE: core\InventoryIndex.lua
 REQUIRES:
   require 'inv.InventoryIndex'
 FUNCTIONS: (none)
 
-FILE: inv\core\Item.lua
+FILE: core\Item.lua
 REQUIRES:
   require 'inv.Item'
 FUNCTIONS: (none)
 
-FILE: inv\core\Recipe.lua
+FILE: core\Recipe.lua
 REQUIRES:
   require 'inv.Recipe'
 FUNCTIONS: (none)
 
-FILE: inv\craft\CraftExecutor.lua
+FILE: craft\CraftExecutor.lua
 REQUIRES:
   require 'inv.CraftExecutor'
 FUNCTIONS: (none)
 
-FILE: inv\craft\CraftPlanner.lua
+FILE: craft\CraftPlanner.lua
 REQUIRES:
   require 'inv.CraftPlanner'
 FUNCTIONS: (none)
 
-FILE: inv\craft\CraftRegistry.lua
+FILE: craft\CraftRegistry.lua
 REQUIRES:
   require 'inv.CraftRegistry'
 FUNCTIONS: (none)
 
-FILE: inv\craft\DependencyResolver.lua
+FILE: craft\DependencyResolver.lua
 REQUIRES:
   require 'inv.task.WaitTask'
 FUNCTIONS:
   DependencyResolver.findOutputCount
   DependencyResolver.attachDependencies
 
-FILE: inv\craft\TaskAssigner.lua
+FILE: craft\TaskAssigner.lua
 REQUIRES:
   require 'inv.task.CraftTask'
 FUNCTIONS:
   TaskAssigner.buildBatches
   TaskAssigner.createTask
 
-FILE: inv\CraftExecutor.lua
+FILE: CraftExecutor.lua
 REQUIRES:
   require 'object.Object'
   require 'inv.CraftPlanner'
@@ -57,7 +57,7 @@ FUNCTIONS:
   CraftExecutor:init
   CraftExecutor:pushOrCraftItemsTo
 
-FILE: inv\CraftPlanner.lua
+FILE: CraftPlanner.lua
 REQUIRES:
   require 'object.Object'
   require 'inv.craft.DependencyResolver'
@@ -70,7 +70,7 @@ FUNCTIONS:
   CraftPlanner:logMachineSummary
   CraftPlanner:setCriticalMachine
 
-FILE: inv\CraftRegistry.lua
+FILE: CraftRegistry.lua
 REQUIRES:
   require 'object.Object'
   require 'inv.Recipe'
@@ -88,12 +88,12 @@ FUNCTIONS:
   CraftRegistry:findRecipe
   CraftRegistry:findMachine
 
-FILE: inv\CraftRunner.lua
+FILE: CraftRunner.lua
 REQUIRES:
   require 'inv.CraftExecutor'
 FUNCTIONS: (none)
 
-FILE: inv\device\Device.lua
+FILE: device\Device.lua
 REQUIRES:
   require 'object.Object'
 FUNCTIONS:
@@ -104,12 +104,12 @@ FUNCTIONS:
   Device:pullItems
   Device:destroy
 
-FILE: inv\device\InventoryIO.lua
+FILE: device\InventoryIO.lua
 REQUIRES:
   require 'inv.InventoryIO'
 FUNCTIONS: (none)
 
-FILE: inv\device\Machine.lua
+FILE: device\Machine.lua
 REQUIRES:
   require 'inv.device.Device'
   require 'inv.util.Net'
@@ -127,7 +127,7 @@ FUNCTIONS:
   Machine:handleOutputSlot
   Machine:pullOutput
 
-FILE: inv\device\Storage.lua
+FILE: device\Storage.lua
 REQUIRES:
   require 'inv.device.Device'
   require 'inv.Item'
@@ -136,7 +136,7 @@ FUNCTIONS:
   Storage:destroy
   Storage:itemAllowed
 
-FILE: inv\DeviceManager.lua
+FILE: DeviceManager.lua
 REQUIRES:
   require 'object.Object'
   require 'inv.util.Net'
@@ -153,12 +153,12 @@ FUNCTIONS:
   DeviceManager:addDevice
   DeviceManager:removeDevice
 
-FILE: inv\DeviceRegistry.lua
+FILE: DeviceRegistry.lua
 REQUIRES:
   require 'inv.DeviceManager'
 FUNCTIONS: (none)
 
-FILE: inv\InventoryIndex.lua
+FILE: InventoryIndex.lua
 REQUIRES:
   require 'object.Object'
   require 'inv.Item'
@@ -172,7 +172,7 @@ FUNCTIONS:
   InventoryIndex:markUpdated
   InventoryIndex:getUpdatedItems
 
-FILE: inv\InventoryIO.lua
+FILE: InventoryIO.lua
 REQUIRES:
   require 'object.Object'
 FUNCTIONS:
@@ -183,12 +183,12 @@ FUNCTIONS:
   InventoryIO:pushItemsTo
   InventoryIO:pullItemsFrom
 
-FILE: inv\InventoryTransfer.lua
+FILE: InventoryTransfer.lua
 REQUIRES:
   require 'inv.InventoryIO'
 FUNCTIONS: (none)
 
-FILE: inv\Item.lua
+FILE: Item.lua
 REQUIRES:
   require 'object.Object'
 FUNCTIONS:
@@ -201,7 +201,7 @@ FUNCTIONS:
   Item:getName
   Item:serialize
 
-FILE: inv\Log.lua
+FILE: Log.lua
 REQUIRES: (none)
 FUNCTIONS:
   Log.setLevel
@@ -212,24 +212,24 @@ FUNCTIONS:
   Log.warn
   Log.error
 
-FILE: inv\MachineScheduler.lua
+FILE: MachineScheduler.lua
 REQUIRES:
   require 'inv.CraftRegistry'
 FUNCTIONS: (none)
 
-FILE: inv\Recipe.lua
+FILE: Recipe.lua
 REQUIRES:
   require 'object.Object'
   require 'inv.Item'
 FUNCTIONS:
   Recipe:init
 
-FILE: inv\runtime\Server.lua
+FILE: runtime\Server.lua
 REQUIRES:
   require 'inv.Server'
 FUNCTIONS: (none)
 
-FILE: inv\Server.lua
+FILE: Server.lua
 REQUIRES:
   require 'object.Object'
   require 'inv.Config'
@@ -258,7 +258,7 @@ FUNCTIONS:
   Server:broadcastUpdatedItems
   Server:mainLoop
 
-FILE: inv\StorageManager.lua
+FILE: StorageManager.lua
 REQUIRES:
   require 'object.Object'
   require 'inv.util.Table'
@@ -269,12 +269,12 @@ FUNCTIONS:
   StorageManager.deviceSort
   StorageManager:ensureSorted
 
-FILE: inv\StoragePool.lua
+FILE: StoragePool.lua
 REQUIRES:
   require 'inv.StorageManager'
 FUNCTIONS: (none)
 
-FILE: inv\task\CraftTask.lua
+FILE: task\CraftTask.lua
 REQUIRES:
   require 'inv.task.Task'
 FUNCTIONS:
@@ -284,7 +284,7 @@ FUNCTIONS:
   CraftTask:setStatus
   CraftTask:run
 
-FILE: inv\task\FetchTask.lua
+FILE: task\FetchTask.lua
 REQUIRES:
   require 'inv.task.Task'
   require 'inv.task.CraftTask'
@@ -293,7 +293,7 @@ FUNCTIONS:
   FetchTask:init
   FetchTask:run
 
-FILE: inv\task\Task.lua
+FILE: task\Task.lua
 REQUIRES:
   require 'object.Object'
 FUNCTIONS:
@@ -301,12 +301,12 @@ FUNCTIONS:
   Task:run
   Task:destroy
 
-FILE: inv\task\TaskManager.lua
+FILE: task\TaskManager.lua
 REQUIRES:
   require 'inv.TaskManager'
 FUNCTIONS: (none)
 
-FILE: inv\task\WaitTask.lua
+FILE: task\WaitTask.lua
 REQUIRES:
   require 'inv.task.Task'
 FUNCTIONS:
@@ -314,7 +314,7 @@ FUNCTIONS:
   WaitTask:print
   WaitTask:run
 
-FILE: inv\TaskManager.lua
+FILE: TaskManager.lua
 REQUIRES:
   require 'object.Object'
 FUNCTIONS:
@@ -331,42 +331,23 @@ FUNCTIONS:
   TaskManager:logSummary
   TaskManager:getMachineStats
 
-FILE: inv\TaskScheduler.lua
+FILE: TaskScheduler.lua
 REQUIRES:
   require 'inv.TaskManager'
 FUNCTIONS: (none)
 
-FILE: inv\util\Net.lua
+FILE: util\Net.lua
 REQUIRES: (none)
 FUNCTIONS:
   Net.getModemSide
   Net.getModem
   Net.getNameLocal
 
-FILE: inv\util\Table.lua
+FILE: util\Table.lua
 REQUIRES: (none)
 FUNCTIONS:
   Table.copyShallow
   Table.copyDeep
   Table.removeItem
   Table.integerKeys
-
-FILE: object\Object.lua
-REQUIRES:
-  require "cc.expect"
-FUNCTIONS:
-  Object:init
-  Object:subclass
-  Object:instanceof
-
-FILE: run_server.lua
-REQUIRES:
-  require 'inv.Server'
-  require 'inv.Log'
-FUNCTIONS:
-  run
-
-FILE: test.lua
-REQUIRES: (none)
-FUNCTIONS: (none)
 

@@ -1,18 +1,18 @@
 local Object = require 'object.Object'
 local Config = require 'inv.Config'
-local CraftRegistry = require 'inv.CraftRegistry'
-local CraftExecutor = require 'inv.CraftExecutor'
-local DeviceManager = require 'inv.DeviceManager'
+local MachineScheduler = require 'inv.MachineScheduler'
+local CraftRunner = require 'inv.CraftRunner'
+local DeviceRegistry = require 'inv.DeviceRegistry'
 local InventoryIndex = require 'inv.InventoryIndex'
 local InventoryIO = require 'inv.InventoryIO'
-local StorageManager = require 'inv.StorageManager'
+local StoragePool = require 'inv.StoragePool'
 local Item = require 'inv.Item'
-local TaskManager = require 'inv.TaskManager'
-local Log = require 'inv.Log'
+local TaskScheduler = require 'inv.TaskScheduler'
 
 local Server = Object:subclass()
 
-function Server:init()
+function Server:init(logger)
+    self.logger = logger or require 'inv.Log'
     local deviceConfig, recipeConfig = self:loadConfig()
     self:setup(deviceConfig, recipeConfig)
     self:initCLI()
@@ -28,13 +28,13 @@ end
 function Server:setup(deviceConfig, recipeConfig)
     self.inventoryIndex = InventoryIndex(self)
     self.inventoryIO = InventoryIO(self, self.inventoryIndex)
-    self.storageManager = StorageManager(self)
-    self.deviceManager = DeviceManager(self, deviceConfig)
-    self.craftRegistry = CraftRegistry(self)
-    self.craftExecutor = CraftExecutor(self, self.craftRegistry)
-    self.taskManager = TaskManager(self)
-    if Log and Log.runId then
-        self.taskManager.currentRunId = Log.runId
+    self.storageManager = StoragePool(self)
+    self.deviceManager = DeviceRegistry(self, deviceConfig)
+    self.craftRegistry = MachineScheduler(self)
+    self.craftExecutor = CraftRunner(self, self.craftRegistry)
+    self.taskManager = TaskScheduler(self)
+    if self.logger and self.logger.runId then
+        self.taskManager.currentRunId = self.logger.runId
     end
     self.taskTimer = nil
     self.running = true
@@ -47,14 +47,14 @@ end
 
 function Server:handlePeripheralAttach(name)
     if peripheral.isPresent(name) then
-        Log.debug("[event] peripheral attach", name)
+        self.logger.debug("[event] peripheral attach", name)
         self.deviceManager:addDevice(name)
     end
 end
 
 function Server:handlePeripheralDetach(name)
     if not peripheral.isPresent(name) then
-        Log.debug("[event] peripheral detach", name)
+        self.logger.debug("[event] peripheral detach", name)
         self.deviceManager:removeDevice(name)
     end
 end
@@ -64,7 +64,7 @@ function Server:initCLI()
     self.cliPrompt = "> "
     self.cliBuffer = ""
     self:drawPrompt()
-    Log.cli("[cli] type 'help' for commands")
+    self.logger.cli("[cli] type 'help' for commands")
     self:drawPrompt()
 end
 
@@ -97,7 +97,7 @@ function Server:cliOnKey(key)
         local w, h = term.getSize()
         term.setCursorPos(1, h)
         term.clearLine()
-        Log.cli(self.cliPrompt .. line)
+        self.logger.cli(self.cliPrompt .. line)
         self:handleCommand(line)
         self:drawPrompt()
     end
@@ -115,17 +115,17 @@ function Server:handleCommand(line)
     cmd = cmd:lower()
 
     if cmd == "help" then
-        Log.cli("commands:")
-        Log.cli("  help")
-        Log.cli("  list [filter]")
-        Log.cli("  count <item>")
-        Log.cli("  craft <item> <count>")
-        Log.cli("  scan")
-        Log.cli("  devices")
-        Log.cli("  peripherals")
-        Log.cli("  status")
-        Log.cli("  quit")
-        Log.cli("  test")
+        self.logger.cli("commands:")
+        self.logger.cli("  help")
+        self.logger.cli("  list [filter]")
+        self.logger.cli("  count <item>")
+        self.logger.cli("  craft <item> <count>")
+        self.logger.cli("  scan")
+        self.logger.cli("  devices")
+        self.logger.cli("  peripherals")
+        self.logger.cli("  status")
+        self.logger.cli("  quit")
+        self.logger.cli("  test")
         return
     end
 
@@ -148,7 +148,7 @@ function Server:handleCommand(line)
             textutils.pagedPrint(table.concat(lines, "\n"))
         else
             for i, line in ipairs(lines) do
-                Log.cli(line)
+                self.logger.cli(line)
             end
         end
         return
@@ -157,14 +157,14 @@ function Server:handleCommand(line)
     if cmd == "count" then
         local name = args[2]
         if not name then
-            Log.cli("usage: count <item>")
+            self.logger.cli("usage: count <item>")
             return
         end
         local item = self.inventoryIndex.items[name]
         if item then
-            Log.cli(name .. " x" .. tostring(item.count))
+            self.logger.cli(name .. " x" .. tostring(item.count))
         else
-            Log.cli(name .. " x0")
+            self.logger.cli(name .. " x0")
         end
         return
     end
@@ -173,35 +173,35 @@ function Server:handleCommand(line)
         local name = args[2]
         local count = tonumber(args[3]) or 1
         if not name then
-            Log.cli("usage: craft <item> <count>")
+            self.logger.cli("usage: craft <item> <count>")
             return
         end
         local existing = self.inventoryIndex.items[name]
         local have = existing and existing.count or 0
         if have >= count then
-            Log.cli("already have " .. tostring(have))
+            self.logger.cli("already have " .. tostring(have))
             return
         end
         local missing = count - have
         local planned = self.craftExecutor.planner:plan(Item{name=name, count=missing}, nil, nil)
         if planned == 0 then
-            Log.warn("no recipe for", name)
+            self.logger.warn("no recipe for", name)
         else
-            Log.info("planned", planned, "craft(s)")
+            self.logger.info("planned", planned, "craft(s)")
         end
         return
     end
 
     if cmd == "scan" then
         self.inventoryIO:scanInventories()
-        Log.info("inventories scanned")
+        self.logger.info("inventories scanned")
         return
     end
 
     if cmd == "devices" then
         self.deviceManager:scanDevices()
         self.inventoryIO:scanInventories()
-        Log.info("devices rescanned")
+        self.logger.info("devices rescanned")
         return
     end
 
@@ -218,17 +218,17 @@ function Server:handleCommand(line)
         end
         table.sort(lines)
         if #lines == 0 then
-            Log.cli("no peripherals")
+            self.logger.cli("no peripherals")
         else
             for _, line in ipairs(lines) do
-                Log.cli(line)
+                self.logger.cli(line)
             end
         end
         return
     end
 
     if cmd == "status" then
-        Log.info("active tasks:", #self.taskManager.active)
+        self.logger.info("active tasks:", #self.taskManager.active)
         return
     end
 
@@ -237,7 +237,7 @@ function Server:handleCommand(line)
         return
     end
 
-    Log.warn("unknown command:", cmd)
+    self.logger.warn("unknown command:", cmd)
 end
 
 function Server:handleEvent(evt)
@@ -268,7 +268,7 @@ function Server:updateTasks()
         local activeCount = #self.taskManager.active
         local now = os.clock()
         if self.lastActiveCount ~= activeCount or (now - self.lastActiveLogTime) > 5 then
-            Log.info("[server] active tasks:", activeCount)
+            self.logger.info("[server] active tasks:", activeCount)
             self.lastActiveCount = activeCount
             self.lastActiveLogTime = now
         end

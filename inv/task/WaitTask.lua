@@ -1,5 +1,4 @@
 local Task = require 'inv.task.Task'
-local Log = require 'inv.Log'
 
 -- Waits for a missing item that has no known recipe.
 local WaitTask = Task:subclass()
@@ -19,7 +18,7 @@ function WaitTask:print()
             table.insert(parts, k)
         end
     end
-    Log.cli(table.concat(parts, " "))
+    self.server.logger.cli(table.concat(parts, " "))
 end
 
 function WaitTask:run()

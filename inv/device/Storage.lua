@@ -1,5 +1,4 @@
 local Device = require 'inv.device.Device'
-local Common = require 'inv.Common'
 local Item = require 'inv.Item'
 
 -- Represents an inventory connected to the network.

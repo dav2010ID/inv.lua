@@ -1,7 +1,6 @@
 local Device = require 'inv.device.Device'
 local Net = require 'inv.util.Net'
 local Table = require 'inv.util.Table'
-local Log = require 'inv.Log'
 
 -- Represents a crafting machine.
 local Machine = Device:subclass()
@@ -41,7 +40,7 @@ backends.turtle = {
         for i = 1, times do
             local ok = turtle.craft()
             if not ok then
-                Log.warn("[machine] craft failed", machine.name)
+                machine.server.logger.warn("[machine] craft failed", machine.name)
                 break
             end
         end
@@ -132,7 +131,7 @@ function Machine:rollbackInputs(pushed)
                 detail.count = math.min(detail.count or n, n)
                 local moved = self.server.inventoryIO:pullItemsFrom(detail, self, realSlot)
                 if moved < detail.count then
-                Log.warn("[machine] rollback incomplete", self.name, detail.name or "unknown")
+                    self.server.logger.warn("[machine] rollback incomplete", self.name, detail.name or "unknown")
                 end
             end
         end
@@ -159,7 +158,7 @@ function Machine:craft(recipe, dest, destSlot, craftCount)
         local n = self.server.inventoryIO:pushItemsTo(needed, self, realSlot)
         pushed[virtSlot] = n
         if n < needed.count then
-            Log.warn("[machine] insufficient input for", self.name)
+            self.server.logger.warn("[machine] insufficient input for", self.name)
             self:rollbackInputs(pushed)
             self.recipe = nil
             self.dest = nil
@@ -189,7 +188,7 @@ function Machine:handleOutputSlot(item, virtSlot, realSlot)
                 self.server.inventoryIO:pushItemsTo(outItem, self.dest, self.destSlot)
             end
         else
-            Log.warn("[machine] unexpected output", item.name, "in", self.name)
+            self.server.logger.warn("[machine] unexpected output", item.name, "in", self.name)
         end
     end
 end
