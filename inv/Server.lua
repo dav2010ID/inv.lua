@@ -47,14 +47,14 @@ end
 
 function Server:handlePeripheralAttach(name)
     if peripheral.isPresent(name) then
-        Log.info("[event] peripheral attach", name)
+        Log.debug("[event] peripheral attach", name)
         self.deviceManager:addDevice(name)
     end
 end
 
 function Server:handlePeripheralDetach(name)
     if not peripheral.isPresent(name) then
-        Log.info("[event] peripheral detach", name)
+        Log.debug("[event] peripheral detach", name)
         self.deviceManager:removeDevice(name)
     end
 end
@@ -122,6 +122,7 @@ function Server:handleCommand(line)
         Log.cli("  craft <item> <count>")
         Log.cli("  scan")
         Log.cli("  devices")
+        Log.cli("  peripherals")
         Log.cli("  status")
         Log.cli("  quit")
         Log.cli("  test")
@@ -201,6 +202,27 @@ function Server:handleCommand(line)
         self.deviceManager:scanDevices()
         self.inventoryIO:scanInventories()
         Log.info("devices rescanned")
+        return
+    end
+
+    if cmd == "peripherals" then
+        local lines = {}
+        for name, device in pairs(self.deviceManager.devices) do
+            local kind = (device and device.type) or "unknown"
+            local purpose = "unknown"
+            if device and device.config and device.config.purpose then
+                purpose = device.config.purpose
+            end
+            table.insert(lines, string.format("%s | type=%s | purpose=%s", name, kind, purpose))
+        end
+        table.sort(lines)
+        if #lines == 0 then
+            Log.cli("no peripherals")
+        else
+            for _, line in ipairs(lines) do
+                Log.cli(line)
+            end
+        end
         return
     end
 
