@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 
 local RuntimeLoop = Object:subclass()
 
@@ -58,3 +58,4 @@ function RuntimeLoop:run()
 end
 
 return RuntimeLoop
+

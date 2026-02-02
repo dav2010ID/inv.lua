@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 local CraftPlanner = require 'inv.craft.CraftPlanner'
 local TaskFactory = require 'inv.craft.TaskFactory'
 
@@ -30,3 +30,4 @@ function CraftExecutor:pushOrCraftItemsTo(criteria, dest, destSlot)
 end
 
 return CraftExecutor
+

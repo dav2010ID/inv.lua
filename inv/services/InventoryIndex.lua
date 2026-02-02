@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 local Item = require 'inv.domain.Item'
 
 -- Indexes items and tags for the inventory system.
@@ -118,3 +118,4 @@ function InventoryIndex:getUpdatedItems()
 end
 
 return InventoryIndex
+

@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 
 local EventDispatcher = Object:subclass()
 
@@ -44,3 +44,4 @@ function EventDispatcher:handleEvent(evt)
 end
 
 return EventDispatcher
+

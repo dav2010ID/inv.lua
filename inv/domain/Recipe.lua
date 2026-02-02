@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 local Item = require 'inv.domain.Item'
 
 -- Describes a crafting recipe.
@@ -25,3 +25,4 @@ function Recipe:init(spec)
 end
 
 return Recipe
+

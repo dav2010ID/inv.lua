@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 local CraftTask = require 'inv.domain.CraftTask'
 local BlockedTask = require 'inv.domain.BlockedTask'
 local CraftDependencyGraph = require 'inv.craft.CraftDependencyGraph'
@@ -82,3 +82,4 @@ function TaskFactory:attachDependencies(task, recipe, depth, visiting, craftCoun
 end
 
 return TaskFactory
+

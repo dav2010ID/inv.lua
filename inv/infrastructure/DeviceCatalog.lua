@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 
 local Net = require 'inv.infrastructure.util.Net'
 local Storage = require 'inv.infrastructure.device.Storage'
@@ -163,3 +163,4 @@ function DeviceCatalog:removeDevice(name)
 end
 
 return DeviceCatalog
+

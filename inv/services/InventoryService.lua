@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 local InventoryIndex = require 'inv.services.InventoryIndex'
 local InventoryIO = require 'inv.infrastructure.InventoryIO'
 
@@ -84,3 +84,4 @@ function InventoryService:getUpdatedItems()
 end
 
 return InventoryService
+

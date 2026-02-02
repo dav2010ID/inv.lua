@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 local CraftDependencyGraph = require 'inv.craft.CraftDependencyGraph'
 
 -- Builds a dependency tree (DAG) of crafting tasks before execution.
@@ -26,3 +26,4 @@ function CraftPlanner:plan(criteria)
 end
 
 return CraftPlanner
+

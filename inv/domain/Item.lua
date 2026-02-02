@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 
 -- Represents various types of items, including optional details such as name,
 -- display name, and Ore Dictionary tags.
@@ -123,3 +123,4 @@ function Item:serialize()
 end
 
 return Item
+

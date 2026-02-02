@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 
 -- Represents an asynchronous operation performed by the network.
 local Task = Object:subclass()
@@ -60,3 +60,4 @@ function Task:destroy()
 end
 
 return Task
+

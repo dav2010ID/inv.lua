@@ -1,0 +1,362 @@
+FILE: inv\craft\CraftDependencyGraph.lua
+REQUIRES: (none)
+FUNCTIONS:
+  CraftDependencyGraph.findOutputCount
+  CraftDependencyGraph.attachDependencies
+
+FILE: inv\craft\CraftExecutor.lua
+REQUIRES:
+  require 'inv.core.Object'
+  require 'inv.craft.CraftPlanner'
+  require 'inv.craft.TaskFactory'
+FUNCTIONS:
+  CraftExecutor:init
+  CraftExecutor:pushOrCraftItemsTo
+
+FILE: inv\craft\CraftPlanner.lua
+REQUIRES:
+  require 'inv.core.Object'
+  require 'inv.craft.CraftDependencyGraph'
+FUNCTIONS:
+  CraftPlanner:init
+  CraftPlanner:plan
+
+FILE: inv\craft\TaskFactory.lua
+REQUIRES:
+  require 'inv.core.Object'
+  require 'inv.domain.CraftTask'
+  require 'inv.domain.BlockedTask'
+  require 'inv.craft.CraftDependencyGraph'
+FUNCTIONS:
+  TaskFactory:init
+  TaskFactory:buildBatches
+  TaskFactory:createTask
+  TaskFactory:resolveSummary
+  TaskFactory:addBlockedTask
+  TaskFactory:queueRecipe
+  TaskFactory:queuePlan
+  TaskFactory:attachDependencies
+
+FILE: inv\domain\BlockedTask.lua
+REQUIRES:
+  require 'inv.domain.Task'
+FUNCTIONS:
+  BlockedTask:init
+  BlockedTask:print
+  BlockedTask:run
+
+FILE: inv\domain\CraftTask.lua
+REQUIRES:
+  require 'inv.domain.Task'
+FUNCTIONS:
+  CraftTask:init
+  CraftTask:scaledInputs
+  CraftTask:assignMachine
+  CraftTask:run
+
+FILE: inv\domain\Item.lua
+REQUIRES:
+  require 'inv.core.Object'
+FUNCTIONS:
+  Item:init
+  Item:matches
+  Item:matchesCount
+  Item:copy
+  Item.stack
+  Item:setDetails
+  Item:getName
+  Item:serialize
+
+FILE: inv\domain\Recipe.lua
+REQUIRES:
+  require 'inv.core.Object'
+  require 'inv.domain.Item'
+FUNCTIONS:
+  Recipe:init
+
+FILE: inv\domain\SupplyTask.lua
+REQUIRES:
+  require 'inv.domain.Task'
+  require 'inv.domain.CraftTask'
+  require 'inv.domain.BlockedTask'
+FUNCTIONS:
+  SupplyTask:init
+  SupplyTask:run
+
+FILE: inv\domain\Task.lua
+REQUIRES:
+  require 'inv.core.Object'
+FUNCTIONS:
+  Task:init
+  Task:run
+  Task:setStatus
+  Task:destroy
+
+FILE: inv\infrastructure\Config.lua
+REQUIRES: (none)
+FUNCTIONS:
+  Config.convertPath
+  Config.loadJSON
+  Config.loadDirectory
+
+FILE: inv\infrastructure\device\Device.lua
+REQUIRES:
+  require 'inv.core.Object'
+FUNCTIONS:
+  Device:init
+  Device:getItemDetail
+  Device:list
+  Device:push
+  Device:pull
+  Device:destroy
+
+FILE: inv\infrastructure\device\Machine.lua
+REQUIRES:
+  require 'inv.infrastructure.device.Device'
+  require 'inv.infrastructure.util.Net'
+  require 'inv.infrastructure.util.Table'
+FUNCTIONS:
+  Machine:init
+  Machine:destroy
+  Machine:mapSlot
+  Machine:getCraftOutputSlot
+  Machine:getItemDetail
+  Machine:performCraft
+  Machine:rollbackInputs
+  Machine:craft
+  Machine:isBusy
+  Machine:processOutputSlot
+  Machine:pullOutput
+
+FILE: inv\infrastructure\device\Storage.lua
+REQUIRES:
+  require 'inv.infrastructure.device.Device'
+  require 'inv.domain.Item'
+FUNCTIONS:
+  Storage:init
+  Storage:destroy
+  Storage:itemAllowed
+
+FILE: inv\infrastructure\DeviceCatalog.lua
+REQUIRES:
+  require 'inv.core.Object'
+  require 'inv.infrastructure.util.Net'
+  require 'inv.infrastructure.device.Storage'
+  require 'inv.infrastructure.device.Machine'
+FUNCTIONS:
+  DeviceCatalog:init
+  DeviceCatalog:scanDevices
+  DeviceCatalog:discoverDevices
+  DeviceCatalog:copyConfig
+  DeviceCatalog:getConfig
+  DeviceCatalog:createDevice
+  DeviceCatalog:instantiateDevice
+  DeviceCatalog:addDevice
+  DeviceCatalog:removeDevice
+
+FILE: inv\infrastructure\InventoryIO.lua
+REQUIRES:
+  require 'inv.core.Object'
+FUNCTIONS:
+  InventoryIO:init
+  InventoryIO:getStorageRegistry
+  InventoryIO:scanInventories
+  InventoryIO:scanInventory
+  InventoryIO:push
+  InventoryIO:pull
+
+FILE: inv\infrastructure\Log.lua
+REQUIRES: (none)
+FUNCTIONS:
+  Log.setLevel
+  Log.throttle
+  Log.cli
+  Log.debug
+  Log.info
+  Log.warn
+  Log.error
+
+FILE: inv\infrastructure\MachineRegistry.lua
+REQUIRES:
+  require 'inv.core.Object'
+FUNCTIONS:
+  MachineRegistry:init
+  MachineRegistry:addMachine
+  MachineRegistry:removeMachine
+  MachineRegistry:getMachines
+  MachineRegistry:countMachines
+  MachineRegistry:countAvailableMachines
+  MachineRegistry:findMachine
+
+FILE: inv\infrastructure\StorageRegistry.lua
+REQUIRES:
+  require 'inv.core.Object'
+  require 'inv.infrastructure.util.Table'
+FUNCTIONS:
+  StorageRegistry:init
+  StorageRegistry:addStorage
+  StorageRegistry:removeStorage
+  StorageRegistry.deviceSort
+  StorageRegistry:ensureSorted
+
+FILE: inv\infrastructure\util\Net.lua
+REQUIRES: (none)
+FUNCTIONS:
+  Net.getModemSide
+  Net.getModem
+  Net.getNameLocal
+
+FILE: inv\infrastructure\util\Table.lua
+REQUIRES: (none)
+FUNCTIONS:
+  Table.copyShallow
+  Table.copyDeep
+  Table.removeItem
+  Table.integerKeys
+
+FILE: inv\runtime\CliController.lua
+REQUIRES:
+  require 'inv.core.Object'
+  require 'inv.domain.Item'
+FUNCTIONS:
+  CliController:init
+  CliController:setEnabled
+  CliController:clearBuffer
+  CliController:drawPrompt
+  CliController:onChar
+  CliController:onKey
+  CliController:handleCommand
+
+FILE: inv\runtime\EventDispatcher.lua
+REQUIRES:
+  require 'inv.core.Object'
+FUNCTIONS:
+  EventDispatcher:init
+  EventDispatcher:handlePeripheralAttach
+  EventDispatcher:handlePeripheralDetach
+  EventDispatcher:handleEvent
+
+FILE: inv\runtime\RuntimeLoop.lua
+REQUIRES:
+  require 'inv.core.Object'
+FUNCTIONS:
+  RuntimeLoop:init
+  RuntimeLoop:stop
+  RuntimeLoop:updateTasks
+  RuntimeLoop:broadcastUpdatedItems
+  RuntimeLoop:run
+
+FILE: inv\runtime\Server.lua
+REQUIRES:
+  require 'inv.core.Object'
+  require 'inv.infrastructure.Config'
+  require 'inv.services.MachineScheduler'
+  require 'inv.craft.CraftExecutor'
+  require 'inv.infrastructure.DeviceCatalog'
+  require 'inv.services.InventoryService'
+  require 'inv.services.RecipeStore'
+  require 'inv.infrastructure.MachineRegistry'
+  require 'inv.infrastructure.StorageRegistry'
+  require 'inv.services.TaskScheduler'
+  require 'inv.runtime.CliController'
+  require 'inv.runtime.EventDispatcher'
+  require 'inv.runtime.RuntimeLoop'
+  require 'inv.infrastructure.Log'
+FUNCTIONS:
+  Server:init
+  Server:loadConfig
+  Server:setup
+  Server:run
+
+FILE: inv\services\InventoryIndex.lua
+REQUIRES:
+  require 'inv.core.Object'
+  require 'inv.domain.Item'
+FUNCTIONS:
+  InventoryIndex:init
+  InventoryIndex:addItem
+  InventoryIndex:updateDB
+  InventoryIndex:updateTags
+  InventoryIndex:tryMatchAll
+  InventoryIndex:resolveCriteria
+  InventoryIndex:markUpdated
+  InventoryIndex:getUpdatedItems
+
+FILE: inv\services\InventoryService.lua
+REQUIRES:
+  require 'inv.core.Object'
+  require 'inv.services.InventoryIndex'
+  require 'inv.infrastructure.InventoryIO'
+FUNCTIONS:
+  InventoryService:init
+  InventoryService:getItems
+  InventoryService:getItem
+  InventoryService:getItemCount
+  InventoryService:scanInventories
+  InventoryService:scanInventory
+  InventoryService:push
+  InventoryService:pull
+  InventoryService:resolveCriteria
+  InventoryService:tryMatchAll
+  InventoryService:addItem
+  InventoryService:updateTags
+  InventoryService:updateDB
+  InventoryService:markUpdated
+  InventoryService:getUpdatedItems
+
+FILE: inv\services\MachineScheduler.lua
+REQUIRES:
+  require 'inv.core.Object'
+FUNCTIONS:
+  MachineScheduler:init
+  MachineScheduler:enqueueTask
+  MachineScheduler:requestMachine
+  MachineScheduler:notifyMachineFree
+  MachineScheduler:logSaturation
+  MachineScheduler:logMachineSummary
+  MachineScheduler:setCriticalMachine
+
+FILE: inv\services\RecipeStore.lua
+REQUIRES:
+  require 'inv.core.Object'
+  require 'inv.domain.Recipe'
+FUNCTIONS:
+  RecipeStore:init
+  RecipeStore:loadRecipes
+  RecipeStore:findRecipe
+
+FILE: inv\services\TaskScheduler.lua
+REQUIRES:
+  require 'inv.core.Object'
+FUNCTIONS:
+  TaskScheduler:init
+  TaskScheduler:nextID
+  TaskScheduler:update
+  TaskScheduler:addTask
+  TaskScheduler:createSummary
+  TaskScheduler:registerTask
+  TaskScheduler:recordWaitProgress
+  TaskScheduler:setStatus
+  TaskScheduler:recordTaskStart
+  TaskScheduler:recordWait
+  TaskScheduler:recordInputBlocker
+  TaskScheduler:recordTaskComplete
+  TaskScheduler:logSummary
+  TaskScheduler:getMachineStats
+
+FILE: object\Object.lua
+REQUIRES:
+  require "cc.expect"
+FUNCTIONS:
+  Object:init
+  Object:subclass
+  Object:instanceof
+
+FILE: run_server.lua
+REQUIRES:
+  require 'inv.runtime.Server'
+  require 'inv.infrastructure.Log'
+FUNCTIONS:
+  run
+
+

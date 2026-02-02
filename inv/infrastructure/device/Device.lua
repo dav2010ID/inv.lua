@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 
 -- Represents a network-attached device, and
 -- acts as a proxy for CC peripheral methods.
@@ -52,3 +52,4 @@ end
 function Device:destroy() end
 
 return Device
+

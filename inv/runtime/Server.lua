@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 local Config = require 'inv.infrastructure.Config'
 local MachineScheduler = require 'inv.services.MachineScheduler'
 local CraftExecutor = require 'inv.craft.CraftExecutor'
@@ -52,3 +52,4 @@ function Server:run()
 end
 
 return Server
+

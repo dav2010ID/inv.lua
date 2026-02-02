@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 
 -- Stores known crafting machines and their availability.
 local MachineRegistry = Object:subclass()
@@ -77,3 +77,4 @@ function MachineRegistry:findMachine(machineType)
 end
 
 return MachineRegistry
+

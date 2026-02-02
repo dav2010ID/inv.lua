@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 local Item = require 'inv.domain.Item'
 
 local CliController = Object:subclass()
@@ -193,3 +193,4 @@ function CliController:handleCommand(line)
 end
 
 return CliController
+

@@ -38,6 +38,10 @@ status
 quit
 ```
 
+## Architecture
+
+See `ARCHITECTURE.md`.
+
 ## Troubleshooting
 
 Make sure to use `cd` to enter the repository folder before running the server so that the configuration files can be read.

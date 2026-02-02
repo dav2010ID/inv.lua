@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 local Recipe = require 'inv.domain.Recipe'
 
 -- Stores recipes and helps resolve outputs to crafting recipes.
@@ -52,3 +52,4 @@ function RecipeStore:findRecipe(item)
 end
 
 return RecipeStore
+

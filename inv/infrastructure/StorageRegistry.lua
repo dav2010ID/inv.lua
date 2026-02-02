@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 local Table = require 'inv.infrastructure.util.Table'
 
 -- Manages storage devices and their ordering.
@@ -48,3 +48,4 @@ function StorageRegistry:ensureSorted()
 end
 
 return StorageRegistry
+

@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 
 -- Asynchronously manages crafting tasks
 local TaskScheduler = Object:subclass()
@@ -395,3 +395,4 @@ function TaskScheduler:getMachineStats()
 end
 
 return TaskScheduler
+

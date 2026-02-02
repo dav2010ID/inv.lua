@@ -1,4 +1,4 @@
-local Object = require 'object.Object'
+local Object = require 'inv.core.Object'
 
 -- Schedules tasks onto machines and tracks saturation/queues.
 local MachineScheduler = Object:subclass()
@@ -153,3 +153,4 @@ function MachineScheduler:setCriticalMachine()
 end
 
 return MachineScheduler
+

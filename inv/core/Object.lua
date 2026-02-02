@@ -1,12 +1,26 @@
 local expect = require "cc.expect"
 
+local function instanceToString(self)
+    local class = rawget(self, "class")
+    local className = class and rawget(class, "__name") or "Object"
+    local name = rawget(self, "name") or rawget(self, "id")
+    if name ~= nil then
+        return string.format("%s(%s)", className, tostring(name))
+    end
+    return className
+end
+
+local function instanceEquals(a, b)
+    return rawequal(a, b)
+end
+
 -- Creates an instance of a class, and then calls the class's init() method
 -- with the provided arguments.
 local function new(class, ...)
     local instance = setmetatable({}, class.instanceMeta)
-    ret, msg = pcall(instance.init, instance, ...)
-    if not ret then
-        error(msg, 2) -- propagate error up to caller
+    local ok, err = pcall(instance.init, instance, ...)
+    if not ok then
+        error(err, 2) -- propagate error up to caller
     end
     return instance
 end
@@ -15,7 +29,15 @@ end
 local function makeClass(class, superClass)
     class.class = class
     class.superClass = superClass
-    class.instanceMeta = {__index=class}
+    if not class.__name then
+        class.__name = (superClass and superClass.__name) or "Object"
+    end
+    class.instanceMeta = {
+        __index = class,
+        __tostring = instanceToString,
+        __eq = instanceEquals,
+        __name = class.__name
+    }
     return setmetatable(class, {__index=superClass, __call=new})
 end
 
