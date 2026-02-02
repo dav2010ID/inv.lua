@@ -1,5 +1,5 @@
-local Server = require 'inv.Server'
-local Logger = require 'inv.Log'
+local Server = require 'inv.runtime.Server'
+local Logger = require 'inv.infrastructure.Log'
 
 local args = {...}
 
@@ -31,13 +31,13 @@ function run()
     if #args > 0 then
         local command = table.concat(args, " ")
         Logger.info("executing CLI command:", command)
-        s.cliEnabled = false
-        s.cliBuffer = ""
-        s:handleCommand(command)
-        s.cliEnabled = true
-        s:drawPrompt()
+        s.cli:setEnabled(false)
+        s.cli:clearBuffer()
+        s.cli:handleCommand(command)
+        s.cli:setEnabled(true)
+        s.cli:drawPrompt()
     end
-    s:mainLoop()
+    s:run()
 end
 
 run()
