@@ -5,36 +5,6 @@ FUNCTIONS:
   Config.loadJSON
   Config.loadDirectory
 
-FILE: core\InventoryIndex.lua
-REQUIRES:
-  require 'inv.InventoryIndex'
-FUNCTIONS: (none)
-
-FILE: core\Item.lua
-REQUIRES:
-  require 'inv.Item'
-FUNCTIONS: (none)
-
-FILE: core\Recipe.lua
-REQUIRES:
-  require 'inv.Recipe'
-FUNCTIONS: (none)
-
-FILE: craft\CraftExecutor.lua
-REQUIRES:
-  require 'inv.CraftExecutor'
-FUNCTIONS: (none)
-
-FILE: craft\CraftPlanner.lua
-REQUIRES:
-  require 'inv.CraftPlanner'
-FUNCTIONS: (none)
-
-FILE: craft\CraftRegistry.lua
-REQUIRES:
-  require 'inv.CraftRegistry'
-FUNCTIONS: (none)
-
 FILE: craft\DependencyResolver.lua
 REQUIRES:
   require 'inv.task.WaitTask'
@@ -49,49 +19,22 @@ FUNCTIONS:
   TaskAssigner.buildBatches
   TaskAssigner.createTask
 
-FILE: CraftExecutor.lua
-REQUIRES:
-  require 'object.Object'
-  require 'inv.CraftPlanner'
-FUNCTIONS:
-  CraftExecutor:init
-  CraftExecutor:pushOrCraftItemsTo
-
 FILE: CraftPlanner.lua
 REQUIRES:
   require 'object.Object'
   require 'inv.craft.DependencyResolver'
-  require 'inv.craft.TaskAssigner'
 FUNCTIONS:
   CraftPlanner:init
   CraftPlanner:plan
-  CraftPlanner:queueTasks
   CraftPlanner:attachDependencies
-  CraftPlanner:logMachineSummary
-  CraftPlanner:setCriticalMachine
-
-FILE: CraftRegistry.lua
-REQUIRES:
-  require 'object.Object'
-  require 'inv.Recipe'
-FUNCTIONS:
-  CraftRegistry:init
-  CraftRegistry:addMachine
-  CraftRegistry:removeMachine
-  CraftRegistry:enqueueTask
-  CraftRegistry:requestMachine
-  CraftRegistry:notifyMachineFree
-  CraftRegistry:logSaturation
-  CraftRegistry:countMachines
-  CraftRegistry:countAvailableMachines
-  CraftRegistry:loadRecipes
-  CraftRegistry:findRecipe
-  CraftRegistry:findMachine
 
 FILE: CraftRunner.lua
 REQUIRES:
-  require 'inv.CraftExecutor'
-FUNCTIONS: (none)
+  require 'object.Object'
+  require 'inv.CraftPlanner'
+FUNCTIONS:
+  CraftRunner:init
+  CraftRunner:pushOrCraftItemsTo
 
 FILE: device\Device.lua
 REQUIRES:
@@ -103,11 +46,6 @@ FUNCTIONS:
   Device:pushItems
   Device:pullItems
   Device:destroy
-
-FILE: device\InventoryIO.lua
-REQUIRES:
-  require 'inv.InventoryIO'
-FUNCTIONS: (none)
 
 FILE: device\Machine.lua
 REQUIRES:
@@ -123,8 +61,8 @@ FUNCTIONS:
   Machine:performCraft
   Machine:rollbackInputs
   Machine:craft
-  Machine:busy
-  Machine:handleOutputSlot
+  Machine:isBusy
+  Machine:processOutputSlot
   Machine:pullOutput
 
 FILE: device\Storage.lua
@@ -136,27 +74,22 @@ FUNCTIONS:
   Storage:destroy
   Storage:itemAllowed
 
-FILE: DeviceManager.lua
+FILE: DeviceRegistry.lua
 REQUIRES:
   require 'object.Object'
   require 'inv.util.Net'
   require 'inv.device.Storage'
   require 'inv.device.Machine'
 FUNCTIONS:
-  DeviceManager:init
-  DeviceManager:scanDevices
-  DeviceManager:discoverDevices
-  DeviceManager:copyConfig
-  DeviceManager:getConfig
-  DeviceManager:createDevice
-  DeviceManager:instantiateDevice
-  DeviceManager:addDevice
-  DeviceManager:removeDevice
-
-FILE: DeviceRegistry.lua
-REQUIRES:
-  require 'inv.DeviceManager'
-FUNCTIONS: (none)
+  DeviceRegistry:init
+  DeviceRegistry:scanDevices
+  DeviceRegistry:discoverDevices
+  DeviceRegistry:copyConfig
+  DeviceRegistry:getConfig
+  DeviceRegistry:createDevice
+  DeviceRegistry:instantiateDevice
+  DeviceRegistry:addDevice
+  DeviceRegistry:removeDevice
 
 FILE: InventoryIndex.lua
 REQUIRES:
@@ -172,21 +105,38 @@ FUNCTIONS:
   InventoryIndex:markUpdated
   InventoryIndex:getUpdatedItems
 
-FILE: InventoryIO.lua
+FILE: InventoryService.lua
 REQUIRES:
   require 'object.Object'
+  require 'inv.InventoryIndex'
+  require 'inv.InventoryTransfer'
 FUNCTIONS:
-  InventoryIO:init
-  InventoryIO:getStorageManager
-  InventoryIO:scanInventories
-  InventoryIO:scanInventory
-  InventoryIO:pushItemsTo
-  InventoryIO:pullItemsFrom
+  InventoryService:init
+  InventoryService:getItems
+  InventoryService:getItem
+  InventoryService:getItemCount
+  InventoryService:scanInventories
+  InventoryService:scanInventory
+  InventoryService:pushItemsTo
+  InventoryService:pullItemsFrom
+  InventoryService:resolveCriteria
+  InventoryService:tryMatchAll
+  InventoryService:addItem
+  InventoryService:updateTags
+  InventoryService:updateDB
+  InventoryService:markUpdated
+  InventoryService:getUpdatedItems
 
 FILE: InventoryTransfer.lua
 REQUIRES:
-  require 'inv.InventoryIO'
-FUNCTIONS: (none)
+  require 'object.Object'
+FUNCTIONS:
+  InventoryTransfer:init
+  InventoryTransfer:getStoragePool
+  InventoryTransfer:scanInventories
+  InventoryTransfer:scanInventory
+  InventoryTransfer:pushItemsTo
+  InventoryTransfer:pullItemsFrom
 
 FILE: Item.lua
 REQUIRES:
@@ -212,10 +162,29 @@ FUNCTIONS:
   Log.warn
   Log.error
 
+FILE: MachinePool.lua
+REQUIRES:
+  require 'object.Object'
+FUNCTIONS:
+  MachinePool:init
+  MachinePool:addMachine
+  MachinePool:removeMachine
+  MachinePool:getMachines
+  MachinePool:countMachines
+  MachinePool:countAvailableMachines
+  MachinePool:findMachine
+
 FILE: MachineScheduler.lua
 REQUIRES:
-  require 'inv.CraftRegistry'
-FUNCTIONS: (none)
+  require 'object.Object'
+FUNCTIONS:
+  MachineScheduler:init
+  MachineScheduler:enqueueTask
+  MachineScheduler:requestMachine
+  MachineScheduler:notifyMachineFree
+  MachineScheduler:logSaturation
+  MachineScheduler:logMachineSummary
+  MachineScheduler:setCriticalMachine
 
 FILE: Recipe.lua
 REQUIRES:
@@ -224,10 +193,14 @@ REQUIRES:
 FUNCTIONS:
   Recipe:init
 
-FILE: runtime\Server.lua
+FILE: RecipeStore.lua
 REQUIRES:
-  require 'inv.Server'
-FUNCTIONS: (none)
+  require 'object.Object'
+  require 'inv.Recipe'
+FUNCTIONS:
+  RecipeStore:init
+  RecipeStore:loadRecipes
+  RecipeStore:findRecipe
 
 FILE: Server.lua
 REQUIRES:
@@ -236,8 +209,9 @@ REQUIRES:
   require 'inv.MachineScheduler'
   require 'inv.CraftRunner'
   require 'inv.DeviceRegistry'
-  require 'inv.InventoryIndex'
-  require 'inv.InventoryIO'
+  require 'inv.InventoryService'
+  require 'inv.RecipeStore'
+  require 'inv.MachinePool'
   require 'inv.StoragePool'
   require 'inv.Item'
   require 'inv.TaskScheduler'
@@ -258,21 +232,16 @@ FUNCTIONS:
   Server:broadcastUpdatedItems
   Server:mainLoop
 
-FILE: StorageManager.lua
+FILE: StoragePool.lua
 REQUIRES:
   require 'object.Object'
   require 'inv.util.Table'
 FUNCTIONS:
-  StorageManager:init
-  StorageManager:addStorage
-  StorageManager:removeStorage
-  StorageManager.deviceSort
-  StorageManager:ensureSorted
-
-FILE: StoragePool.lua
-REQUIRES:
-  require 'inv.StorageManager'
-FUNCTIONS: (none)
+  StoragePool:init
+  StoragePool:addStorage
+  StoragePool:removeStorage
+  StoragePool.deviceSort
+  StoragePool:ensureSorted
 
 FILE: task\CraftTask.lua
 REQUIRES:
@@ -301,11 +270,6 @@ FUNCTIONS:
   Task:run
   Task:destroy
 
-FILE: task\TaskManager.lua
-REQUIRES:
-  require 'inv.TaskManager'
-FUNCTIONS: (none)
-
 FILE: task\WaitTask.lua
 REQUIRES:
   require 'inv.task.Task'
@@ -314,27 +278,24 @@ FUNCTIONS:
   WaitTask:print
   WaitTask:run
 
-FILE: TaskManager.lua
-REQUIRES:
-  require 'object.Object'
-FUNCTIONS:
-  TaskManager:init
-  TaskManager:nextID
-  TaskManager:update
-  TaskManager:addTask
-  TaskManager:createSummary
-  TaskManager:registerTask
-  TaskManager:recordTaskStart
-  TaskManager:recordWait
-  TaskManager:recordInputBlocker
-  TaskManager:recordTaskComplete
-  TaskManager:logSummary
-  TaskManager:getMachineStats
-
 FILE: TaskScheduler.lua
 REQUIRES:
-  require 'inv.TaskManager'
-FUNCTIONS: (none)
+  require 'object.Object'
+  require 'inv.craft.TaskAssigner'
+FUNCTIONS:
+  TaskScheduler:init
+  TaskScheduler:nextID
+  TaskScheduler:update
+  TaskScheduler:addTask
+  TaskScheduler:queueTasks
+  TaskScheduler:createSummary
+  TaskScheduler:registerTask
+  TaskScheduler:recordTaskStart
+  TaskScheduler:recordWait
+  TaskScheduler:recordInputBlocker
+  TaskScheduler:recordTaskComplete
+  TaskScheduler:logSummary
+  TaskScheduler:getMachineStats
 
 FILE: util\Net.lua
 REQUIRES: (none)

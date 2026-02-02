@@ -43,7 +43,7 @@ function DependencyResolver.attachDependencies(planner, task, recipe, depth, vis
     end
 
     local count = craftCount or 1
-    local missing = planner.server.inventoryIndex:tryMatchAll(scaledInputs(recipe, count))
+    local missing = planner.server.inventoryService:tryMatchAll(scaledInputs(recipe, count))
     if #missing == 0 then
         return
     end
@@ -52,20 +52,20 @@ function DependencyResolver.attachDependencies(planner, task, recipe, depth, vis
         local key = criteriaKey(item)
         if visiting[key] then
             planner.logger.warn("[planner] cycle detected at", key)
-            planner.server.taskManager:addTask(WaitTask(planner.server, task, item))
+            planner.server.taskScheduler:addTask(WaitTask(planner.server, task, item))
         else
             visiting[key] = true
-            local depRecipe = planner.server.craftRegistry:findRecipe(item)
+            local depRecipe = planner.server.recipeStore:findRecipe(item)
             if depRecipe then
                 local nOut = DependencyResolver.findOutputCount(depRecipe, item)
                 if nOut > 0 then
                     local crafts = math.ceil(item.count / nOut)
-                    planner:queueTasks(depRecipe, crafts, summary, task, nil, nil, depth + 1, visiting, false)
+                    planner.server.taskScheduler:queueTasks(planner, depRecipe, crafts, summary, task, nil, nil, depth + 1, visiting, false)
                 else
-                    planner.server.taskManager:addTask(WaitTask(planner.server, task, item))
+                    planner.server.taskScheduler:addTask(WaitTask(planner.server, task, item))
                 end
             else
-                planner.server.taskManager:addTask(WaitTask(planner.server, task, item))
+                planner.server.taskScheduler:addTask(WaitTask(planner.server, task, item))
             end
             visiting[key] = nil
         end

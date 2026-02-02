@@ -25,31 +25,6 @@ backends.peripheral = {
     end
 }
 
-backends.turtle = {
-    name = "turtle",
-    defaultSlots = defaultWorkbenchSlots,
-    getItemDetail = function(machine, slot)
-        return turtle.getItemDetail(slot, true)
-    end,
-    craft = function(machine, count)
-        local outSlot = machine:getCraftOutputSlot()
-        if outSlot then
-            turtle.select(outSlot)
-        end
-        local times = count or 1
-        for i = 1, times do
-            local ok = turtle.craft()
-            if not ok then
-                machine.server.logger.warn("[machine] craft failed", machine.name)
-                break
-            end
-        end
-    end,
-    locationResolver = function(machine)
-        return Net.getNameLocal()
-    end
-}
-
 local function resolveBackend(name)
     if name and backends[name] then
         return backends[name]
@@ -89,11 +64,11 @@ function Machine:init(server, name, deviceType, config)
         self.location = self.backend.locationResolver(self)
     end
 
-    self.server.craftRegistry:addMachine(self)
+    self.server.machinePool:addMachine(self)
 end
 
 function Machine:destroy()
-    self.server.craftRegistry:removeMachine(self)
+    self.server.machinePool:removeMachine(self)
 end
 
 -- Maps a virtual slot number from a Recipe
@@ -129,7 +104,7 @@ function Machine:rollbackInputs(pushed)
             local detail = self:getItemDetail(realSlot)
             if detail then
                 detail.count = math.min(detail.count or n, n)
-                local moved = self.server.inventoryIO:pullItemsFrom(detail, self, realSlot)
+                local moved = self.server.inventoryService:pullItemsFrom(detail, self, realSlot)
                 if moved < detail.count then
                     self.server.logger.warn("[machine] rollback incomplete", self.name, detail.name or "unknown")
                 end
@@ -141,7 +116,7 @@ end
 -- Starts a crafting operation.
 -- dest and destSlot are optional.
 function Machine:craft(recipe, dest, destSlot, craftCount)
-    if self:busy() then error("machine " .. self.name .. " busy") end
+    if self:isBusy() then error("machine " .. self.name .. " busy") end
     local count = craftCount or 1
     self.recipe = recipe
     self.dest = dest
@@ -155,7 +130,7 @@ function Machine:craft(recipe, dest, destSlot, craftCount)
         local realSlot = self:mapSlot(virtSlot)
         local needed = crit:copy()
         needed.count = crit.count * count
-        local n = self.server.inventoryIO:pushItemsTo(needed, self, realSlot)
+        local n = self.server.inventoryService:pushItemsTo(needed, self, realSlot)
         pushed[virtSlot] = n
         if n < needed.count then
             self.server.logger.warn("[machine] insufficient input for", self.name)
@@ -172,20 +147,20 @@ function Machine:craft(recipe, dest, destSlot, craftCount)
 end
 
 -- Returns true if this machine is currently crafting.
-function Machine:busy()
+function Machine:isBusy()
     return self.recipe ~= nil
 end
 
 -- Empties an output slot of the machine and counts any crafted items.
-function Machine:handleOutputSlot(item, virtSlot, realSlot)
+function Machine:processOutputSlot(item, virtSlot, realSlot)
     if item then
-        local n = self.server.inventoryIO:pullItemsFrom(item, self, realSlot)
+        local n = self.server.inventoryService:pullItemsFrom(item, self, realSlot)
         if self.recipe.output[virtSlot]:matches(item) then
             self.remaining[virtSlot] = self.remaining[virtSlot] - n
             if self.dest then
                 local outItem = self.recipe.output[virtSlot]:copy()
                 outItem.count = n
-                self.server.inventoryIO:pushItemsTo(outItem, self.dest, self.destSlot)
+                self.server.inventoryService:pushItemsTo(outItem, self.dest, self.destSlot)
             end
         else
             self.server.logger.warn("[machine] unexpected output", item.name, "in", self.name)
@@ -199,7 +174,7 @@ function Machine:pullOutput()
     for virtSlot, rem in pairs(self.remaining) do
         local realSlot = self:mapSlot(virtSlot)
         local item = self:getItemDetail(realSlot)
-        self:handleOutputSlot(item, virtSlot, realSlot)
+        self:processOutputSlot(item, virtSlot, realSlot)
     end
     for virtSlot, rem in pairs(self.remaining) do
         if rem > 0 then

@@ -3,7 +3,7 @@ local CraftTask = require 'inv.task.CraftTask'
 local TaskAssigner = {}
 
 function TaskAssigner.buildBatches(planner, recipe, crafts)
-    local machineCount = planner.server.craftRegistry:countAvailableMachines(recipe.machine)
+    local machineCount = planner.server.machinePool:countAvailableMachines(recipe.machine)
     local batches = crafts
     if machineCount > 0 then
         batches = math.min(crafts, machineCount)

@@ -16,11 +16,11 @@ function Storage:init(server, name, deviceType, config)
         end
     end
 
-    self.server.storageManager:addStorage(self)
+    self.server.storagePool:addStorage(self)
 end
 
 function Storage:destroy()
-    self.server.storageManager:removeStorage(self)
+    self.server.storagePool:removeStorage(self)
 end
 
 -- Returns true if the item can be stored in this Storage according to

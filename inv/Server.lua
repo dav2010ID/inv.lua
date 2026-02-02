@@ -3,8 +3,9 @@ local Config = require 'inv.Config'
 local MachineScheduler = require 'inv.MachineScheduler'
 local CraftRunner = require 'inv.CraftRunner'
 local DeviceRegistry = require 'inv.DeviceRegistry'
-local InventoryIndex = require 'inv.InventoryIndex'
-local InventoryIO = require 'inv.InventoryIO'
+local InventoryService = require 'inv.InventoryService'
+local RecipeStore = require 'inv.RecipeStore'
+local MachinePool = require 'inv.MachinePool'
 local StoragePool = require 'inv.StoragePool'
 local Item = require 'inv.Item'
 local TaskScheduler = require 'inv.TaskScheduler'
@@ -26,36 +27,37 @@ function Server:loadConfig()
 end
 
 function Server:setup(deviceConfig, recipeConfig)
-    self.inventoryIndex = InventoryIndex(self)
-    self.inventoryIO = InventoryIO(self, self.inventoryIndex)
-    self.storageManager = StoragePool(self)
-    self.deviceManager = DeviceRegistry(self, deviceConfig)
-    self.craftRegistry = MachineScheduler(self)
-    self.craftExecutor = CraftRunner(self, self.craftRegistry)
-    self.taskManager = TaskScheduler(self)
+    self.inventoryService = InventoryService(self)
+    self.storagePool = StoragePool(self)
+    self.deviceRegistry = DeviceRegistry(self, deviceConfig)
+    self.recipeStore = RecipeStore(self)
+    self.machinePool = MachinePool(self)
+    self.machineScheduler = MachineScheduler(self, self.machinePool)
+    self.craftRunner = CraftRunner(self)
+    self.taskScheduler = TaskScheduler(self)
     if self.logger and self.logger.runId then
-        self.taskManager.currentRunId = self.logger.runId
+        self.taskScheduler.currentRunId = self.logger.runId
     end
     self.taskTimer = nil
     self.running = true
     self.lastActiveCount = nil
     self.lastActiveLogTime = 0
 
-    self.craftRegistry:loadRecipes(recipeConfig)
-    self.deviceManager:scanDevices()
+    self.recipeStore:loadRecipes(recipeConfig)
+    self.deviceRegistry:scanDevices()
 end
 
 function Server:handlePeripheralAttach(name)
     if peripheral.isPresent(name) then
         self.logger.debug("[event] peripheral attach", name)
-        self.deviceManager:addDevice(name)
+        self.deviceRegistry:addDevice(name)
     end
 end
 
 function Server:handlePeripheralDetach(name)
     if not peripheral.isPresent(name) then
         self.logger.debug("[event] peripheral detach", name)
-        self.deviceManager:removeDevice(name)
+        self.deviceRegistry:removeDevice(name)
     end
 end
 
@@ -135,7 +137,7 @@ function Server:handleCommand(line)
             filter = filter:lower()
         end
         local lines = {}
-        for name, item in pairs(self.inventoryIndex.items) do
+        for name, item in pairs(self.inventoryService:getItems()) do
             local label = item:getName()
             if not filter
                 or name:lower():find(filter, 1, true)
@@ -160,12 +162,8 @@ function Server:handleCommand(line)
             self.logger.cli("usage: count <item>")
             return
         end
-        local item = self.inventoryIndex.items[name]
-        if item then
-            self.logger.cli(name .. " x" .. tostring(item.count))
-        else
-            self.logger.cli(name .. " x0")
-        end
+        local count = self.inventoryService:getItemCount(name)
+        self.logger.cli(name .. " x" .. tostring(count))
         return
     end
 
@@ -176,14 +174,13 @@ function Server:handleCommand(line)
             self.logger.cli("usage: craft <item> <count>")
             return
         end
-        local existing = self.inventoryIndex.items[name]
-        local have = existing and existing.count or 0
+        local have = self.inventoryService:getItemCount(name)
         if have >= count then
             self.logger.cli("already have " .. tostring(have))
             return
         end
         local missing = count - have
-        local planned = self.craftExecutor.planner:plan(Item{name=name, count=missing}, nil, nil)
+        local planned = self.craftRunner.planner:plan(Item{name=name, count=missing}, nil, nil)
         if planned == 0 then
             self.logger.warn("no recipe for", name)
         else
@@ -193,14 +190,14 @@ function Server:handleCommand(line)
     end
 
     if cmd == "scan" then
-        self.inventoryIO:scanInventories()
+        self.inventoryService:scanInventories()
         self.logger.info("inventories scanned")
         return
     end
 
     if cmd == "devices" then
-        self.deviceManager:scanDevices()
-        self.inventoryIO:scanInventories()
+        self.deviceRegistry:scanDevices()
+        self.inventoryService:scanInventories()
         self.logger.info("devices rescanned")
         return
     end
@@ -208,7 +205,7 @@ function Server:handleCommand(line)
     if cmd == "peripherals" then
         local lines = {}
         for _, name in ipairs(peripheral.getNames()) do
-            local device = self.deviceManager.devices[name]
+            local device = self.deviceRegistry.devices[name]
             local kind = (device and device.type) or peripheral.getType(name) or "unknown"
             local purpose = "unknown"
             if device and device.config and device.config.purpose then
@@ -228,7 +225,7 @@ function Server:handleCommand(line)
     end
 
     if cmd == "status" then
-        self.logger.info("active tasks:", #self.taskManager.active)
+        self.logger.info("active tasks:", #self.taskScheduler.active)
         return
     end
 
@@ -263,16 +260,16 @@ function Server:handleEvent(evt)
 end
 
 function Server:updateTasks()
-    if self.taskManager:update() then
+    if self.taskScheduler:update() then
         self.taskTimer = os.startTimer(1)
-        local activeCount = #self.taskManager.active
+        local activeCount = #self.taskScheduler.active
         local now = os.clock()
         if self.lastActiveCount ~= activeCount or (now - self.lastActiveLogTime) > 5 then
             self.logger.info("[server] active tasks:", activeCount)
             self.lastActiveCount = activeCount
             self.lastActiveLogTime = now
         end
-        --for i,t in pairs(self.taskManager.sleeping) do
+        --for i,t in pairs(self.taskScheduler.sleeping) do
         --    print("sleeping",i)
         --end
         --print(math.random(1,100))
@@ -280,7 +277,7 @@ function Server:updateTasks()
 end
 
 function Server:broadcastUpdatedItems()
-    self.inventoryIndex:getUpdatedItems()
+    self.inventoryService:getUpdatedItems()
 end
 
 function Server:mainLoop()

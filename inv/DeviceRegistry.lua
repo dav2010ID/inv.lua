@@ -1,2 +1,165 @@
-﻿return require 'inv.DeviceManager'
+local Object = require 'object.Object'
 
+local Net = require 'inv.util.Net'
+local Storage = require 'inv.device.Storage'
+local Machine = require 'inv.device.Machine'
+
+-- Manages network-attached devices, including storage and crafting machines.
+-- Specialized behavior is delegated by Devices to the appropriate class
+-- (either InventoryTransfer or MachineScheduler).
+local DeviceRegistry = Object:subclass()
+
+function DeviceRegistry:init(server, overrides)
+    self.server = server
+    self.logger = server.logger
+    -- table<string, Device>: Devices connected to this network.
+    self.devices = {}
+
+    -- table<string, table>: Configuration applied to specific device types.
+    self.typeOverrides = {}
+    -- table<string, table>: Configuration applied to individual devices by name.
+    self.nameOverrides = {}
+
+    for i,v in ipairs(overrides) do
+        if v.type then
+            self.typeOverrides[v.type] = v
+        elseif v.name then
+            self.nameOverrides[v.name] = v
+        end
+    end
+end
+
+-- Scans and adds all devices connected to the network.
+-- Clears any existing loaded devices beforehand.
+function DeviceRegistry:scanDevices()
+    for name,device in pairs(self.devices) do
+        device:destroy()
+    end
+    self.devices = {}
+
+    for i,name in ipairs(peripheral.getNames()) do
+        self:addDevice(name)
+    end
+end
+
+-- Alias for scanDevices (new naming)
+function DeviceRegistry:discoverDevices()
+    return self:scanDevices()
+end
+
+-- Copies configuration entries to the given table.
+-- Preexisting entries of the same name are overwritten.
+function DeviceRegistry:copyConfig(entries, dest)
+    if entries then
+        for k,v in pairs(entries) do
+            dest[k] = v
+        end
+    end
+end
+
+-- Gets all configuration for the given device name and type.
+-- Device type settings are overridden by name-specific settings.
+function DeviceRegistry:getConfig(name, deviceType)
+    local config = {}
+    self:copyConfig(self.typeOverrides[deviceType], config)
+    self:copyConfig(self.nameOverrides[name], config)
+    return config
+end
+
+-- Creates the appropriate Device for the given network peripheral
+-- as specified in the server configuration.
+function DeviceRegistry:createDevice(name)
+    assert(name ~= Net.getNameLocal())
+
+    local types = { peripheral.getType(name) }
+    local deviceType = nil
+
+    for k,v in pairs(types) do
+        if v == "inventory" or v == "fluid_storage" or v == "energy_storage" then
+            -- ignore generic types; purpose must be explicitly configured
+        else
+            deviceType = v
+        end
+    end
+
+    local config = self:getConfig(name, deviceType)
+    local purpose = config.purpose
+
+    if not purpose then
+        self.logger.warn("[device] unconfigured device", name, "type", deviceType or "unknown")
+        return nil
+    end
+
+    if purpose == "crafting" and not deviceType then
+        deviceType = config.machineType or config.type
+    end
+
+    if deviceType == "workbench" and purpose == "crafting" then
+        if config.backend == nil then
+            config.backend = "turtle"
+        end
+        if config.slots == nil then
+            config.slots = {
+                [1]=1,  [2]=2,  [3]=3,
+                [4]=5,  [5]=6,  [6]=7,
+                [7]=9,  [8]=10, [9]=11,
+                [10]=16
+            }
+        end
+        if config.craftOutputSlot == nil then
+            config.craftOutputSlot = 10
+        end
+    end
+
+    if purpose == "crafting" then
+        if not deviceType then
+            self.logger.warn("[device] crafting device missing type", name)
+            return nil
+        end
+        local machine = Machine(self.server, name, deviceType, config)
+        self.logger.debug("[device] machine attached", name, "type", deviceType)
+        return machine
+    elseif purpose == "storage" then
+        local storage = Storage(self.server, name, deviceType, config)
+        self.logger.debug("[device] storage attached", name, "type", deviceType or "inventory")
+        return storage
+    end
+
+    if deviceType then
+        self.logger.warn("[device] unconfigured device", name, "type", deviceType)
+    else
+        self.logger.warn("[device] unconfigured device", name, "(unknown type)")
+    end
+    return nil
+end
+
+-- Alias for createDevice (new naming)
+function DeviceRegistry:instantiateDevice(name)
+    return self:createDevice(name)
+end
+
+-- Creates the appropriate Device for the given network peripheral,
+-- then adds it to the device table.
+function DeviceRegistry:addDevice(name)
+    if self.devices[name] then
+        self.logger.info("[device] skipped double add device", name)
+        --self.devices[name]:destroy()
+        return
+    end
+    self.logger.debug("[device] attach event", name)
+    self.devices[name] = self:createDevice(name)
+end
+
+-- Removes a device from the device table, clearing any associated state.
+function DeviceRegistry:removeDevice(name)
+    local device = self.devices[name]
+    if device then
+        self.logger.debug("[device] detach event", name, "type", device.type or "unknown")
+        self.devices[name] = nil
+        device:destroy()
+    else
+        self.logger.warn("[device] double remove device", name)
+    end
+end
+
+return DeviceRegistry

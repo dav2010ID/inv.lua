@@ -1,2 +1,0 @@
-﻿return require 'inv.Server'
-

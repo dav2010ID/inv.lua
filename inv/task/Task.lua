@@ -13,7 +13,7 @@ function Task:init(server, parent)
     -- The number of current sub-tasks.
     self.nSubTasks = 0
     -- This task's unique identifier.
-    self.id = server.taskManager:nextID()
+    self.id = server.taskScheduler:nextID()
     
     if self.parent then
         self.parent.subTasks[self.id] = self

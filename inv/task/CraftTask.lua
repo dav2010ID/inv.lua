@@ -55,7 +55,7 @@ function CraftTask:assignMachine(machine)
     self:setStatus("running")
     local waitSeconds = self.startedAt - self.createdAt
     if self.summaryId then
-        self.server.taskManager:recordTaskStart(self.summaryId, self.machineType, waitSeconds)
+        self.server.taskScheduler:recordTaskStart(self.summaryId, self.machineType, waitSeconds)
     end
     local blocker = self.lastMissing
     self.lastMissing = nil
@@ -78,9 +78,9 @@ function CraftTask:setStatus(newStatus)
     if self.summaryId and (self.status == "waiting_machine" or self.status == "waiting_inputs") then
         local now = os.clock()
         local waited = now - self.lastStatusAt
-        self.server.taskManager:recordWait(self.summaryId, self.machineType, self.status, waited)
+        self.server.taskScheduler:recordWait(self.summaryId, self.machineType, self.status, waited)
         if self.status == "waiting_inputs" and self.lastMissing then
-            self.server.taskManager:recordInputBlocker(self.summaryId, self.machineType, self.lastMissing, waited)
+            self.server.taskScheduler:recordInputBlocker(self.summaryId, self.machineType, self.lastMissing, waited)
             self.lastMissing = nil
         end
         self.lastStatusAt = now
@@ -101,15 +101,15 @@ function CraftTask:run()
         return false
     end
     if not self.machine then
-        local missing = self.server.inventoryIndex:tryMatchAll(self:scaledInputs())
+        local missing = self.server.inventoryService:tryMatchAll(self:scaledInputs())
         if #missing > 0 then
             local now = os.clock()
             if self.summaryId and self.status == "waiting_inputs" then
                 local waited = now - self.lastStatusAt
                 if waited > 0 then
-                    self.server.taskManager:recordWait(self.summaryId, self.machineType, "waiting_inputs", waited)
+                    self.server.taskScheduler:recordWait(self.summaryId, self.machineType, "waiting_inputs", waited)
                     if self.lastMissing then
-                        self.server.taskManager:recordInputBlocker(self.summaryId, self.machineType, self.lastMissing, waited)
+                        self.server.taskScheduler:recordInputBlocker(self.summaryId, self.machineType, self.lastMissing, waited)
                     end
                     self.lastStatusAt = now
                 end
@@ -128,16 +128,16 @@ function CraftTask:run()
                     self.lastMissing = name
                 end
             end
-            if not self.dependenciesPlanned and self.server.craftExecutor.planner then
+            if not self.dependenciesPlanned and self.server.craftRunner.planner then
                 self.dependenciesPlanned = true
-                self.server.craftExecutor.planner:attachDependencies(self, self.recipe, 0, {}, self.craftCount)
+                self.server.craftRunner.planner:attachDependencies(self, self.recipe, 0, {}, self.craftCount)
             end
             return false
         end
-        local machine = self.server.craftRegistry:requestMachine(self)
+        local machine = self.server.machineScheduler:requestMachine(self)
         if not machine then
             self:setStatus("waiting_machine")
-            self.server.craftRegistry:logSaturation(self.recipe.machine)
+            self.server.machineScheduler:logSaturation(self.recipe.machine)
             self.nextAttempt = os.clock() + 1
             return false
         end
@@ -146,13 +146,13 @@ function CraftTask:run()
         end
     end
     self.machine:pullOutput()
-    if not self.machine:busy() then
+    if not self.machine:isBusy() then
         self:setStatus("done")
         local endAt = os.clock()
         local runSeconds = self.startedAt and (endAt - self.startedAt) or 0
         local totalSeconds = endAt - self.createdAt
         if self.summaryId then
-            self.server.taskManager:recordTaskComplete(self.summaryId, self.machineType, runSeconds)
+            self.server.taskScheduler:recordTaskComplete(self.summaryId, self.machineType, runSeconds)
         end
         self.server.logger.debug(
             "[task] completed",
@@ -165,7 +165,7 @@ function CraftTask:run()
             "total",
             string.format("%.2fs", totalSeconds)
         )
-        self.server.craftRegistry:notifyMachineFree(self.recipe.machine)
+        self.server.machineScheduler:notifyMachineFree(self.recipe.machine)
         return true
     end
     return false
