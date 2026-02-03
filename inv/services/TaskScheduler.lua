@@ -85,7 +85,7 @@ function TaskScheduler:getExecution(task)
     return exec
 end
 
-function TaskScheduler:runWaitTask(task)
+local function runWaitTask(self, task)
     local missing = self.server.inventoryQuery:tryMatchAll({task.waitItem})
     if #missing == 0 then
         return "done"
@@ -102,7 +102,7 @@ function TaskScheduler:clearExecution(task)
     self.executions[task.id] = nil
 end
 
-function TaskScheduler:runCraftTask(task)
+local function runCraftTask(self, task)
     if task.retryAfter and os.clock() < task.retryAfter then
         self:recordWaitProgress(task)
         return nil
@@ -179,7 +179,7 @@ function TaskScheduler:runCraftTask(task)
         return nil
     end
 
-    local machine = self.server.machineScheduler:requestMachine(task)
+    local machine = self.server.machineScheduler:schedule(task)
     if not machine then
         task.state = "waiting_machine"
         self:setStatus(task, "waiting", "machine")
@@ -242,9 +242,9 @@ function TaskScheduler:tick()
         local task = self.active[i]
         local result = nil
         if isCraftTask(task) then
-            result = self:runCraftTask(task)
+            result = runCraftTask(self, task)
         elseif isWaitTask(task) then
-            result = self:runWaitTask(task)
+            result = runWaitTask(self, task)
         else
             if task:run() then
                 result = "done"
@@ -332,6 +332,7 @@ function TaskScheduler:registerTask(summary, task)
     if not summary then
         return
     end
+    self:ensureTaskId(task)
     summary.tasksTotal = summary.tasksTotal + 1
     task.summaryId = summary.id
 end
@@ -381,7 +382,7 @@ function TaskScheduler:setStatus(task, newStatus, reason, blockedBy)
             task.blockedBy = nil
         end
     end
-    task:setStatus(newStatus, reason, nil, blockedBy)
+    task:applyStatus(newStatus, reason, nil, blockedBy)
 end
 
 local function getMachineEntry(summary, machineType)

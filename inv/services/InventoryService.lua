@@ -68,8 +68,12 @@ function InventoryMutator:scanInventory(device, markUpdates)
     return self.transfer:scanInventory(device, markUpdates)
 end
 
+function InventoryMutator:registerItem(name)
+    return self.index:registerItem(name)
+end
+
 function InventoryMutator:addItem(name)
-    return self.index:addItem(name)
+    return self:registerItem(name)
 end
 
 function InventoryMutator:updateTags(name)

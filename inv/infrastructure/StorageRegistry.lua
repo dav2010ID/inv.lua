@@ -47,6 +47,11 @@ function StorageRegistry:ensureSorted()
     end
 end
 
+-- Returns a shallow copy of the storage list.
+function StorageRegistry:list()
+    return Table.copyShallow(self.storage)
+end
+
 return StorageRegistry
 
 

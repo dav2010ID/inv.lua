@@ -25,7 +25,7 @@ function RecipeStore:loadRecipes(data)
             end
             local info = self.server.inventoryQuery:getItem(item.name)
             if not info then
-                info = self.server.inventoryMutator:addItem(item.name)
+                info = self.server.inventoryMutator:registerItem(item.name)
             end
             if not info.detailed and item.tags then
                 for tag, v in pairs(item.tags) do

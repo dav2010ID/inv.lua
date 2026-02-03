@@ -1,16 +1,10 @@
-FILE: inv\core\Object.lua
+﻿FILE: inv\core\Class.lua
 REQUIRES:
   require "cc.expect"
 FUNCTIONS:
-  Object:init
-  Object:subclass
-  Object:instanceof
-
-FILE: inv\craft\CraftDependencyGraph.lua
-REQUIRES: (none)
-FUNCTIONS:
-  CraftDependencyGraph.findOutputCount
-  CraftDependencyGraph.attachDependencies
+  Class:init
+  Class:subclass
+  Class:instanceof
 
 FILE: inv\craft\CraftExecutor.lua
 REQUIRES:
@@ -24,34 +18,37 @@ FUNCTIONS:
 FILE: inv\craft\CraftPlanner.lua
 REQUIRES:
   require 'inv.core.Class'
-  require 'inv.craft.CraftDependencyGraph'
+  require 'inv.domain.CraftGraph'
 FUNCTIONS:
   CraftPlanner:init
   CraftPlanner:plan
+  CraftPlanner:planWithReason
 
 FILE: inv\craft\TaskFactory.lua
 REQUIRES:
   require 'inv.core.Class'
   require 'inv.domain.CraftTask'
-  require 'inv.domain.BlockedTask'
-  require 'inv.craft.CraftDependencyGraph'
+  require 'inv.domain.Task'
+  require 'inv.domain.CraftGraph'
 FUNCTIONS:
   TaskFactory:init
-  TaskFactory:buildBatches
   TaskFactory:createTask
-  TaskFactory:resolveSummary
-  TaskFactory:addBlockedTask
-  TaskFactory:queueRecipe
-  TaskFactory:queuePlan
-  TaskFactory:attachDependencies
+  TaskGraphBuilder:init
+  TaskGraphBuilder:addWaitTask
+  TaskGraphBuilder:graphContext
+  TaskGraphBuilder:link
+  TaskQueue:init
+  TaskQueue:resolveSummary
+  TaskQueue:buildBatches
+  TaskQueue:schedule
+  TaskQueue:enqueueRecipe
+  TaskQueue:queuePlan
 
-FILE: inv\domain\BlockedTask.lua
-REQUIRES:
-  require 'inv.domain.Task'
+FILE: inv\domain\CraftGraph.lua
+REQUIRES: (none)
 FUNCTIONS:
-  BlockedTask:init
-  BlockedTask:print
-  BlockedTask:run
+  CraftGraph.countProduced
+  CraftGraph.link
 
 FILE: inv\domain\CraftTask.lua
 REQUIRES:
@@ -59,7 +56,13 @@ REQUIRES:
 FUNCTIONS:
   CraftTask:init
   CraftTask:scaledInputs
-  CraftTask:assignMachine
+  CraftTask:wantsInputs
+  CraftTask:wantsMachine
+  CraftTask:canRun
+  CraftTask:bindMachine
+  CraftTask:startExecution
+  CraftTask:onStartSuccess
+  CraftTask:onStartFailure
   CraftTask:run
 
 FILE: inv\domain\Item.lua
@@ -68,6 +71,7 @@ REQUIRES:
 FUNCTIONS:
   Item:init
   Item:matches
+  Item:identityKey
   Item:matchesCount
   Item:copy
   Item.stack
@@ -81,15 +85,10 @@ REQUIRES:
   require 'inv.domain.Item'
 FUNCTIONS:
   Recipe:init
-
-FILE: inv\domain\SupplyTask.lua
-REQUIRES:
-  require 'inv.domain.Task'
-  require 'inv.domain.CraftTask'
-  require 'inv.domain.BlockedTask'
-FUNCTIONS:
-  SupplyTask:init
-  SupplyTask:run
+  Recipe:scaledInputs
+  Recipe:countProduced
+  Recipe:getProducedCount
+  Recipe:matchesOutput
 
 FILE: inv\domain\Task.lua
 REQUIRES:
@@ -98,6 +97,11 @@ FUNCTIONS:
   Task:init
   Task:run
   Task:setStatus
+  Task:applyStatus
+  Task:clearBlock
+  Task:attachToParent
+  Task:detachFromParent
+  Task:onChildDone
   Task:destroy
 
 FILE: inv\infrastructure\Config.lua
@@ -120,21 +124,30 @@ FUNCTIONS:
 
 FILE: inv\infrastructure\device\Machine.lua
 REQUIRES:
+  require 'inv.core.Class'
   require 'inv.infrastructure.device.Device'
-  require 'inv.infrastructure.util.Net'
   require 'inv.infrastructure.util.Table'
 FUNCTIONS:
+  CraftSession:init
+  CraftSession:prepareInputs
+  CraftSession:rollbackInputs
+  CraftSession:startCraft
+  CraftSession:validateOutput
+  CraftSession:consumeOutput
+  CraftSession:forwardOutput
+  CraftSession:drainOutput
+  CraftSession:isDone
+  CraftSession:close
   Machine:init
   Machine:destroy
   Machine:mapSlot
   Machine:getCraftOutputSlot
   Machine:getItemDetail
-  Machine:performCraft
-  Machine:rollbackInputs
-  Machine:craft
+  Machine:startCraft
+  Machine:createSession
+  Machine:clearSession
   Machine:isBusy
-  Machine:processOutputSlot
-  Machine:pullOutput
+  Machine:isFinished
 
 FILE: inv\infrastructure\device\Storage.lua
 REQUIRES:
@@ -151,6 +164,7 @@ REQUIRES:
   require 'inv.infrastructure.util.Net'
   require 'inv.infrastructure.device.Storage'
   require 'inv.infrastructure.device.Machine'
+  require 'inv.infrastructure.machine.BackendRegistry'
 FUNCTIONS:
   DeviceCatalog:init
   DeviceCatalog:scanDevices
@@ -183,6 +197,10 @@ FUNCTIONS:
   Log.info
   Log.warn
   Log.error
+
+FILE: inv\infrastructure\machine\BackendRegistry.lua
+REQUIRES: (none)
+FUNCTIONS: (none)
 
 FILE: inv\infrastructure\MachineRegistry.lua
 REQUIRES:
@@ -250,7 +268,7 @@ REQUIRES:
 FUNCTIONS:
   RuntimeLoop:init
   RuntimeLoop:stop
-  RuntimeLoop:updateTasks
+  RuntimeLoop:tick
   RuntimeLoop:broadcastUpdatedItems
   RuntimeLoop:run
 
@@ -296,28 +314,29 @@ REQUIRES:
   require 'inv.services.InventoryIndex'
   require 'inv.infrastructure.InventoryIO'
 FUNCTIONS:
-  InventoryService:init
-  InventoryService:getItems
-  InventoryService:getItem
-  InventoryService:getItemCount
-  InventoryService:scanInventories
-  InventoryService:scanInventory
-  InventoryService:push
-  InventoryService:pull
-  InventoryService:resolveCriteria
-  InventoryService:tryMatchAll
-  InventoryService:addItem
-  InventoryService:updateTags
-  InventoryService:updateDB
-  InventoryService:markUpdated
-  InventoryService:getUpdatedItems
+  InventoryQuery:init
+  InventoryQuery:getItems
+  InventoryQuery:getItem
+  InventoryQuery:getItemCount
+  InventoryQuery:resolveCriteria
+  InventoryQuery:tryMatchAll
+  InventoryMutator:init
+  InventoryMutator:push
+  InventoryMutator:pull
+  InventoryMutator:scanInventories
+  InventoryMutator:scanInventory
+  InventoryMutator:addItem
+  InventoryMutator:updateTags
+  InventoryMutator:updateDB
+  InventoryMutator:markUpdated
+  InventoryMutator:getUpdatedItems
 
 FILE: inv\services\MachineScheduler.lua
 REQUIRES:
   require 'inv.core.Class'
 FUNCTIONS:
   MachineScheduler:init
-  MachineScheduler:enqueueTask
+  MachineScheduler:schedule
   MachineScheduler:requestMachine
   MachineScheduler:notifyMachineFree
   MachineScheduler:logSaturation
@@ -333,13 +352,29 @@ FUNCTIONS:
   RecipeStore:loadRecipes
   RecipeStore:findRecipe
 
+FILE: inv\services\SupplyTask.lua
+REQUIRES:
+  require 'inv.domain.Task'
+FUNCTIONS:
+  SupplyTask:init
+  SupplyTask:isSatisfied
+  SupplyTask:trySupplyFromInventory
+  SupplyTask:ensureProductionPlanned
+  SupplyTask:run
+
 FILE: inv\services\TaskScheduler.lua
 REQUIRES:
   require 'inv.core.Class'
+  require 'inv.domain.CraftTask'
 FUNCTIONS:
   TaskScheduler:init
   TaskScheduler:nextID
-  TaskScheduler:update
+  TaskScheduler:ensureTaskId
+  TaskScheduler:getExecution
+  TaskScheduler:runWaitTask
+  TaskScheduler:clearExecution
+  TaskScheduler:runCraftTask
+  TaskScheduler:tick
   TaskScheduler:addTask
   TaskScheduler:createSummary
   TaskScheduler:registerTask
@@ -358,8 +393,4 @@ REQUIRES:
   require 'inv.infrastructure.Log'
 FUNCTIONS:
   run
-
-
-
-
 

@@ -48,34 +48,6 @@ function MachineRegistry:countMachines(machineType)
     return n
 end
 
-function MachineRegistry:countAvailableMachines(machineType)
-    local machinesOfType = self.machines[machineType]
-    if not machinesOfType then
-        return 0
-    end
-    local n = 0
-    for _, machine in pairs(machinesOfType) do
-        if not machine:isBusy() then
-            n = n + 1
-        end
-    end
-    return n
-end
-
--- Finds a non-busy crafting machine of the given type,
--- returning nil if none is found.
-function MachineRegistry:findMachine(machineType)
-    local machinesOfType = self.machines[machineType]
-    if machinesOfType then
-        for _, machine in pairs(machinesOfType) do
-            if not machine:isBusy() then
-                return machine
-            end
-        end
-    end
-    return nil
-end
-
 return MachineRegistry
 
 

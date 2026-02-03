@@ -59,16 +59,12 @@ function Task:run()
     return true
 end
 
--- Updates the task status. Intended for use by TaskScheduler.
-function Task:setStatus(newStatus, reason, at, blockedBy)
+-- Applies a status transition. Intended for use by TaskScheduler only.
+function Task:applyStatus(newStatus, reason, at, blockedBy)
     assert(STATUS_SET[newStatus], "unknown task status: " .. tostring(newStatus))
     if newStatus == self.status and reason == self.statusReason and blockedBy == self.blockedBy then
         return
     end
-    self:applyStatus(newStatus, reason, at, blockedBy)
-end
-
-function Task:applyStatus(newStatus, reason, at, blockedBy)
     self.status = newStatus
     self.statusReason = reason
     if newStatus == Task.STATUS.BLOCKED then

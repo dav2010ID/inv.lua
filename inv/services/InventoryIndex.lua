@@ -18,11 +18,15 @@ function InventoryIndex:init()
     self.updatedItems = {}
 end
 
--- Given an item name, adds a new item to the database.
-function InventoryIndex:addItem(name)
+-- Given an item name, registers a new item in the database.
+function InventoryIndex:registerItem(name)
     local info = Item{name=name, count=0}
     self.items[name] = info
     return info
+end
+
+function InventoryIndex:addItem(name)
+    return self:registerItem(name)
 end
 
 -- Given a detail specification for an item, adds or updates the associated
@@ -34,7 +38,7 @@ function InventoryIndex:updateDB(detail)
     local info = self.items[detail.name]
 
     if not info then
-        info = self:addItem(detail.name)
+        info = self:registerItem(detail.name)
     end
 
     if not info.detailed then

@@ -23,7 +23,7 @@ function InventoryIO:scanInventories()
     end
 
     local storageRegistry = self:getStorageRegistry()
-    for i, device in ipairs(storageRegistry.storage) do
+    for i, device in ipairs(storageRegistry:list()) do
         self:scanInventory(device, false)
     end
 
@@ -44,7 +44,7 @@ function InventoryIO:scanInventory(device, markUpdates)
     for slot, item in pairs(items) do
         local entry = self.index.items[item.name]
         if not entry then
-            entry = self.index:addItem(item.name)
+            entry = self.index:registerItem(item.name)
         end
         if not entry.detailed then
             local detail = device:getItemDetail(slot)
@@ -73,7 +73,7 @@ function InventoryIO:push(targetDevice, criteria, count, targetSlot)
     local storageRegistry = self:getStorageRegistry()
     -- Note: matches is a snapshot; this assumes resolveCriteria doesn't change during push.
     storageRegistry:ensureSorted()
-    for i, device in ipairs(storageRegistry.storage) do
+    for i, device in ipairs(storageRegistry:list()) do
         local items = device:list()
 
         for slot, deviceItem in pairs(items) do
@@ -110,7 +110,7 @@ function InventoryIO:pull(sourceDevice, item, count, sourceSlot)
 
     local storageRegistry = self:getStorageRegistry()
     storageRegistry:ensureSorted()
-    for i, device in ipairs(storageRegistry.storage) do
+    for i, device in ipairs(storageRegistry:list()) do
         local toMove = targetCount - moved
         if device:itemAllowed(item) then
             local n = device:pull(sourceDevice, sourceSlot, toMove)

@@ -123,7 +123,6 @@ function Machine:init(server, name, deviceType, config, backend)
     self.backendName = self.backend.name or (self.config.backend or "peripheral")
     assert(self.backend.getItemDetail, "backend missing getItemDetail")
     assert(self.backend.craft, "backend missing craft")
-    assert(self.backend.resolveLocation, "backend missing resolveLocation")
 
     if self.config.slots then
         self.slots = Table.integerKeys(self.config.slots)
@@ -140,8 +139,10 @@ function Machine:init(server, name, deviceType, config, backend)
 
     if self.config.location then
         self.location = self.config.location
-    else
+    elseif self.backend.resolveLocation then
         self.location = self.backend.resolveLocation(self)
+    else
+        self.location = self.name
     end
 
     self.state = "idle"

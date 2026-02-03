@@ -12,12 +12,12 @@ function MachineScheduler:init(server, machineRegistry)
     self.queued = {}
 end
 
-function MachineScheduler:schedule(machineType, task)
-    if not self.waitingTasks[machineType] then
-        self.waitingTasks[machineType] = {}
+local function enqueue(machineScheduler, machineType, task)
+    if not machineScheduler.waitingTasks[machineType] then
+        machineScheduler.waitingTasks[machineType] = {}
     end
-    local queue = self.waitingTasks[machineType]
-    local critical = self.server and self.server.taskScheduler and self.server.taskScheduler.currentCriticalMachine
+    local queue = machineScheduler.waitingTasks[machineType]
+    local critical = machineScheduler.server and machineScheduler.server.taskScheduler and machineScheduler.server.taskScheduler.currentCriticalMachine
     local bonus = (critical and critical == machineType) and 1000 or 0
     local priority = (task.priority or 0) + bonus
     local inserted = false
@@ -35,7 +35,7 @@ function MachineScheduler:schedule(machineType, task)
     end
 end
 
-function MachineScheduler:requestMachine(task)
+function MachineScheduler:schedule(task)
     local machineType = task.machineType
     local machinesOfType = self.machineRegistry and self.machineRegistry:getMachines(machineType) or nil
     local queue = self.waitingTasks[machineType]
@@ -55,14 +55,40 @@ function MachineScheduler:requestMachine(task)
         end
     end
     if not self.queued[task.id] then
-        self:schedule(machineType, task)
+        enqueue(self, machineType, task)
         self.queued[task.id] = true
     end
     return nil
 end
 
+function MachineScheduler:countAvailableMachines(machineType)
+    local machinesOfType = self.machineRegistry and self.machineRegistry:getMachines(machineType) or nil
+    if not machinesOfType then
+        return 0
+    end
+    local n = 0
+    for _, machine in pairs(machinesOfType) do
+        if not machine:isBusy() then
+            n = n + 1
+        end
+    end
+    return n
+end
+
+function MachineScheduler:findMachine(machineType)
+    local machinesOfType = self.machineRegistry and self.machineRegistry:getMachines(machineType) or nil
+    if machinesOfType then
+        for _, machine in pairs(machinesOfType) do
+            if not machine:isBusy() then
+                return machine
+            end
+        end
+    end
+    return nil
+end
+
 function MachineScheduler:notifyMachineFree(machineType)
-    -- Tasks will claim machines on the next scheduler tick via requestMachine.
+    -- Tasks will claim machines on the next scheduler tick via schedule.
 end
 
 function MachineScheduler:logSaturation(machineType)
@@ -113,7 +139,7 @@ function MachineScheduler:logMachineSummary()
     self.logger.info("[planner] machines:")
     for machineType, entry in pairs(stats) do
         local total = self.machineRegistry:countMachines(machineType)
-        local available = self.machineRegistry:countAvailableMachines(machineType)
+        local available = self:countAvailableMachines(machineType)
         self.logger.info(
             "  " .. machineType .. ":",
             tostring(available) .. " available,",

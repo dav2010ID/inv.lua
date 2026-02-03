@@ -10,10 +10,7 @@ local function identityKey(ctx, item)
     return tostring(item)
 end
 
-local function scaledInputs(ctx, recipe, craftCount)
-    if ctx and ctx.scaledInputs then
-        return ctx.scaledInputs(recipe, craftCount)
-    end
+local function scaledInputs(recipe, craftCount)
     return recipe:scaledInputs(craftCount)
 end
 
@@ -45,14 +42,14 @@ function CraftGraph.link(ctx, task, recipe, depth, visiting, craftCount, summary
         if logger then
             logger.warn("[planner] max depth exceeded for recipe", recipe.machine)
         end
-        local missing = ctx.inventoryQuery:tryMatchAll(scaledInputs(ctx, recipe, count))
+        local missing = ctx.inventoryQuery:tryMatchAll(scaledInputs(recipe, count))
         for _, item in ipairs(missing) do
             addWait(ctx, task, item, summaryId, "depth_limit", result)
         end
         return result
     end
 
-    local missing = ctx.inventoryQuery:tryMatchAll(scaledInputs(ctx, recipe, count))
+    local missing = ctx.inventoryQuery:tryMatchAll(scaledInputs(recipe, count))
     if #missing == 0 then
         return result
     end

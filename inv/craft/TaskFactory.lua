@@ -77,7 +77,7 @@ function TaskQueue:resolveSummary(summaryRef)
 end
 
 function TaskQueue:buildBatches(recipe, crafts)
-    local machineCount = self.server.machineRegistry:countAvailableMachines(recipe.machine)
+    local machineCount = self.server.machineScheduler:countAvailableMachines(recipe.machine)
     local batches = crafts
     if machineCount > 0 then
         batches = math.min(crafts, machineCount)
