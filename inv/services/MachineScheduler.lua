@@ -61,6 +61,20 @@ function MachineScheduler:schedule(task)
     return nil
 end
 
+function MachineScheduler:queuePosition(task)
+    local machineType = task.machineType
+    local queue = self.waitingTasks[machineType]
+    if not queue then
+        return nil
+    end
+    for i = 1, #queue do
+        if queue[i] == task then
+            return i
+        end
+    end
+    return nil
+end
+
 function MachineScheduler:countAvailableMachines(machineType)
     local machinesOfType = self.machineRegistry and self.machineRegistry:getMachines(machineType) or nil
     if not machinesOfType then
@@ -117,7 +131,7 @@ function MachineScheduler:logSaturation(machineType)
     if self.server and self.server.taskScheduler then
         local stats = self.server.taskScheduler:getMachineStats()
         local entry = stats[machineType]
-        waiting = entry and entry.waiting_machine or 0
+        waiting = entry and ((entry.waiting_machine_capacity or 0) + (entry.waiting_machine_priority or 0) + (entry.waiting_machine_unavailable or 0)) or 0
     end
     self.logger.throttle(
         "craft_saturated_" .. tostring(machineType),
@@ -145,7 +159,7 @@ function MachineScheduler:logMachineSummary()
             tostring(available) .. " available,",
             tostring(total) .. " total,",
             tostring(entry.total) .. " tasks,",
-            tostring(entry.waiting_machine) .. " waiting_machine,",
+            tostring((entry.waiting_machine_capacity or 0) + (entry.waiting_machine_priority or 0) + (entry.waiting_machine_unavailable or 0)) .. " waiting_machine,",
             tostring(entry.waiting_inputs) .. " waiting_inputs"
         )
     end

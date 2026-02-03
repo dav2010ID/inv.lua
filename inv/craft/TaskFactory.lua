@@ -101,9 +101,14 @@ end
 function TaskQueue:enqueueRecipe(recipe, crafts, summaryRef, parent, dest, destSlot, depth, visiting, skipDependencies)
     local summary = self:resolveSummary(summaryRef)
     local batches = self:buildBatches(recipe, crafts)
+    local planId = summary and summary.id or summaryRef or 0
+    local batchKey = {machineType=recipe.machine, planId=planId}
     for i = 1, #batches do
         local batch = batches[i]
         local task = self.taskFactory:createTask(recipe, batch, summary, parent, dest, destSlot, depth)
+        task.batchMachine = recipe.machine
+        task.batchIndex = i
+        task.batchKey = batchKey
         self.server.taskScheduler:registerTask(summary, task)
         if not skipDependencies then
             self.taskGraphBuilder:link(task, recipe, depth, visiting, batch, summary and summary.id or summaryRef)

@@ -87,7 +87,7 @@ function DeviceCatalog:createDevice(name)
     local purpose = config.purpose
 
     if not purpose then
-        self.logger.warn("[device] unconfigured device", name, "type", deviceType or "unknown")
+        self.logger.debug("[device] unconfigured device", name, "type", deviceType or "unknown")
         return nil
     end
 
@@ -111,9 +111,9 @@ function DeviceCatalog:createDevice(name)
     end
 
     if deviceType then
-        self.logger.warn("[device] unconfigured device", name, "type", deviceType)
+        self.logger.debug("[device] unconfigured device", name, "type", deviceType)
     else
-        self.logger.warn("[device] unconfigured device", name, "(unknown type)")
+        self.logger.debug("[device] unconfigured device", name, "(unknown type)")
     end
     return nil
 end
