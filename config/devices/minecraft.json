@@ -1,15 +1,15 @@
 {
     "crafting": [
         "minecraft:furnace",
-        "gtceu:mv_assembler",
-        "gtceu:mv_bender",
-        "gtceu:mv_compressor",
-        "gtceu:mv_electric_furnace",
-        "gtceu:mv_forge_hammer",
-        "gtceu:mv_extruder",
-        "gtceu:mv_lathe",
-        "gtceu:mv_polarizer",
-        "gtceu:mv_wiremill"
+        { "type": "gtceu:mv_assembler", "backend": "gtceu" },
+        { "type": "gtceu:mv_bender", "backend": "gtceu" },
+        { "type": "gtceu:mv_compressor", "backend": "gtceu" },
+        { "type": "gtceu:mv_electric_furnace", "backend": "gtceu" },
+        { "type": "gtceu:mv_forge_hammer", "backend": "gtceu" },
+        { "type": "gtceu:mv_extruder", "backend": "gtceu" },
+        { "type": "gtceu:mv_lathe", "backend": "gtceu" },
+        { "type": "gtceu:mv_polarizer", "backend": "gtceu" },
+        { "type": "gtceu:mv_wiremill", "backend": "gtceu" }
     ],
     "storage": [
         "minecraft:chest"

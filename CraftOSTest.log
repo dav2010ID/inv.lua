@@ -1,117 +1,237 @@
-[info] [run] id=2026-02-03T15:51Z goal=craft minecraft:piston 7
-[warn] [device] unconfigured device back type peripheral_hub
-[cli] type 'help' for commands
-[info] executing CLI command: craft minecraft:piston 7
-[info] [planner] plan 4 craft(s) on gtceu:mv_assembler at 252.35s
-[info] [planner] machines:
-[info]   gtceu:mv_electric_furnace: 4 available, 4 total, 2 tasks, 0 waiting_machine, 0 waiting_inputs
-[info]   gtceu:mv_assembler: 2 available, 2 total, 2 tasks, 0 waiting_machine, 0 waiting_inputs
-[info]   gtceu:mv_compressor: 4 available, 4 total, 4 tasks, 0 waiting_machine, 0 waiting_inputs
-[info]   gtceu:mv_bender: 2 available, 2 total, 4 tasks, 0 waiting_machine, 0 waiting_inputs
-[info]   gtceu:mv_forge_hammer: 2 available, 2 total, 2 tasks, 0 waiting_machine, 0 waiting_inputs
-[info] planned 4 craft(s)
-[info] [phase] first_task_started at +3.15s
-[info] [server] active tasks: 6
-[info] [server] active tasks: 6
-[info] [phase] critical_path_started at +11.35s
-[warn] [craft] gtceu:mv_bender saturated (2/2 busy, 1 waiting)
-[info] [server] active tasks: 4
-[info] [server] active tasks: 2
-[info] [summary] craft minecraft:piston x7
-[info]   total_time: 23.80s
-[info]   critical_machine: gtceu:mv_forge_hammer
-[info]   theoretical_min: 7.60s
-[info]   efficiency: 32%
-[info]   overhead: +16.20s (68%)
-[info]   utilization:
-[info]     gtceu:mv_electric_furnace: 11%
-[info]     gtceu:mv_assembler: 25%
-[info]     gtceu:mv_compressor: 32%
-[info]     gtceu:mv_bender: 22%
-[info]     gtceu:mv_forge_hammer: 32%
-[info]   waits:
-[info]     gtceu:mv_electric_furnace: avg 11.60s, max 11.65s
-[info]     gtceu:mv_assembler: avg 17.85s, max 18.10s
-[info]     gtceu:mv_compressor: avg 3.35s, max 3.55s
-[info]     gtceu:mv_bender: avg 12.87s, max 14.40s
-[info]     gtceu:mv_forge_hammer: avg 3.50s, max 3.65s
-[info]   wait_reasons: (inputs = not in storage, machine = no free machine)
-[info]     gtceu:mv_electric_furnace: machine avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
-[info]     gtceu:mv_assembler: machine avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
-[info]     gtceu:mv_compressor: machine avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
-[info]     gtceu:mv_bender: machine avg 1.40s, max 1.60s; inputs avg 0.00s, max 0.00s
-[info]     gtceu:mv_forge_hammer: machine avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
-[info]   lost_time:
-[info]     waiting_inputs: 0%
-[info]     waiting_machine: 100%
-[info]     idle: 0%
-[info]   input_blockers:
-[info] [run] id=2026-02-03T15:51Z completed in 23.80s
-[info] [run] id=2026-02-03T17:31Z goal=craft minecraft:piston 20
+[info] [run] id=2026-02-03T22:17Z goal=craft minecraft:piston 20
 [cli] type 'help' for commands
 [info] executing CLI command: craft minecraft:piston 20
-[info] [planner] plan 10 craft(s) on gtceu:mv_assembler at 427.60s
+already have 20
+[info] [run] id=2026-02-03T22:17Z goal=craft minecraft:piston 20
+[cli] type 'help' for commands
+[info] executing CLI command: craft minecraft:piston 20
+[info] [planner] plan 10 craft(s) on gtceu:mv_assembler at 17557.15s
 [info] [planner] machines:
-[info]   gtceu:mv_compressor: 6 available, 6 total, 10 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_electric_furnace: 4 available, 4 total, 3 tasks, 0 waiting_machine, 0 waiting_inputs
 [info]   gtceu:mv_assembler: 3 available, 3 total, 3 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_compressor: 6 available, 6 total, 10 tasks, 0 waiting_machine, 0 waiting_inputs
 [info]   gtceu:mv_bender: 3 available, 3 total, 9 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_forge_hammer: 2 available, 2 total, 3 tasks, 0 waiting_machine, 0 waiting_inputs
 [info] planned 10 craft(s)
 [info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-2
-[info] [phase] first_task_started at +1.85s
+[info] [phase] first_task_started at +1.10s
 [info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
 [info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
+[info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-1
 [info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
 [info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
 [info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
 [warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 1 waiting)
+[info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-1
 [info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
 [info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
 [info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
-[info] [server] active tasks: 10
+[info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-1
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
+[info] [server] active tasks: 13
 [warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 4 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
 [warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 4 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
+[info] [phase] critical_path_started at +11.15s
+[info] [server] active tasks: 12
+[info] [batch] wave_update gtceu:mv_electric_furnace plan 1 capacity 4 wave 1-1
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
+[info] [batch] wave_update gtceu:mv_electric_furnace plan 1 capacity 4 wave 1-1
 [info] [server] active tasks: 10
-[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
-[info] [phase] critical_path_started at +11.55s
-[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
-[warn] [craft] gtceu:mv_bender saturated (3/3 busy, 1 waiting)
-[info] [server] active tasks: 9
 [info] [server] active tasks: 7
-[info] [batch] wave_update gtceu:mv_assembler plan 1 capacity 3 wave 1-3
-[info] [server] active tasks: 5
 [info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
-[warn] [craft] gtceu:mv_bender saturated (3/3 busy, 1 waiting)
+[info] [batch] wave_update gtceu:mv_assembler plan 1 capacity 3 wave 1-3
+[info] [server] active tasks: 6
+[info] [batch] wave_update gtceu:mv_electric_furnace plan 1 capacity 4 wave 1-1
 [info] [server] active tasks: 3
-[info] [server] active tasks: 2
+[info] [server] active tasks: 3
 [info] [server] active tasks: 1
 [info] [summary] craft minecraft:piston x20
-[info]   total_time: 32.90s
-[info]   critical_machine: gtceu:mv_compressor
-[info]   lower_bound_infinite: 11.15s
-[info]   lower_bound_resource: 14.22s
-[info]   efficiency: 43%
-[info]   overhead: +18.67s (57%)
+[info]   total_time: 39.45s
+[info]   critical_machine: gtceu:mv_forge_hammer
+[info]   lower_bound_infinite: 10.95s
+[info]   lower_bound_resource: 15.15s
+[info]   efficiency: 38%
+[info]   overhead: +24.30s (62%)
 [info]   utilization:
-[info]     gtceu:mv_compressor: 43%
-[info]     gtceu:mv_bender: 17%
-[info]     gtceu:mv_assembler: 27%
+[info]     gtceu:mv_electric_furnace: 12%
+[info]     gtceu:mv_assembler: 23%
+[info]     gtceu:mv_compressor: 37%
+[info]     gtceu:mv_bender: 21%
+[info]     gtceu:mv_forge_hammer: 38%
 [info]   waits:
-[info]     gtceu:mv_compressor: avg 5.76s, max 11.40s
-[info]     gtceu:mv_bender: avg 16.29s, max 22.45s
-[info]     gtceu:mv_assembler: avg 21.27s, max 24.85s
+[info]     gtceu:mv_electric_furnace: avg 17.83s, max 24.20s
+[info]     gtceu:mv_assembler: avg 26.23s, max 31.00s
+[info]     gtceu:mv_compressor: avg 5.33s, max 10.85s
+[info]     gtceu:mv_bender: avg 15.94s, max 20.90s
+[info]     gtceu:mv_forge_hammer: avg 6.37s, max 13.55s
 [info]   wait_reasons:
-[info]     gtceu:mv_compressor: capacity avg 1.09s, max 2.05s; priority avg 1.12s, max 2.35s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
-[info]     gtceu:mv_bender: capacity avg 1.77s, max 1.80s; priority avg 1.95s, max 1.95s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_electric_furnace: capacity avg 0.00s, max 0.00s; priority avg 0.00s, max 0.00s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
 [info]     gtceu:mv_assembler: capacity avg 0.00s, max 0.00s; priority avg 0.00s, max 0.00s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_compressor: capacity avg 1.17s, max 1.70s; priority avg 1.22s, max 2.60s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_bender: capacity avg 0.00s, max 0.00s; priority avg 0.00s, max 0.00s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_forge_hammer: capacity avg 1.47s, max 2.70s; priority avg 0.00s, max 0.00s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
 [info]   lost_time:
 [info]     waiting_inputs: 0%
-[info]     waiting_machine_capacity: 30%
-[info]     waiting_machine_priority: 70%
+[info]     waiting_machine_capacity: 44%
+[info]     waiting_machine_priority: 56%
 [info]     waiting_machine_unavailable: 0%
-[info]     idle: 35%
-[info] [hint] bottleneck detected: gtceu:mv_compressor
-[info] [hint] adding +1 machine reduces theoretical_min to 12.19s
-[info] [run] id=2026-02-03T17:31Z completed in 32.90s
-[info] [device] skipped double add device gtceu:mv_assembler_0
-[info] [device] skipped double add device minecraft:chest_12
-[info] [device] skipped double add device minecraft:chest_13
+[info]     idle: 0%
+[info] [hint] bottleneck detected: gtceu:mv_forge_hammer
+[info] [hint] adding +1 machine reduces theoretical_min to 10.10s
+[info] [run] id=2026-02-03T22:17Z completed in 39.45s
+[info] [run] id=2026-02-03T22:35Z goal=new gtceu:mv_assembler
+[cli] type 'help' for commands
+[info] executing CLI command: new gtceu:mv_assembler
+[warn] unknown command: new
+[info] [run] id=2026-02-03T22:35Z goal=
+[cli] type 'help' for commands
+> help
+commands:
+  help
+  list [filter]
+  count <item>
+  craft <item> <count>
+  new <machine>
+  ok
+  scan
+  devices
+  peripherals
+  status
+  quit
+  test
+> new
+[warn] unknown command: new
+> id
+[warn] unknown command: id
+[info] [run] id=2026-02-03T22:37Z goal=
+[cli] type 'help' for commands
+> help
+commands:
+  help
+  list [filter]
+  count <item>
+  craft <item> <count>
+  new <machine>
+  ok
+  scan
+  devices
+  peripherals
+  status
+  quit
+  test
+> new gtceu:assembler
+[warn] unknown command: new
+[info] [run] id=2026-02-03T22:38Z goal=new gtceu:mv_assembler
+[cli] type 'help' for commands
+[info] executing CLI command: new gtceu:mv_assembler
+[warn] unknown command: new
+[info] [run] id=2026-02-03T22:38Z goal=new gtceu:mv_assembler
+[cli] type 'help' for commands
+[info] executing CLI command: new gtceu:mv_assembler
+[warn] unknown command: new
+[info] [run] id=2026-02-03T22:42Z goal=
+[cli] type 'help' for commands
+> new gtceu:mv_assembler
+put ingredients into machine, then type 'ok'
+> ok
+[warn] output slot not empty; clear output and try again
+> ok
+[warn] output slot not empty; clear output and try again
+> ok
+[warn] no inputs detected
+> ok
+[warn] no inputs detected
+> 
+> ok
+[warn] output slot not empty; clear output and try again
+> ok
+[warn] output slot not empty; clear output and try again
+> ok
+[warn] output slot not empty; clear output and try again
+[info] [run] id=2026-02-03T22:46Z goal=
+[cli] type 'help' for commands
+> new gtceu:assembler
+[warn] unknown machine: gtceu:assembler
+> new gtceu:mv_assembler
+put ingredients into machine, then type 'ok'
+> ok
+[warn] no inputs detected
+> ok
+[warn] no inputs detected
+> ok
+inputs recorded, waiting for output...
+[info] [craft] added recipe gtceu:brass_rod
+recipe saved
+> ok
+no recipe capture in progress
+[info] [run] id=2026-02-03T22:53Z goal=
+[cli] type 'help' for commands
+> new gtceu:assembler
+[warn] unknown machine: gtceu:assembler
+> new gtceu:mv_assembler
+put ingredients into machine, then type 'ok'
+> ok
+[warn] no inputs detected
+> ok
+inputs recorded, waiting for output...
+output detected; type 'ok' to save recipe
+> ok
+[info] [craft] added recipe gtceu:lv_sensor
+recipe saved
+[info] [run] id=2026-02-03T22:57Z goal=
+[cli] type 'help' for commands
+> help
+commands:
+  help
+  list [filter]
+  count <item>
+  craft <item> <count>
+  new <machine>
+  ok
+  scan
+  devices
+  peripherals
+  status
+  quit
+  test
+[info] [run] id=2026-02-03T22:57Z goal=craft gtceu:lv_sensor 5
+[cli] type 'help' for commands
+[info] executing CLI command: craft gtceu:lv_sensor 5
+[info] [planner] plan 2 craft(s) on gtceu:mv_assembler at 939.40s
+[info] [planner] machines:
+[info]   gtceu:mv_assembler: 3 available, 3 total, 2 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_bender: 3 available, 3 total, 6 tasks, 0 waiting_machine, 0 waiting_inputs
+[info] planned 2 craft(s)
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
+[info] [phase] first_task_started at +1.30s
+[info] [phase] critical_path_started at +1.30s
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
+[warn] [craft] gtceu:mv_bender saturated (3/3 busy, 1 waiting)
+[info] [server] active tasks: 6
+[warn] [craft] gtceu:mv_bender saturated (3/3 busy, 1 waiting)
+[info] [server] active tasks: 4
+[info] [batch] wave_update gtceu:mv_assembler plan 1 capacity 3 wave 1-2
+[info] [server] active tasks: 2
+[info] [server] active tasks: 2
+[info] [server] active tasks: 2
+[info] [run] id=2026-02-03T22:58Z goal=craft gtceu:lv_sensor 5
+[cli] type 'help' for commands
+[info] executing CLI command: craft gtceu:lv_sensor 5
+[info] [planner] plan 1 craft(s) on gtceu:mv_assembler at 970.35s
+[info] [planner] machines:
+[info]   gtceu:mv_assembler: 3 available, 3 total, 1 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_bender: 3 available, 3 total, 3 tasks, 0 waiting_machine, 0 waiting_inputs
+[info] planned 1 craft(s)
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
+[info] [phase] first_task_started at +1.55s
+[info] [phase] critical_path_started at +1.55s
+[info] [server] active tasks: 3
+[info] [server] active tasks: 1
+[info] [batch] wave_update gtceu:mv_assembler plan 1 capacity 3 wave 1-1
+[info] [server] active tasks: 1
+[info] [server] active tasks: 1
+[info] [server] active tasks: 1

@@ -33,6 +33,17 @@ register("peripheral", {
     end,
     defaultSlots = nil
 })
+register("gtceu", {
+    name = "gtceu",
+    getItemDetail = function(machine, slot)
+        return machine.interface.getItemDetail(slot)
+    end,
+    craft = function(machine, count) end,
+    resolveLocation = function(machine)
+        return machine.name
+    end,
+    defaultSlots = nil
+})
 
 
 BackendRegistry.register = register

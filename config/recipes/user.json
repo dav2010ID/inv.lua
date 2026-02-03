@@ -1,0 +1,48 @@
+[
+    {
+        "input": {
+            "1": {
+                "name": "gtceu:brass_rod",
+                "count": 6,
+                "tags": {
+                    "forge:rods/brass": true,
+                    "forge:rods": true
+                }
+            },
+            "4": {
+                "name": "gtceu:quartzite_gem",
+                "count": 6,
+                "tags": {
+                    "forge:gems": true,
+                    "forge:gems/quartzite": true
+                }
+            },
+            "3": {
+                "name": "gtceu:basic_electronic_circuit",
+                "count": 6,
+                "tags": {
+                    "gtceu:circuits": true,
+                    "gtceu:circuits/lv": true
+                }
+            },
+            "2": {
+                "name": "gtceu:steel_plate",
+                "count": 24,
+                "tags": {
+                    "forge:plates/steel": true,
+                    "forge:plates": true
+                }
+            }
+        },
+        "machine": "gtceu:mv_assembler",
+        "output": {
+            "10": {
+                "name": "gtceu:lv_sensor",
+                "count": 1,
+                "tags": {
+                    "gtceu:sensors": true
+                }
+            }
+        }
+    }
+]

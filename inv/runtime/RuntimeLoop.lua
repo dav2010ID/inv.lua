@@ -51,6 +51,9 @@ function RuntimeLoop:run()
             self:tick()
         end
         self:broadcastUpdatedItems()
+        if self.cli and self.cli.tick then
+            self.cli:tick()
+        end
         if self.cli then
             self.cli:drawPrompt()
         end
