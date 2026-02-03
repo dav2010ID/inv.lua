@@ -1,0 +1,263 @@
+[info] [run] id=2026-02-03T17:02Z goal=craft minecraft:piston 100
+[info] [craft] added recipe minecraft:oak_planks
+[info] [craft] added recipe minecraft:stick
+[info] [craft] added recipe minecraft:wooden_pickaxe
+[info] [craft] added recipe minecraft:stone_pickaxe
+[info] [craft] added recipe minecraft:iron_pickaxe
+[info] [craft] added recipe minecraft:furnace
+[info] [craft] added recipe minecraft:stone
+[info] [craft] added recipe minecraft:iron_ingot
+[info] [craft] added recipe minecraft:piston
+[info] [run] id=2026-02-03T17:16Z goal=craft minecraft:piston 100
+[info] [craft] added recipe minecraft:oak_planks
+[info] [craft] added recipe minecraft:stick
+[info] [craft] added recipe minecraft:wooden_pickaxe
+[info] [craft] added recipe minecraft:stone_pickaxe
+[info] [craft] added recipe minecraft:iron_pickaxe
+[info] [craft] added recipe minecraft:furnace
+[info] [craft] added recipe minecraft:stone
+[info] [craft] added recipe minecraft:iron_ingot
+[info] [craft] added recipe minecraft:piston
+[info] [craft] added recipe gtceu:steel_plate
+[info] [craft] added recipe gtceu:steel_ingot
+[info] [craft] added recipe minecraft:redstone
+[info] [craft] added recipe gtceu:raw_redstone
+[warn] [device] unconfigured device back type peripheral_hub
+[cli] type 'help' for commands
+[info] executing CLI command: craft minecraft:piston 100
+[info] [planner] plan 45 craft(s) on gtceu:mv_assembler at 249.20s
+[info] [planner] machines:
+[info]   gtceu:mv_electric_furnace: 4 available, 4 total, 9 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_bender: 3 available, 3 total, 9 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_assembler: 3 available, 3 total, 3 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_compressor: 5 available, 5 total, 45 tasks, 0 waiting_machine, 0 waiting_inputs
+[info] planned 45 craft(s)
+[info] [phase] first_task_started at +2.45s
+[info] [phase] critical_path_started at +2.45s
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 1 waiting)
+[warn] [craft] gtceu:mv_electric_furnace saturated (4/4 busy, 1 waiting)
+[info] [server] active tasks: 54
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 40 waiting)
+[warn] [craft] gtceu:mv_electric_furnace saturated (4/4 busy, 5 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 40 waiting)
+[warn] [craft] gtceu:mv_electric_furnace saturated (4/4 busy, 1 waiting)
+[info] [server] active tasks: 50
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 35 waiting)
+[warn] [craft] gtceu:mv_electric_furnace saturated (4/4 busy, 1 waiting)
+[info] [server] active tasks: 46
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 35 waiting)
+[info] [server] active tasks: 42
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 35 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 30 waiting)
+[info] [server] active tasks: 36
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 30 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 30 waiting)
+[info] [server] active tasks: 36
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 25 waiting)
+[info] [server] active tasks: 31
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 25 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 25 waiting)
+[info] [server] active tasks: 31
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 20 waiting)
+[info] [server] active tasks: 27
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 20 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 20 waiting)
+[info] [server] active tasks: 27
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 15 waiting)
+[info] [server] active tasks: 22
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 15 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 15 waiting)
+[info] [server] active tasks: 22
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 10 waiting)
+[info] [server] active tasks: 17
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 10 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 10 waiting)
+[info] [server] active tasks: 17
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 5 waiting)
+[info] [server] active tasks: 13
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 5 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (5/5 busy, 5 waiting)
+[info] [server] active tasks: 13
+[info] [server] active tasks: 8
+[info] [server] active tasks: 7
+[info] [server] active tasks: 2
+[info] [server] active tasks: 2
+[info] [server] active tasks: 2
+[info] [server] active tasks: 2
+[info] [server] active tasks: 1
+[info] [server] active tasks: 1
+[info] [server] active tasks: 1
+[info] [server] active tasks: 1
+[info] [server] active tasks: 1
+[info] [summary] craft minecraft:piston x90
+[info]   total_time: 130.35s
+[info]   critical_machine: gtceu:mv_compressor
+[info]   theoretical_min: 75.92s
+[info]   efficiency: 58%
+[info]   overhead: +54.43s (42%)
+[info]   utilization:
+[info]     gtceu:mv_electric_furnace: 10%
+[info]     gtceu:mv_bender: 20%
+[info]     gtceu:mv_assembler: 29%
+[info]     gtceu:mv_compressor: 58%
+[info]   waits:
+[info]     gtceu:mv_electric_furnace: avg 7.67s, max 16.40s
+[info]     gtceu:mv_bender: avg 49.34s, max 84.05s
+[info]     gtceu:mv_assembler: avg 67.27s, max 92.60s
+[info]     gtceu:mv_compressor: avg 39.78s, max 75.90s
+[info]   wait_reasons: (inputs = not in storage, machine = no free machine)
+[info]     gtceu:mv_electric_furnace: machine avg 1.69s, max 2.50s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_bender: machine avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_assembler: machine avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_compressor: machine avg 1.72s, max 3.50s; inputs avg 0.00s, max 0.00s
+[info]   lost_time:
+[info]     waiting_inputs: 0%
+[info]     waiting_machine: 100%
+[info]     idle: 4%
+[info]   input_blockers:
+[info] [hint] bottleneck detected: gtceu:mv_compressor
+[info] [hint] adding +1 machine reduces theoretical_min to 63.27s
+[info] [run] id=2026-02-03T17:16Z completed in 130.35s
+[info] [run] id=2026-02-03T17:20Z goal=craft minecraft:piston 100
+[info] [craft] added recipe minecraft:oak_planks
+[info] [craft] added recipe minecraft:stick
+[info] [craft] added recipe minecraft:wooden_pickaxe
+[info] [craft] added recipe minecraft:stone_pickaxe
+[info] [craft] added recipe minecraft:iron_pickaxe
+[info] [craft] added recipe minecraft:furnace
+[info] [craft] added recipe minecraft:stone
+[info] [craft] added recipe minecraft:iron_ingot
+[info] [craft] added recipe minecraft:piston
+[info] [craft] added recipe gtceu:steel_plate
+[info] [craft] added recipe gtceu:steel_ingot
+[info] [craft] added recipe minecraft:redstone
+[info] [craft] added recipe gtceu:raw_redstone
+[warn] [device] unconfigured device back type peripheral_hub
+[cli] type 'help' for commands
+[info] executing CLI command: craft minecraft:piston 100
+[info] [planner] plan 50 craft(s) on gtceu:mv_assembler at 492.75s
+[info] [planner] machines:
+[info]   gtceu:mv_electric_furnace: 4 available, 4 total, 12 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_assembler: 3 available, 3 total, 3 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_compressor: 6 available, 6 total, 50 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_bender: 3 available, 3 total, 9 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_forge_hammer: 2 available, 2 total, 12 tasks, 0 waiting_machine, 0 waiting_inputs
+[info] planned 50 craft(s)
+[info] [phase] first_task_started at +1.60s
+[info] [phase] critical_path_started at +1.60s
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 1 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
+[info] [server] active tasks: 62
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 44 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 10 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 44 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 10 waiting)
+[info] [server] active tasks: 62
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 38 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 8 waiting)
+[info] [server] active tasks: 57
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 38 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 8 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 38 waiting)
+[info] [server] active tasks: 55
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 32 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 6 waiting)
+[info] [server] active tasks: 49
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 32 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 6 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 32 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 6 waiting)
+[info] [server] active tasks: 47
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 26 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 4 waiting)
+[info] [server] active tasks: 41
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 26 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 4 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 26 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 4 waiting)
+[info] [server] active tasks: 39
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 20 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 2 waiting)
+[info] [server] active tasks: 34
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 20 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 2 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 20 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 2 waiting)
+[info] [server] active tasks: 32
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 14 waiting)
+[info] [server] active tasks: 26
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 14 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 14 waiting)
+[info] [server] active tasks: 24
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 8 waiting)
+[info] [server] active tasks: 18
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 8 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 8 waiting)
+[info] [server] active tasks: 16
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 2 waiting)
+[info] [server] active tasks: 11
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 2 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 2 waiting)
+[info] [server] active tasks: 6
+[info] [server] active tasks: 5
+[info] [server] active tasks: 4
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[warn] [device] unconfigured device top type computer
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[warn] [device] unconfigured device computer_2 type computer
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3

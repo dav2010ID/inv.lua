@@ -4,8 +4,9 @@ local Logger = require 'inv.infrastructure.Log'
 local args = {...}
 
 local function initLogging(path, maxSize)
-    maxSize = 100 * 1024  -- 100 KB
+    maxSize = maxSize or (32 * 1024) -- 32 KB default
     local oldPrint = print
+    local warned = false
 
     print = function(...)
         local parts = {}
@@ -16,8 +17,16 @@ local function initLogging(path, maxSize)
 
         oldPrint(line)
 
-        if fs.exists(path) and fs.getSize(path) > maxSize then
-            fs.delete(path)
+        local free = fs.getFreeSpace("/")
+        if free < 4096 then
+            if fs.exists(path) then
+                fs.delete(path)
+            end
+            if not warned then
+                oldPrint("[warn] low disk space; file logging disabled")
+                warned = true
+            end
+            return
         end
 
         local log = fs.open(path, "a")
@@ -30,7 +39,7 @@ end
 
 
 function run()
-    initLogging("Run.log")
+    initLogging("Run.log", 32 * 1024)
     Logger.setLevel("info")
     local runId = os.date("!%Y-%m-%dT%H:%MZ")
     Logger.info("[run] id=" .. runId, "goal=" .. table.concat(args, " "))
