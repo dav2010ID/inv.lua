@@ -3,12 +3,23 @@ local Class = require 'inv.core.Class'
 local Net = require 'inv.infrastructure.util.Net'
 local Storage = require 'inv.infrastructure.device.Storage'
 local Machine = require 'inv.infrastructure.device.Machine'
+local GtceuMachine = require 'inv.infrastructure.device.GtceuMachine'
 local BackendRegistry = require 'inv.infrastructure.machine.BackendRegistry'
 
 -- Manages network-attached devices, including storage and crafting machines.
 -- Specialized behavior is delegated by Devices to the appropriate class
 -- (either InventoryIO or MachineScheduler).
 local DeviceCatalog = Class:subclass()
+
+local function resolveMachineClass(deviceType, config)
+    if config and config.machineClass == "gtceu" then
+        return GtceuMachine
+    end
+    if deviceType and string.find(deviceType, "^gtceu:") then
+        return GtceuMachine
+    end
+    return Machine
+end
 
 function DeviceCatalog:init(server, overrides)
     self.server = server
@@ -101,7 +112,8 @@ function DeviceCatalog:createDevice(name)
             return nil
         end
         local backend = BackendRegistry.resolve(config.backend)
-        local machine = Machine(self.server, name, deviceType, config, backend)
+        local machineClass = resolveMachineClass(deviceType, config)
+        local machine = machineClass(self.server, name, deviceType, config, backend)
         self.logger.debug("[device] machine attached", name, "type", deviceType)
         return machine
     elseif purpose == "storage" then

@@ -11,9 +11,27 @@ function TaskFactory:init(server)
     self.server = server
 end
 
+function TaskFactory:estimateDuration(recipe, craftCount)
+    local registry = self.server and self.server.machineRegistry or nil
+    if not registry or not recipe then
+        return nil
+    end
+    local machine = registry:getAny(recipe.machine)
+    if not machine or type(machine.estimateDuration) ~= "function" then
+        return nil
+    end
+    return machine:estimateDuration(craftCount)
+end
+
 function TaskFactory:createTask(recipe, batch, summary, parent, dest, destSlot, depth)
     local priority = -(depth or 0)
-    return CraftTask(self.server, parent, recipe, dest, destSlot, batch, summary, priority)
+    local estimatedDuration = self:estimateDuration(recipe, batch)
+    if estimatedDuration then
+        priority = priority - estimatedDuration
+    end
+    local task = CraftTask(self.server, parent, recipe, dest, destSlot, batch, summary, priority)
+    task.estimatedDuration = estimatedDuration
+    return task
 end
 
 function TaskGraphBuilder:init(server, queue)

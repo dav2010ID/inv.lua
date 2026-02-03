@@ -47,3 +47,71 @@
 [info]     idle: 0%
 [info]   input_blockers:
 [info] [run] id=2026-02-03T15:51Z completed in 23.80s
+[info] [run] id=2026-02-03T17:31Z goal=craft minecraft:piston 20
+[cli] type 'help' for commands
+[info] executing CLI command: craft minecraft:piston 20
+[info] [planner] plan 10 craft(s) on gtceu:mv_assembler at 427.60s
+[info] [planner] machines:
+[info]   gtceu:mv_compressor: 6 available, 6 total, 10 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_assembler: 3 available, 3 total, 3 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_bender: 3 available, 3 total, 9 tasks, 0 waiting_machine, 0 waiting_inputs
+[info] planned 10 craft(s)
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-2
+[info] [phase] first_task_started at +1.85s
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 1 waiting)
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
+[info] [server] active tasks: 10
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 4 waiting)
+[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 4 waiting)
+[info] [server] active tasks: 10
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
+[info] [phase] critical_path_started at +11.55s
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
+[warn] [craft] gtceu:mv_bender saturated (3/3 busy, 1 waiting)
+[info] [server] active tasks: 9
+[info] [server] active tasks: 7
+[info] [batch] wave_update gtceu:mv_assembler plan 1 capacity 3 wave 1-3
+[info] [server] active tasks: 5
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
+[warn] [craft] gtceu:mv_bender saturated (3/3 busy, 1 waiting)
+[info] [server] active tasks: 3
+[info] [server] active tasks: 2
+[info] [server] active tasks: 1
+[info] [summary] craft minecraft:piston x20
+[info]   total_time: 32.90s
+[info]   critical_machine: gtceu:mv_compressor
+[info]   lower_bound_infinite: 11.15s
+[info]   lower_bound_resource: 14.22s
+[info]   efficiency: 43%
+[info]   overhead: +18.67s (57%)
+[info]   utilization:
+[info]     gtceu:mv_compressor: 43%
+[info]     gtceu:mv_bender: 17%
+[info]     gtceu:mv_assembler: 27%
+[info]   waits:
+[info]     gtceu:mv_compressor: avg 5.76s, max 11.40s
+[info]     gtceu:mv_bender: avg 16.29s, max 22.45s
+[info]     gtceu:mv_assembler: avg 21.27s, max 24.85s
+[info]   wait_reasons:
+[info]     gtceu:mv_compressor: capacity avg 1.09s, max 2.05s; priority avg 1.12s, max 2.35s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_bender: capacity avg 1.77s, max 1.80s; priority avg 1.95s, max 1.95s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_assembler: capacity avg 0.00s, max 0.00s; priority avg 0.00s, max 0.00s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]   lost_time:
+[info]     waiting_inputs: 0%
+[info]     waiting_machine_capacity: 30%
+[info]     waiting_machine_priority: 70%
+[info]     waiting_machine_unavailable: 0%
+[info]     idle: 35%
+[info] [hint] bottleneck detected: gtceu:mv_compressor
+[info] [hint] adding +1 machine reduces theoretical_min to 12.19s
+[info] [run] id=2026-02-03T17:31Z completed in 32.90s
+[info] [device] skipped double add device gtceu:mv_assembler_0
+[info] [device] skipped double add device minecraft:chest_12
+[info] [device] skipped double add device minecraft:chest_13

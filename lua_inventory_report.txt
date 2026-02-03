@@ -32,6 +32,7 @@ REQUIRES:
   require 'inv.domain.CraftGraph'
 FUNCTIONS:
   TaskFactory:init
+  TaskFactory:estimateDuration
   TaskFactory:createTask
   TaskGraphBuilder:init
   TaskGraphBuilder:addWaitTask
@@ -96,7 +97,6 @@ REQUIRES:
 FUNCTIONS:
   Task:init
   Task:run
-  Task:setStatus
   Task:applyStatus
   Task:clearBlock
   Task:attachToParent
@@ -117,10 +117,26 @@ REQUIRES:
 FUNCTIONS:
   Device:init
   Device:getItemDetail
+  Device:getItemLimit
   Device:list
   Device:push
   Device:pull
   Device:destroy
+
+FILE: inv\infrastructure\device\GtceuMachine.lua
+REQUIRES:
+  require 'inv.infrastructure.device.Machine'
+FUNCTIONS:
+  GtceuMachine:isActive
+  GtceuMachine:getProgress
+  GtceuMachine:getMaxProgress
+  GtceuMachine:getInputPerSec
+  GtceuMachine:getOutputPerSec
+  GtceuMachine:isWorkingEnabled
+  GtceuMachine:setWorkingEnabled
+  GtceuMachine:setSuspendAfterFinish
+  GtceuMachine:isOutputReady
+  GtceuMachine:estimateDuration
 
 FILE: inv\infrastructure\device\Machine.lua
 REQUIRES:
@@ -144,6 +160,8 @@ FUNCTIONS:
   Machine:getCraftOutputSlot
   Machine:getItemDetail
   Machine:startCraft
+  Machine:isOutputReady
+  Machine:estimateDuration
   Machine:createSession
   Machine:clearSession
   Machine:isBusy
@@ -164,6 +182,7 @@ REQUIRES:
   require 'inv.infrastructure.util.Net'
   require 'inv.infrastructure.device.Storage'
   require 'inv.infrastructure.device.Machine'
+  require 'inv.infrastructure.device.GtceuMachine'
   require 'inv.infrastructure.machine.BackendRegistry'
 FUNCTIONS:
   DeviceCatalog:init
@@ -210,9 +229,8 @@ FUNCTIONS:
   MachineRegistry:addMachine
   MachineRegistry:removeMachine
   MachineRegistry:getMachines
+  MachineRegistry:getAny
   MachineRegistry:countMachines
-  MachineRegistry:countAvailableMachines
-  MachineRegistry:findMachine
 
 FILE: inv\infrastructure\StorageRegistry.lua
 REQUIRES:
@@ -224,6 +242,7 @@ FUNCTIONS:
   StorageRegistry:removeStorage
   StorageRegistry.deviceSort
   StorageRegistry:ensureSorted
+  StorageRegistry:list
 
 FILE: inv\infrastructure\util\Net.lua
 REQUIRES: (none)
@@ -300,6 +319,7 @@ REQUIRES:
   require 'inv.domain.Item'
 FUNCTIONS:
   InventoryIndex:init
+  InventoryIndex:registerItem
   InventoryIndex:addItem
   InventoryIndex:updateDB
   InventoryIndex:updateTags
@@ -325,6 +345,7 @@ FUNCTIONS:
   InventoryMutator:pull
   InventoryMutator:scanInventories
   InventoryMutator:scanInventory
+  InventoryMutator:registerItem
   InventoryMutator:addItem
   InventoryMutator:updateTags
   InventoryMutator:updateDB
@@ -337,7 +358,9 @@ REQUIRES:
 FUNCTIONS:
   MachineScheduler:init
   MachineScheduler:schedule
-  MachineScheduler:requestMachine
+  MachineScheduler:queuePosition
+  MachineScheduler:countAvailableMachines
+  MachineScheduler:findMachine
   MachineScheduler:notifyMachineFree
   MachineScheduler:logSaturation
   MachineScheduler:logMachineSummary
@@ -371,9 +394,10 @@ FUNCTIONS:
   TaskScheduler:nextID
   TaskScheduler:ensureTaskId
   TaskScheduler:getExecution
-  TaskScheduler:runWaitTask
   TaskScheduler:clearExecution
-  TaskScheduler:runCraftTask
+  TaskScheduler:registerBatch
+  TaskScheduler:batchAllows
+  TaskScheduler:recordBatchComplete
   TaskScheduler:tick
   TaskScheduler:addTask
   TaskScheduler:createSummary

@@ -69,6 +69,30 @@ function InventoryIO:push(targetDevice, criteria, count, targetSlot)
     if targetCount <= 0 then
         return 0
     end
+    local slotRemaining = nil
+    local slotItemName = nil
+    if targetSlot and targetDevice and type(targetDevice.getItemLimit) == "function" then
+        local limit = targetDevice:getItemLimit(targetSlot)
+        if limit and limit > 0 then
+            slotRemaining = limit
+            if type(targetDevice.getItemDetail) == "function" then
+                local detail = targetDevice:getItemDetail(targetSlot)
+                if detail then
+                    slotItemName = detail.name
+                    slotRemaining = limit - (detail.count or 0)
+                end
+            end
+            if slotRemaining < 0 then
+                slotRemaining = 0
+            end
+            if slotRemaining == 0 then
+                return 0
+            end
+            if targetCount > slotRemaining then
+                targetCount = slotRemaining
+            end
+        end
+    end
 
     local storageRegistry = self:getStorageRegistry()
     -- Note: matches is a snapshot; this assumes resolveCriteria doesn't change during push.
@@ -78,20 +102,46 @@ function InventoryIO:push(targetDevice, criteria, count, targetSlot)
 
         for slot, deviceItem in pairs(items) do
             if matches[deviceItem.name] then
-                local toMove = math.min(deviceItem.count, targetCount - moved)
-                local n = device:push(targetDevice, slot, toMove, targetSlot)
+                if slotRemaining ~= nil then
+                    if slotItemName and slotItemName ~= deviceItem.name then
+                        -- slot is already occupied by a different item
+                    else
+                        local toMove = math.min(deviceItem.count, targetCount - moved, slotRemaining)
+                        local n = device:push(targetDevice, slot, toMove, targetSlot)
 
-                if n > 0 then
-                    moved = moved + n
+                        if n > 0 then
+                            moved = moved + n
+                            if not slotItemName then
+                                slotItemName = deviceItem.name
+                            end
+                            slotRemaining = slotRemaining - n
 
-                    local info = self.index.items[deviceItem.name]
-                    info.count = info.count - n
-                    assert(info.count >= 0, "inventory count underflow for " .. tostring(deviceItem.name))
-                    self.index:markUpdated(deviceItem.name)
-                end
+                            local info = self.index.items[deviceItem.name]
+                            info.count = info.count - n
+                            assert(info.count >= 0, "inventory count underflow for " .. tostring(deviceItem.name))
+                            self.index:markUpdated(deviceItem.name)
+                        end
 
-                if moved >= targetCount then
-                    return moved
+                        if moved >= targetCount or slotRemaining <= 0 then
+                            return moved
+                        end
+                    end
+                else
+                    local toMove = math.min(deviceItem.count, targetCount - moved)
+                    local n = device:push(targetDevice, slot, toMove, targetSlot)
+
+                    if n > 0 then
+                        moved = moved + n
+
+                        local info = self.index.items[deviceItem.name]
+                        info.count = info.count - n
+                        assert(info.count >= 0, "inventory count underflow for " .. tostring(deviceItem.name))
+                        self.index:markUpdated(deviceItem.name)
+                    end
+
+                    if moved >= targetCount then
+                        return moved
+                    end
                 end
             end
         end

@@ -36,6 +36,17 @@ function MachineRegistry:getMachines(machineType)
     return self.machines[machineType]
 end
 
+function MachineRegistry:getAny(machineType)
+    local machinesOfType = self.machines[machineType]
+    if not machinesOfType then
+        return nil
+    end
+    for _, machine in pairs(machinesOfType) do
+        return machine
+    end
+    return nil
+end
+
 function MachineRegistry:countMachines(machineType)
     local machinesOfType = self.machines[machineType]
     if not machinesOfType then

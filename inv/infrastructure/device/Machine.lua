@@ -79,6 +79,11 @@ function CraftSession:forwardOutput(virtSlot, count)
 end
 
 function CraftSession:drainOutput()
+    if self.machine and type(self.machine.isOutputReady) == "function" then
+        if not self.machine:isOutputReady(self) then
+            return true
+        end
+    end
     self.state = "output"
     self.machine.state = "output"
     for virtSlot, rem in pairs(self.remaining) do
