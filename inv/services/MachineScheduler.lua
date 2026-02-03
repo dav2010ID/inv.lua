@@ -9,6 +9,7 @@ function MachineScheduler:init(server, machineRegistry)
     self.machineRegistry = machineRegistry
     -- table<string, table<int, CraftTask>>: queues per machine type.
     self.waitingTasks = {}
+    self.queued = {}
 end
 
 function MachineScheduler:schedule(machineType, task)
@@ -37,39 +38,31 @@ end
 function MachineScheduler:requestMachine(task)
     local machineType = task.machineType
     local machinesOfType = self.machineRegistry and self.machineRegistry:getMachines(machineType) or nil
+    local queue = self.waitingTasks[machineType]
+    local queuedTask = queue and queue[1] or nil
     if machinesOfType then
         for _, machine in pairs(machinesOfType) do
             if not machine:isBusy() then
+                if queuedTask and queuedTask ~= task then
+                    return nil
+                end
+                if queuedTask == task then
+                    table.remove(queue, 1)
+                    self.queued[task.id] = nil
+                end
                 return machine
             end
         end
     end
-    if not task.queuedForMachine then
+    if not self.queued[task.id] then
         self:schedule(machineType, task)
-        task.queuedForMachine = true
+        self.queued[task.id] = true
     end
     return nil
 end
 
 function MachineScheduler:notifyMachineFree(machineType)
-    local queue = self.waitingTasks[machineType]
-    if not queue or #queue == 0 then
-        return
-    end
-    local machinesOfType = self.machineRegistry and self.machineRegistry:getMachines(machineType) or nil
-    if not machinesOfType then
-        return
-    end
-    for _, machine in pairs(machinesOfType) do
-        if not machine:isBusy() then
-            local task = table.remove(queue, 1)
-            if task then
-                task.queuedForMachine = false
-                task:assignMachine(machine)
-            end
-            return
-        end
-    end
+    -- Tasks will claim machines on the next scheduler tick via requestMachine.
 end
 
 function MachineScheduler:logSaturation(machineType)

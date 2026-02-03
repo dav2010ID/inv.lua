@@ -1,6 +1,6 @@
 local Class = require 'inv.core.Class'
 local CraftTask = require 'inv.domain.CraftTask'
-local WaitTask = require 'inv.domain.WaitTask'
+local Task = require 'inv.domain.Task'
 local CraftGraph = require 'inv.domain.CraftGraph'
 
 local TaskFactory = Class:subclass()
@@ -23,16 +23,40 @@ function TaskGraphBuilder:init(server, queue)
     self.maxDepth = 32
 end
 
-function TaskGraphBuilder:addWaitTask(parent, item, summaryId)
-    local task = WaitTask(self.server, parent, item)
+function TaskGraphBuilder:addWaitTask(parent, item, summaryId, reason)
+    local task = Task(self.server, parent)
+    task.waitItem = item
+    task.waitReason = reason
     if summaryId then
         task.summaryId = summaryId
     end
     self.queue:schedule(task)
 end
 
+function TaskGraphBuilder:graphContext()
+    return {
+        inventoryQuery = self.server.inventoryQuery,
+        recipeStore = self.server.recipeStore,
+        logger = self.logger,
+        maxDepth = self.maxDepth,
+        addWait = function(parent, item, summaryId, reason)
+            self:addWaitTask(parent, item, summaryId, reason)
+        end,
+        enqueueRecipe = function(parent, recipe, crafts, depth, visiting, summaryId)
+            self.queue:enqueueRecipe(recipe, crafts, summaryId, parent, nil, nil, depth, visiting, false)
+        end,
+        identityKey = function(item)
+            if item and item.identityKey then
+                return item:identityKey()
+            end
+            return tostring(item)
+        end
+    }
+end
+
 function TaskGraphBuilder:link(task, recipe, depth, visiting, craftCount, summaryId)
-    CraftGraph.link(self, task, recipe, depth, visiting, craftCount, summaryId)
+    local ctx = self:graphContext()
+    return CraftGraph.link(ctx, task, recipe, depth, visiting, craftCount, summaryId)
 end
 
 function TaskQueue:init(server)
@@ -83,7 +107,7 @@ function TaskQueue:enqueueRecipe(recipe, crafts, summaryRef, parent, dest, destS
         self.server.taskScheduler:registerTask(summary, task)
         if not skipDependencies then
             self.taskGraphBuilder:link(task, recipe, depth, visiting, batch, summary and summary.id or summaryRef)
-            task.dependenciesPlanned = true
+            task.needsDependencies = false
         end
         self:schedule(task)
     end

@@ -2,139 +2,92 @@ local Task = require 'inv.domain.Task'
 -- Represents a crafting operation in progress.
 local CraftTask = Task:subclass()
 
+CraftTask.states = {
+    created = true,
+    waiting_inputs = true,
+    waiting_machine = true,
+    running = true,
+    done = true,
+    failed = true
+}
+
 -- dest and destSlot are optional.
 -- craftCount defaults to 1.
 -- priority defaults to 0 (higher runs first).
 function CraftTask:init(server, parent, recipe, dest, destSlot, craftCount, summary, priority)
     CraftTask.superClass.init(self, server, parent)
-    -- Machine: What is currently crafting this Task's recipe.
-    -- nil if we're waiting to find a machine.
-    self.machine = nil
     -- Recipe: What should be crafted.
     self.recipe = recipe
     -- Device: Optional. Where crafted items should be sent.
     self.dest = dest
     -- int: Optional. Slot within self.dest where items should be sent.
     self.destSlot = destSlot
-    self.dependenciesPlanned = false
     self.craftCount = craftCount or 1
-    self.nextAttempt = nil
     self.createdAt = os.clock()
     self.startedAt = nil
     self.machineType = recipe.machine
-    self.queuedForMachine = false
     self.summaryId = summary and summary.id or nil
     self.priority = priority or 0
+    self.state = "created"
+    self.retryAfter = nil
+    self.needsDependencies = true
+    self._scaledInputs = nil
+    self.machineName = nil
 end
 
 function CraftTask:scaledInputs()
-    local inputs = {}
-    for _, item in pairs(self.recipe.input) do
-        local copy = item:copy()
-        copy.count = copy.count * self.craftCount
-        table.insert(inputs, copy)
+    if self._scaledInputs then
+        return self._scaledInputs
     end
+    local inputs = self.recipe:scaledInputs(self.craftCount)
+    self._scaledInputs = inputs
     return inputs
 end
 
-function CraftTask:assignMachine(machine)
-    if not machine then
-        return false
+function CraftTask:wantsInputs()
+    return self.state == "created" or self.state == "waiting_inputs" or self.state == "waiting_machine"
+end
+
+function CraftTask:wantsMachine()
+    return self.state == "created" or self.state == "waiting_machine"
+end
+
+function CraftTask:canRun()
+    return self.state == "running"
+end
+
+function CraftTask:bindMachine(machine)
+    self.machineName = machine and machine.name or nil
+end
+
+function CraftTask:startExecution(at)
+    self.startedAt = at or os.clock()
+end
+
+function CraftTask:onStartSuccess()
+    self.state = "running"
+end
+
+function CraftTask:onStartFailure(reason)
+    if reason == "inputs" then
+        self.state = "waiting_inputs"
+    elseif reason == "machine" then
+        self.state = "waiting_machine"
+    else
+        self.state = "created"
     end
-    self.machine = machine
-    if self.machine:craft(self.recipe, self.dest, self.destSlot, self.craftCount) == false then
-        self.machine = nil
-        self.server.taskScheduler:setStatus(self, "blocked", "inputs")
-        self.nextAttempt = os.clock() + 1
-        return false
-    end
-    self.startedAt = os.clock()
-    local blocker = self.blockedBy
-    self.server.taskScheduler:setStatus(self, "running")
-    local waitSeconds = self.startedAt - self.createdAt
-    if self.summaryId then
-        self.server.taskScheduler:recordTaskStart(self.summaryId, self.machineType, waitSeconds)
-    end
-    self.server.logger.debug(
-        "[task] start",
-        self.recipe.machine,
-        "x" .. tostring(self.craftCount),
-        "reason: inputs_ready",
-        "waited",
-        string.format("%.2fs", waitSeconds),
-        blocker and ("blocked_by " .. blocker) or ""
-    )
-    return true
 end
 
 function CraftTask:run()
-    if self.nextAttempt and os.clock() < self.nextAttempt then
-        self.server.taskScheduler:recordWaitProgress(self)
+    if self.state == "created" then
         return false
-    end
-    if self.queuedForMachine then
-        self.server.taskScheduler:recordWaitProgress(self)
+    elseif self.state == "waiting_inputs" then
         return false
-    end
-    if self.nSubTasks > 0 then
+    elseif self.state == "waiting_machine" then
         return false
-    end
-    if not self.machine then
-        local missing = self.server.inventoryQuery:tryMatchAll(self:scaledInputs())
-        if #missing > 0 then
-            self.server.taskScheduler:recordWaitProgress(self)
-            local blocker = missing[1]
-            local blockedBy = nil
-            if blocker then
-                local name = blocker.name
-                if not name and blocker.tags then
-                    for tag, _ in pairs(blocker.tags) do
-                        name = "tag:" .. tag
-                        break
-                    end
-                end
-                if name then
-                    blockedBy = name
-                end
-            end
-            self.server.taskScheduler:setStatus(self, "blocked", "inputs", blockedBy)
-            if not self.dependenciesPlanned and self.server.craftExecutor and self.server.craftExecutor.taskGraphBuilder then
-                self.dependenciesPlanned = true
-                self.server.craftExecutor.taskGraphBuilder:link(self, self.recipe, 0, {}, self.craftCount, self.summaryId)
-            end
-            return false
-        end
-        local machine = self.server.machineScheduler:requestMachine(self)
-        if not machine then
-            self.server.taskScheduler:setStatus(self, "waiting", "machine")
-            self.server.machineScheduler:logSaturation(self.recipe.machine)
-            self.nextAttempt = os.clock() + 1
-            return false
-        end
-        if not self:assignMachine(machine) then
-            return false
-        end
-    end
-    self.machine:pullOutput()
-    if not self.machine:isBusy() then
-        local endAt = os.clock()
-        local runSeconds = self.startedAt and (endAt - self.startedAt) or 0
-        local totalSeconds = endAt - self.createdAt
-        if self.summaryId then
-            self.server.taskScheduler:recordTaskComplete(self.summaryId, self.machineType, runSeconds)
-        end
-        self.server.logger.debug(
-            "[task] completed",
-            self.recipe.machine,
-            "x" .. tostring(self.craftCount),
-            "on",
-            self.machine.name,
-            "run",
-            string.format("%.2fs", runSeconds),
-            "total",
-            string.format("%.2fs", totalSeconds)
-        )
-        self.server.machineScheduler:notifyMachineFree(self.recipe.machine)
+    elseif self.state == "running" then
+        return false
+    elseif self.state == "done" or self.state == "failed" then
         return true
     end
     return false

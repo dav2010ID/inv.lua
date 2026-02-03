@@ -3,6 +3,7 @@ local Class = require 'inv.core.Class'
 local Net = require 'inv.infrastructure.util.Net'
 local Storage = require 'inv.infrastructure.device.Storage'
 local Machine = require 'inv.infrastructure.device.Machine'
+local BackendRegistry = require 'inv.infrastructure.machine.BackendRegistry'
 
 -- Manages network-attached devices, including storage and crafting machines.
 -- Specialized behavior is delegated by Devices to the appropriate class
@@ -94,29 +95,13 @@ function DeviceCatalog:createDevice(name)
         deviceType = config.machineType or config.type
     end
 
-    if deviceType == "workbench" and purpose == "crafting" then
-        if config.backend == nil then
-            config.backend = "turtle"
-        end
-        if config.slots == nil then
-            config.slots = {
-                [1]=1,  [2]=2,  [3]=3,
-                [4]=5,  [5]=6,  [6]=7,
-                [7]=9,  [8]=10, [9]=11,
-                [10]=16
-            }
-        end
-        if config.craftOutputSlot == nil then
-            config.craftOutputSlot = 10
-        end
-    end
-
     if purpose == "crafting" then
         if not deviceType then
             self.logger.warn("[device] crafting device missing type", name)
             return nil
         end
-        local machine = Machine(self.server, name, deviceType, config)
+        local backend = BackendRegistry.resolve(config.backend)
+        local machine = Machine(self.server, name, deviceType, config, backend)
         self.logger.debug("[device] machine attached", name, "type", deviceType)
         return machine
     elseif purpose == "storage" then

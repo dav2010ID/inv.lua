@@ -1,73 +1,89 @@
 local CraftGraph = {}
 
-local function criteriaKey(item)
-    if item.name then
-        return "name:" .. item.name
+local function identityKey(ctx, item)
+    if ctx and ctx.identityKey then
+        return ctx.identityKey(item)
     end
-    if item.tags then
-        local keys = {}
-        for tag, _ in pairs(item.tags) do
-            table.insert(keys, tag)
-        end
-        table.sort(keys)
-        return "tags:" .. table.concat(keys, ",")
+    if item and item.identityKey then
+        return item:identityKey()
     end
-    return "unknown"
+    return tostring(item)
 end
 
-local function scaledInputs(recipe, craftCount)
-    local inputs = {}
-    for _, item in pairs(recipe.input) do
-        local copy = item:copy()
-        copy.count = copy.count * craftCount
-        table.insert(inputs, copy)
+local function scaledInputs(ctx, recipe, craftCount)
+    if ctx and ctx.scaledInputs then
+        return ctx.scaledInputs(recipe, craftCount)
     end
-    return inputs
+    return recipe:scaledInputs(craftCount)
+end
+
+local function addWait(ctx, task, item, summaryId, reason, result)
+    if ctx and ctx.addWait then
+        ctx.addWait(task, item, summaryId, reason)
+    end
+    result.blocked = result.blocked + 1
+end
+
+local function enqueue(ctx, task, recipe, crafts, depth, visiting, summaryId, result)
+    if ctx and ctx.enqueueRecipe then
+        ctx.enqueueRecipe(task, recipe, crafts, depth, visiting, summaryId)
+    end
+    result.added = result.added + 1
 end
 
 function CraftGraph.countProduced(recipe, criteria)
-    for _, item in pairs(recipe.output) do
-        if criteria:matches(item) then
-            return item.count
-        end
-    end
-    return 0
+    return recipe:countProduced(criteria)
 end
 
-function CraftGraph.link(builder, task, recipe, depth, visiting, craftCount, summaryId)
-    if depth > builder.maxDepth then
-        builder.logger.warn("[planner] max depth exceeded for recipe", recipe.machine)
-        return
+function CraftGraph.link(ctx, task, recipe, depth, visiting, craftCount, summaryId)
+    local result = {added=0, blocked=0}
+    local maxDepth = ctx and ctx.maxDepth or 0
+    local count = craftCount or 1
+    local logger = ctx and ctx.logger or nil
+
+    if depth > maxDepth then
+        if logger then
+            logger.warn("[planner] max depth exceeded for recipe", recipe.machine)
+        end
+        local missing = ctx.inventoryQuery:tryMatchAll(scaledInputs(ctx, recipe, count))
+        for _, item in ipairs(missing) do
+            addWait(ctx, task, item, summaryId, "depth_limit", result)
+        end
+        return result
     end
 
-    local count = craftCount or 1
-    local missing = builder.server.inventoryQuery:tryMatchAll(scaledInputs(recipe, count))
+    local missing = ctx.inventoryQuery:tryMatchAll(scaledInputs(ctx, recipe, count))
     if #missing == 0 then
-        return
+        return result
     end
 
     for _, item in ipairs(missing) do
-        local key = criteriaKey(item)
+        local key = identityKey(ctx, item)
         if visiting[key] then
-            builder.logger.warn("[planner] cycle detected at", key)
-            builder:addWaitTask(task, item, summaryId)
+            if logger then
+                logger.warn("[planner] cycle detected at", key)
+            end
+            addWait(ctx, task, item, summaryId, "cycle", result)
         else
+            assert(visiting[key] == nil, "visiting key already set")
             visiting[key] = true
-            local depRecipe = builder.server.recipeStore:findRecipe(item)
+            local depRecipe = ctx.recipeStore:findRecipe(item)
             if depRecipe then
-                local nOut = CraftGraph.countProduced(depRecipe, item)
+                local nOut = depRecipe:countProduced(item)
                 if nOut > 0 then
                     local crafts = math.ceil(item.count / nOut)
-                    builder.queue:enqueueRecipe(depRecipe, crafts, summaryId, task, nil, nil, depth + 1, visiting, false)
+                    enqueue(ctx, task, depRecipe, crafts, depth + 1, visiting, summaryId, result)
                 else
-                    builder:addWaitTask(task, item, summaryId)
+                    addWait(ctx, task, item, summaryId, "invalid_output", result)
                 end
             else
-                builder:addWaitTask(task, item, summaryId)
+                addWait(ctx, task, item, summaryId, "no_recipe", result)
             end
+            assert(visiting[key] == true, "visiting key corrupted")
             visiting[key] = nil
         end
     end
+    return result
 end
 
 return CraftGraph

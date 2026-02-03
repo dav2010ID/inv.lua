@@ -71,6 +71,7 @@ function InventoryIO:push(targetDevice, criteria, count, targetSlot)
     end
 
     local storageRegistry = self:getStorageRegistry()
+    -- Note: matches is a snapshot; this assumes resolveCriteria doesn't change during push.
     storageRegistry:ensureSorted()
     for i, device in ipairs(storageRegistry.storage) do
         local items = device:list()
@@ -85,6 +86,7 @@ function InventoryIO:push(targetDevice, criteria, count, targetSlot)
 
                     local info = self.index.items[deviceItem.name]
                     info.count = info.count - n
+                    assert(info.count >= 0, "inventory count underflow for " .. tostring(deviceItem.name))
                     self.index:markUpdated(deviceItem.name)
                 end
 
@@ -101,7 +103,6 @@ end
 -- Attempts to pull a given amount of items into the system.
 function InventoryIO:pull(sourceDevice, item, count, sourceSlot)
     local moved = 0
-    self.index:updateDB(item) -- ensure we know what we're adding to the system
     local targetCount = count or item.count or 0
     if targetCount <= 0 then
         return 0
@@ -121,6 +122,7 @@ function InventoryIO:pull(sourceDevice, item, count, sourceSlot)
     end
 
     if moved > 0 then
+        self.index:updateDB(item) -- ensure we know what we're adding to the system
         local info = self.index.items[item.name]
         info.count = info.count + moved
 

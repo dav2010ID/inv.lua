@@ -1,4 +1,5 @@
 local Class = require 'inv.core.Class'
+local CraftTask = require 'inv.domain.CraftTask'
 
 -- Asynchronously manages crafting tasks
 local TaskScheduler = Class:subclass()
@@ -18,12 +19,218 @@ function TaskScheduler:init(server)
     self.nextSummaryId = 0
     self.currentCriticalMachine = nil
     self.currentRunId = nil
+    self.executions = {}
 end
 
 -- Returns the next available task ID for creating a new task.
 function TaskScheduler:nextID()
     self.lastID = self.lastID + 1
     return self.lastID
+end
+
+function TaskScheduler:ensureTaskId(task)
+    if not task.id then
+        task.id = self:nextID()
+    end
+end
+
+local function isCraftTask(task)
+    return task and task.instanceof and task:instanceof(CraftTask)
+end
+
+local function blockedByForMissing(missing)
+    local blocker = missing and missing[1] or nil
+    if not blocker then
+        return nil
+    end
+    if blocker.reason then
+        return blocker.reason
+    end
+    if blocker.name then
+        return blocker.name
+    end
+    if blocker.tags then
+        for tag, _ in pairs(blocker.tags) do
+            return "tag:" .. tag
+        end
+    end
+    return nil
+end
+
+local function waitItemKey(item)
+    if not item then
+        return nil
+    end
+    if item.name then
+        return item.name
+    end
+    if item.tags then
+        for tag, _ in pairs(item.tags) do
+            return "tag:" .. tag
+        end
+    end
+    return nil
+end
+
+local function isWaitTask(task)
+    return task and task.waitItem ~= nil
+end
+
+function TaskScheduler:getExecution(task)
+    local exec = self.executions[task.id]
+    if not exec then
+        exec = {machine=nil, session=nil}
+        self.executions[task.id] = exec
+    end
+    return exec
+end
+
+function TaskScheduler:runWaitTask(task)
+    local missing = self.server.inventoryQuery:tryMatchAll({task.waitItem})
+    if #missing == 0 then
+        return "done"
+    end
+    self:recordWaitProgress(task)
+    self:setStatus(task, "blocked", "inputs", waitItemKey(task.waitItem))
+    if task.waitReason then
+        self.logger.cli("[task] waiting on items " .. tostring(task.waitReason))
+    end
+    return nil
+end
+
+function TaskScheduler:clearExecution(task)
+    self.executions[task.id] = nil
+end
+
+function TaskScheduler:runCraftTask(task)
+    if task.retryAfter and os.clock() < task.retryAfter then
+        self:recordWaitProgress(task)
+        return nil
+    end
+
+    local exec = self:getExecution(task)
+
+    if exec.session then
+        local ok, code = exec.session:drainOutput()
+        if not ok then
+            task.state = "failed"
+            self:setStatus(task, "failed", code)
+            self.logger.warn("[task] failed", code, "on", exec.machine and exec.machine.name or "unknown")
+            local endAt = os.clock()
+            local runSeconds = task.startedAt and (endAt - task.startedAt) or 0
+            if task.summaryId then
+                self:recordTaskComplete(task.summaryId, task.machineType, runSeconds)
+            end
+            exec.session:close()
+            exec.session = nil
+            exec.machine = nil
+            self.server.machineScheduler:notifyMachineFree(task.machineType)
+            return "failed"
+        end
+        if exec.session:isDone() or (exec.machine and exec.machine:isFinished()) then
+            local endAt = os.clock()
+            local runSeconds = task.startedAt and (endAt - task.startedAt) or 0
+            local totalSeconds = endAt - task.createdAt
+            if task.summaryId then
+                self:recordTaskComplete(task.summaryId, task.machineType, runSeconds)
+            end
+            self.logger.debug(
+                "[task] completed",
+                task.recipe.machine,
+                "x" .. tostring(task.craftCount),
+                "on",
+                exec.machine and exec.machine.name or "unknown",
+                "run",
+                string.format("%.2fs", runSeconds),
+                "total",
+                string.format("%.2fs", totalSeconds)
+            )
+            exec.session = nil
+            exec.machine = nil
+            task.state = "done"
+            self:setStatus(task, "done")
+            self.server.machineScheduler:notifyMachineFree(task.machineType)
+            return "done"
+        end
+        task.state = "running"
+        self:setStatus(task, "running")
+        return nil
+    end
+
+    if task:wantsInputs() then
+        local missing = self.server.inventoryQuery:tryMatchAll(task:scaledInputs())
+        if #missing > 0 then
+            local blockedBy = blockedByForMissing(missing)
+            if task.needsDependencies and self.server.craftExecutor and self.server.craftExecutor.taskGraphBuilder then
+                task.needsDependencies = false
+                self.server.craftExecutor.taskGraphBuilder:link(task, task.recipe, 0, {}, task.craftCount, task.summaryId)
+            end
+            task.state = "waiting_inputs"
+            self:setStatus(task, "blocked", "inputs", blockedBy)
+            self:recordWaitProgress(task)
+            return nil
+        end
+        if task.state == "waiting_inputs" then
+            task.state = "waiting_machine"
+        end
+    end
+
+    if not task:wantsMachine() then
+        return nil
+    end
+
+    local machine = self.server.machineScheduler:requestMachine(task)
+    if not machine then
+        task.state = "waiting_machine"
+        self:setStatus(task, "waiting", "machine")
+        self.server.machineScheduler:logSaturation(task.recipe.machine)
+        self:recordWaitProgress(task)
+        return nil
+    end
+
+    task.retryAfter = nil
+    exec.machine = machine
+    task:bindMachine(machine)
+
+    local session = machine:createSession(task.recipe, task.dest, task.destSlot, task.craftCount)
+    if not session then
+        exec.machine = nil
+        task:onStartFailure("machine")
+        self:setStatus(task, "waiting", "machine")
+        return nil
+    end
+    exec.session = session
+
+    local ok, code = session:prepareInputs()
+    if not ok then
+        session:close()
+        exec.session = nil
+        exec.machine = nil
+        task:onStartFailure("inputs")
+        self:setStatus(task, "blocked", "inputs")
+        self:recordWaitProgress(task)
+        return nil
+    end
+
+    session:startCraft()
+    local blocker = task.blockedBy
+    task:startExecution()
+    task:onStartSuccess()
+    self:setStatus(task, "running")
+    local waitSeconds = task.startedAt - task.createdAt
+    if task.summaryId then
+        self:recordTaskStart(task.summaryId, task.machineType, waitSeconds)
+    end
+    self.logger.debug(
+        "[task] start",
+        task.recipe.machine,
+        "x" .. tostring(task.craftCount),
+        "reason: inputs_ready",
+        "waited",
+        string.format("%.2fs", waitSeconds),
+        blocker and ("blocked_by " .. blocker) or ""
+    )
+    return nil
 end
 
 -- Updates all running tasks, sleeping parent tasks when they create sub-tasks
@@ -33,11 +240,33 @@ function TaskScheduler:tick()
     local i = 1
     while i <= #self.active do
         local task = self.active[i]
-        if task:run() then
+        local result = nil
+        if isCraftTask(task) then
+            result = self:runCraftTask(task)
+        elseif isWaitTask(task) then
+            result = self:runWaitTask(task)
+        else
+            if task:run() then
+                result = "done"
+            end
+        end
+        if result then
             table.remove(self.active, i)
             local parent = task.parent
-            self:setStatus(task, "done")
+            if not isCraftTask(task) then
+                if result == "failed" then
+                    self:setStatus(task, "failed")
+                else
+                    self:setStatus(task, "done")
+                end
+            end
             task:destroy()
+            if parent then
+                parent:onChildDone(task)
+            end
+            if isCraftTask(task) then
+                self:clearExecution(task)
+            end
             if parent and parent.nSubTasks == 0 then
                 self.sleeping[parent.id] = nil
                 table.insert(self.active, parent)
@@ -46,7 +275,7 @@ function TaskScheduler:tick()
         elseif task.nSubTasks > 0 then
             table.remove(self.active, i)
             self.sleeping[task.id] = task
-            self:setStatus(task, "blocked", "subtasks")
+            self:setStatus(task, "waiting", "subtasks")
         else
             i = i + 1
         end
@@ -59,9 +288,19 @@ end
 
 -- Adds a new task, and designates it as active.
 function TaskScheduler:addTask(task)
+    self:ensureTaskId(task)
+    if task.parent then
+        self:ensureTaskId(task.parent)
+        task:attachToParent()
+    end
+    if isWaitTask(task) then
+        table.insert(self.active, task)
+        self:setStatus(task, "blocked", "inputs", waitItemKey(task.waitItem))
+        return
+    end
     if task.nSubTasks and task.nSubTasks > 0 then
         self.sleeping[task.id] = task
-        self:setStatus(task, "blocked", "subtasks")
+        self:setStatus(task, "waiting", "subtasks")
     else
         table.insert(self.active, task)
         self:setStatus(task, "ready")

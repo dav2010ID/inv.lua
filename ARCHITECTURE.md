@@ -149,12 +149,13 @@ return QuotaStorage
 
 ### Machine backends
 
-`Machine` supports backends to abstract peripheral behavior. The backend object can implement:
+`Machine` supports backends to abstract peripheral behavior. The backend object implements:
 - `getItemDetail(machine, slot)`
 - `craft(machine, count)`
-- `locationResolver(machine)`
+- `resolveLocation(machine)`
+- `defaultSlots` (optional)
 
-You can add a backend by extending the `backends` table in `inv/infrastructure/device/Machine.lua`, then selecting it via `config.backend`.
+Add backends via `inv/infrastructure/machine/BackendRegistry.lua` and select them with `config.backend`.
 
 ### DeviceCatalog wiring
 
