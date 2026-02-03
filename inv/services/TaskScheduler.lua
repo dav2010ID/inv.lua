@@ -153,6 +153,15 @@ function TaskScheduler:batchAllows(task)
         end
     end
     local waveEnd = entry.currentStart + entry.waveSize - 1
+    if task.batchIndex > waveEnd then
+        local critical = self.currentCriticalMachine
+        if critical and task.batchMachine ~= critical then
+            local capacityFree = self.server.machineScheduler:countAvailableMachines(task.batchMachine) > 0
+            if capacityFree then
+                return true, nil
+            end
+        end
+    end
     if entry.lastCapacity ~= capacity or entry.lastWaveEnd ~= waveEnd then
         entry.lastCapacity = capacity
         entry.lastWaveEnd = waveEnd

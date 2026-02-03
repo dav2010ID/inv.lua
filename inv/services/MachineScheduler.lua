@@ -19,7 +19,8 @@ local function enqueue(machineScheduler, machineType, task)
     local queue = machineScheduler.waitingTasks[machineType]
     local critical = machineScheduler.server and machineScheduler.server.taskScheduler and machineScheduler.server.taskScheduler.currentCriticalMachine
     local bonus = (critical and critical == machineType) and 1000 or 0
-    local priority = (task.priority or 0) + bonus
+    local durationHint = task.estimatedDuration or task.craftCount or 0
+    local priority = (task.priority or 0) + bonus + durationHint
     local inserted = false
     for i = 1, #queue do
         local other = queue[i]
