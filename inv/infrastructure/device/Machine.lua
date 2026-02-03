@@ -29,6 +29,23 @@ function CraftSession:prepareInputs()
         local realSlot = self.machine:mapSlot(virtSlot)
         local needed = crit:copy()
         needed.count = crit.count * self.craftCount
+        if self.machine and type(self.machine.getItemLimit) == "function" then
+            local limit = self.machine:getItemLimit(realSlot)
+            if limit and limit > 0 then
+                local current = 0
+                local detail = self.machine:getItemDetail(realSlot)
+                if detail then
+                    if not crit:matches(detail) then
+                        return false, "insufficient_input"
+                    end
+                    current = detail.count or 0
+                end
+                local available = limit - current
+                if available < needed.count then
+                    return false, "insufficient_input"
+                end
+            end
+        end
         local n = self.server.inventoryMutator:push(self.machine, needed, needed.count, realSlot)
         pushed[virtSlot] = n
         if n < needed.count then

@@ -117,7 +117,6 @@ REQUIRES:
 FUNCTIONS:
   Device:init
   Device:getItemDetail
-  Device:getItemLimit
   Device:list
   Device:push
   Device:pull
@@ -132,6 +131,9 @@ FUNCTIONS:
   GtceuMachine:getMaxProgress
   GtceuMachine:getInputPerSec
   GtceuMachine:getOutputPerSec
+  GtceuMachine:getItemLimit
+  GtceuMachine:getEnergyStored
+  GtceuMachine:getEnergyCapacity
   GtceuMachine:isWorkingEnabled
   GtceuMachine:setWorkingEnabled
   GtceuMachine:setSuspendAfterFinish
@@ -160,8 +162,6 @@ FUNCTIONS:
   Machine:getCraftOutputSlot
   Machine:getItemDetail
   Machine:startCraft
-  Machine:isOutputReady
-  Machine:estimateDuration
   Machine:createSession
   Machine:clearSession
   Machine:isBusy

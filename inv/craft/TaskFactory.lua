@@ -20,7 +20,7 @@ function TaskFactory:estimateDuration(recipe, craftCount)
     if not machine or type(machine.estimateDuration) ~= "function" then
         return nil
     end
-    return machine:estimateDuration(craftCount)
+    return machine:estimateDuration(recipe, craftCount)
 end
 
 function TaskFactory:createTask(recipe, batch, summary, parent, dest, destSlot, depth)

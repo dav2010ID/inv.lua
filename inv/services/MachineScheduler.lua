@@ -12,6 +12,16 @@ function MachineScheduler:init(server, machineRegistry)
     self.queued = {}
 end
 
+local function machineEligible(machine, task)
+    if not machine then
+        return false
+    end
+    if type(machine.canAcceptTasks) == "function" then
+        return machine:canAcceptTasks(task)
+    end
+    return true
+end
+
 local function enqueue(machineScheduler, machineType, task)
     if not machineScheduler.waitingTasks[machineType] then
         machineScheduler.waitingTasks[machineType] = {}
@@ -42,7 +52,7 @@ function MachineScheduler:schedule(task)
     local queuedTask = queue and queue[1] or nil
     if machinesOfType then
         for _, machine in pairs(machinesOfType) do
-            if not machine:isBusy() then
+            if not machine:isBusy() and machineEligible(machine, task) then
                 if queuedTask and queuedTask ~= task then
                     return nil
                 end
@@ -82,7 +92,7 @@ function MachineScheduler:countAvailableMachines(machineType)
     end
     local n = 0
     for _, machine in pairs(machinesOfType) do
-        if not machine:isBusy() then
+        if not machine:isBusy() and machineEligible(machine, nil) then
             n = n + 1
         end
     end
@@ -93,7 +103,7 @@ function MachineScheduler:findMachine(machineType)
     local machinesOfType = self.machineRegistry and self.machineRegistry:getMachines(machineType) or nil
     if machinesOfType then
         for _, machine in pairs(machinesOfType) do
-            if not machine:isBusy() then
+            if not machine:isBusy() and machineEligible(machine, nil) then
                 return machine
             end
         end
