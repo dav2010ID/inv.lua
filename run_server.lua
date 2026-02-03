@@ -3,26 +3,34 @@ local Logger = require 'inv.infrastructure.Log'
 
 local args = {...}
 
-local function initLogging(path)
-    local log = fs.open(path, "a")
-    if not log then
-        return
-    end
+local function initLogging(path, maxSize)
+    maxSize = 100 * 1024  -- 100 KB
     local oldPrint = print
+
     print = function(...)
         local parts = {}
         for i = 1, select("#", ...) do
             parts[i] = tostring(select(i, ...))
         end
         local line = table.concat(parts, " ")
+
         oldPrint(line)
-        log.writeLine(line)
-        log.flush()
+
+        if fs.exists(path) and fs.getSize(path) > maxSize then
+            fs.delete(path)
+        end
+
+        local log = fs.open(path, "a")
+        if log then
+            log.writeLine(line)
+            log.close()
+        end
     end
 end
 
+
 function run()
-    initLogging("CraftOSTest.log")
+    initLogging("Run.log")
     Logger.setLevel("info")
     local runId = os.date("!%Y-%m-%dT%H:%MZ")
     Logger.info("[run] id=" .. runId, "goal=" .. table.concat(args, " "))
