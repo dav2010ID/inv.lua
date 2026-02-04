@@ -6,7 +6,8 @@ local CraftGraph = require 'inv.domain.CraftGraph'
 local TaskFactory = Class:subclass()
 local TaskGraphBuilder = Class:subclass()
 local TaskQueue = Class:subclass()
-local DeferredPlanTask = Task:subclass()
+
+local PRIORITY_ALPHA = 1.4
 
 function TaskFactory:init(server)
     self.server = server
@@ -32,7 +33,7 @@ function TaskFactory:createTask(recipe, batch, summary, parent, dest, destSlot, 
     if parent and parent.remainingTime then
         remainingTime = remainingTime + parent.remainingTime
     end
-    local weight = remainingTime > 0 and remainingTime or remainingDepth
+    local weight = remainingTime > 0 and (remainingTime ^ PRIORITY_ALPHA) or remainingDepth
     local priority = basePriority * weight
     local task = CraftTask(self.server, parent, recipe, dest, destSlot, batch, summary, priority)
     task.estimatedDuration = estimatedDuration
@@ -169,10 +170,14 @@ function TaskQueue:enqueueRecipe(recipe, crafts, summaryRef, parent, dest, destS
             )
         end
         if not skipDependencies then
-            self.taskGraphBuilder:link(task, recipe, depth, visiting, batch, summary and summary.id or summaryRef)
-            task.needsDependencies = false
+            local result = self.taskGraphBuilder:link(task, recipe, depth, visiting, batch, summary and summary.id or summaryRef)
+            if result and result.added == 0 and result.blocked == 0 then
+                task.needsDependencies = true
+            else
+                task.needsDependencies = false
+            end
         else
-            task.needsDependencies = false
+            task.needsDependencies = true
         end
         self:schedule(task)
     end
@@ -180,63 +185,10 @@ end
 
 function TaskQueue:queuePlan(plan, dest, destSlot)
     local summary = self.server.taskScheduler:createSummary(plan.criteria, plan.crafts)
-    if self:shouldDeferMachine(plan.recipe.machine) then
-        local gate = DeferredPlanTask(self.server, nil, plan.recipe, plan.crafts, summary, dest, destSlot, self)
-        self.server.taskScheduler:addTask(gate)
-    else
-        self:enqueueRecipe(plan.recipe, plan.crafts, summary, nil, dest, destSlot, 0, {}, false)
-    end
+    self:enqueueRecipe(plan.recipe, plan.crafts, summary, nil, dest, destSlot, 0, {}, false)
     self.server.machineScheduler:setCriticalMachine()
     self.server.machineScheduler:logMachineSummary()
     return summary
-end
-
-function DeferredPlanTask:init(server, parent, recipe, crafts, summary, dest, destSlot, queue)
-    DeferredPlanTask.superClass.init(self, server, parent)
-    self.recipe = recipe
-    self.crafts = crafts
-    self.summaryId = summary and summary.id or nil
-    self.summary = summary
-    self.dest = dest
-    self.destSlot = destSlot
-    self.queue = queue
-    self.depsQueued = false
-    self.launched = false
-end
-
-function DeferredPlanTask:queueDependencies()
-    if self.depsQueued then
-        return
-    end
-    self.depsQueued = true
-    if self.queue and self.queue.taskGraphBuilder then
-        self.queue.taskGraphBuilder:link(self, self.recipe, 0, {}, self.crafts, self.summaryId)
-    end
-end
-
-function DeferredPlanTask:inputsReady()
-    local missing = self.server.inventoryQuery:tryMatchAll(self.recipe:scaledInputs(self.crafts))
-    return #missing == 0
-end
-
-function DeferredPlanTask:run()
-    if not self.depsQueued then
-        self:queueDependencies()
-        if self.nSubTasks > 0 then
-            return false
-        end
-    end
-    if self.launched then
-        return true
-    end
-    if not self:inputsReady() then
-        return false
-    end
-    if self.queue then
-        self.queue:enqueueRecipe(self.recipe, self.crafts, self.summary, self, self.dest, self.destSlot, 0, {}, true)
-    end
-    self.launched = true
-    return false
 end
 
 return {
