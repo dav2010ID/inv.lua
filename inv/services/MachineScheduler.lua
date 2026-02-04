@@ -7,6 +7,10 @@ function MachineScheduler:init(server, machineRegistry)
     self.server = server
     self.logger = server.logger
     self.machineRegistry = machineRegistry
+    self.enablePriority = true
+    self.deferMachineTypes = {
+        ["gtceu:mv_assembler"] = true
+    }
     -- table<string, table<int, CraftTask>>: queues per machine type.
     self.waitingTasks = {}
     self.queued = {}
@@ -27,13 +31,15 @@ local function enqueue(machineScheduler, machineType, task)
         machineScheduler.waitingTasks[machineType] = {}
     end
     local queue = machineScheduler.waitingTasks[machineType]
-    local critical = machineScheduler.server and machineScheduler.server.taskScheduler and machineScheduler.server.taskScheduler.currentCriticalMachine
-    local bonus = (critical and critical == machineType) and 1000 or 0
-    local priority = (task.priority or 0) + bonus
+    if not machineScheduler.enablePriority then
+        table.insert(queue, task)
+        return
+    end
+    local priority = task and task.priority or 0
     local inserted = false
     for i = 1, #queue do
         local other = queue[i]
-        local otherPriority = (other.priority or 0) + ((critical and critical == machineType) and 1000 or 0)
+        local otherPriority = other and other.priority or 0
         if priority > otherPriority then
             table.insert(queue, i, task)
             inserted = true
@@ -141,7 +147,7 @@ function MachineScheduler:logSaturation(machineType)
     if self.server and self.server.taskScheduler then
         local stats = self.server.taskScheduler:getMachineStats()
         local entry = stats[machineType]
-        waiting = entry and ((entry.waiting_machine_capacity or 0) + (entry.waiting_machine_priority or 0) + (entry.waiting_machine_unavailable or 0)) or 0
+        waiting = entry and ((entry.waiting_machine_capacity or 0) + (entry.waiting_machine_priority or 0) + (entry.waiting_machine_batch or 0) + (entry.waiting_machine_unavailable or 0)) or 0
     end
     self.logger.throttle(
         "craft_saturated_" .. tostring(machineType),
@@ -169,7 +175,7 @@ function MachineScheduler:logMachineSummary()
             tostring(available) .. " available,",
             tostring(total) .. " total,",
             tostring(entry.total) .. " tasks,",
-            tostring((entry.waiting_machine_capacity or 0) + (entry.waiting_machine_priority or 0) + (entry.waiting_machine_unavailable or 0)) .. " waiting_machine,",
+            tostring((entry.waiting_machine_capacity or 0) + (entry.waiting_machine_priority or 0) + (entry.waiting_machine_batch or 0) + (entry.waiting_machine_unavailable or 0)) .. " waiting_machine,",
             tostring(entry.waiting_inputs) .. " waiting_inputs"
         )
     end

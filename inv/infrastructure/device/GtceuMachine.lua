@@ -1,5 +1,5 @@
 local Machine = require 'inv.infrastructure.device.Machine'
-
+local Log = require 'inv.infrastructure.Log'
 -- Extends Machine with GTCEu-specific helpers.
 local GtceuMachine = Machine:subclass()
 
@@ -149,7 +149,10 @@ function GtceuMachine:canAcceptTasks(task)
     if self.cap and self.cap.working then
         local enabled = self:isWorkingEnabled()
         if enabled == false then
-            return false
+            local taskMachine = task and task.recipe and task.recipe.machine or task and task.machineType or nil
+            if taskMachine and taskMachine ~= self.type then
+                return false
+            end
         end
     end
     if self.cap and self.cap.energy then

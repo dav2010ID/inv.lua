@@ -5,6 +5,7 @@ local Storage = require 'inv.infrastructure.device.Storage'
 local Machine = require 'inv.infrastructure.device.Machine'
 local GtceuMachine = require 'inv.infrastructure.device.GtceuMachine'
 local BackendRegistry = require 'inv.infrastructure.machine.BackendRegistry'
+local Log = require 'inv.infrastructure.Log'
 
 -- Manages network-attached devices, including storage and crafting machines.
 -- Specialized behavior is delegated by Devices to the appropriate class

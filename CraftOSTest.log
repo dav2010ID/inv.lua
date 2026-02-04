@@ -1,237 +1,252 @@
-[info] [run] id=2026-02-03T22:17Z goal=craft minecraft:piston 20
+[info] [run] id=2026-02-04T12:50Z goal=craft minecraft:piston 80
 [cli] type 'help' for commands
-[info] executing CLI command: craft minecraft:piston 20
-already have 20
-[info] [run] id=2026-02-03T22:17Z goal=craft minecraft:piston 20
-[cli] type 'help' for commands
-[info] executing CLI command: craft minecraft:piston 20
-[info] [planner] plan 10 craft(s) on gtceu:mv_assembler at 17557.15s
+[info] executing CLI command: craft minecraft:piston 80
+[debug] [craft] recipe found minecraft:piston
+[info] [planner] plan 40 craft(s) on gtceu:mv_assembler at 4012.30s
 [info] [planner] machines:
-[info]   gtceu:mv_electric_furnace: 4 available, 4 total, 3 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_electric_furnace: 4 available, 4 total, 9 tasks, 0 waiting_machine, 0 waiting_inputs
 [info]   gtceu:mv_assembler: 3 available, 3 total, 3 tasks, 0 waiting_machine, 0 waiting_inputs
-[info]   gtceu:mv_compressor: 6 available, 6 total, 10 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_compressor: 10 available, 10 total, 40 tasks, 0 waiting_machine, 0 waiting_inputs
 [info]   gtceu:mv_bender: 3 available, 3 total, 9 tasks, 0 waiting_machine, 0 waiting_inputs
-[info]   gtceu:mv_forge_hammer: 2 available, 2 total, 3 tasks, 0 waiting_machine, 0 waiting_inputs
-[info] planned 10 craft(s)
-[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-2
-[info] [phase] first_task_started at +1.10s
-[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
-[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
+[info]   gtceu:mv_forge_hammer: 2 available, 2 total, 9 tasks, 0 waiting_machine, 0 waiting_inputs
+[info] planned 40 craft(s)
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 10 wave 1-5
+[info] [phase] first_task_started at +1.80s
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 1.80s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 2.20s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 2.60s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 3.00s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 3.40s 
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 10 wave 1-5
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 3.80s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 4.20s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 4.65s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 5.05s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 5.45s 
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 10 wave 1-4
+[warn] [craft] gtceu:mv_compressor saturated (10/10 busy, 1 waiting)
 [info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-1
-[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
-[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
-[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
-[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 1 waiting)
+[info] [phase] critical_path_started at +5.75s
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 5.75s 
 [info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-1
-[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
-[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
-[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 6 wave 1-1
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 6.05s 
 [info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-1
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 10 wave 1-5
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 10 wave 1-4
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 10 wave 1-4
+[info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-1
+[info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-1
+[info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-1
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 10 wave 1-5
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 10 wave 1-4
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 10 wave 1-4
+[info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-1
+[info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-1
+[info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-1
+[info] [server] active tasks: 49
+[warn] [craft] gtceu:mv_compressor saturated (10/10 busy, 30 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 7 waiting)
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_0 run 8.35s total 10.15s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_5 run 8.05s total 10.25s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_11 run 7.75s total 10.35s
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 10.75s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 11.15s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 11.55s 
+[warn] [craft] gtceu:mv_compressor saturated (10/10 busy, 27 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 7 waiting)
+[info] [server] active tasks: 46
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_10 run 9.65s total 12.65s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_4 run 9.35s total 12.75s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_13 run 9.05s total 12.85s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_12 run 8.75s total 12.95s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_15 run 8.40s total 13.05s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_9 run 8.10s total 13.15s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_14 run 7.80s total 13.25s
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 13.65s 
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_1 run 8.00s total 13.75s
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_0 run 7.80s total 13.85s
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 14.15s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 14.60s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 15.00s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 15.40s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 15.80s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 16.20s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 16.60s 
+[warn] [craft] gtceu:mv_compressor saturated (10/10 busy, 20 waiting)
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 16.90s 
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 5 waiting)
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
+[debug] [task] start gtceu:mv_bender x5 reason: inputs_ready waited 17.20s 
+[debug] [task] start gtceu:mv_bender x5 reason: inputs_ready waited 17.50s 
+[info] [batch] wave_update gtceu:mv_electric_furnace plan 1 capacity 4 wave 1-3
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 17.80s 
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 18.10s 
+[info] [server] active tasks: 41
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_0 run 8.45s total 19.20s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_5 run 8.15s total 19.30s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_11 run 7.85s total 19.40s
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 19.80s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 20.25s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 20.65s 
+[warn] [craft] gtceu:mv_compressor saturated (10/10 busy, 17 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 5 waiting)
+[info] [server] active tasks: 38
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_10 run 8.10s total 21.75s
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_1 run 7.70s total 21.85s
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 22.25s 
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 22.55s 
+[debug] [task] start gtceu:mv_bender x4 reason: inputs_ready waited 22.85s 
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 23.15s 
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_4 run 9.65s total 24.25s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_13 run 9.35s total 24.35s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_12 run 9.05s total 24.45s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_15 run 8.75s total 24.55s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_9 run 8.45s total 24.65s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_14 run 8.15s total 24.75s
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 25.15s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 25.55s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 25.95s 
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_0 run 9.15s total 26.05s
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 26.35s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 26.75s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 27.20s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 27.60s 
+[warn] [craft] gtceu:mv_compressor saturated (10/10 busy, 10 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 3 waiting)
+[debug] [task] completed gtceu:mv_bender x5 on gtceu:mv_bender_5 run 10.50s total 27.70s
+[debug] [task] completed gtceu:mv_bender x5 on gtceu:mv_bender_1 run 10.30s total 27.80s
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_2 run 10.10s total 27.90s
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_0 run 9.90s total 28.00s
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
+[debug] [task] start gtceu:mv_bender x5 reason: inputs_ready waited 28.30s 
+[info] [batch] wave_update gtceu:mv_electric_furnace plan 1 capacity 4 wave 1-3
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 28.60s 
+[info] [server] active tasks: 29
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_0 run 9.90s total 29.70s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_5 run 9.55s total 29.80s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_11 run 9.25s total 29.90s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_10 run 7.75s total 30.00s
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 30.40s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 30.80s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 31.20s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 31.60s 
+[warn] [craft] gtceu:mv_compressor saturated (10/10 busy, 6 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 3 waiting)
+[debug] [task] completed gtceu:mv_bender x4 on gtceu:mv_bender_6 run 8.85s total 31.70s
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_1 run 8.65s total 31.80s
+[debug] [task] start gtceu:mv_bender x4 reason: inputs_ready waited 32.10s 
+[info] [batch] wave_update gtceu:mv_assembler plan 1 capacity 3 wave 1-3
+[debug] [task] start gtceu:mv_assembler x14 reason: inputs_ready waited 33.35s 
+[info] [server] active tasks: 25
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_4 run 9.30s total 34.45s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_13 run 9.00s total 34.55s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_12 run 8.70s total 34.65s
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_1 run 12.20s total 34.75s
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_0 run 8.50s total 34.85s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_15 run 8.20s total 34.95s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_9 run 7.85s total 35.05s
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 35.45s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 35.90s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 36.30s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 36.70s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 37.10s 
+[warn] [craft] gtceu:mv_compressor saturated (10/10 busy, 1 waiting)
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 37.40s 
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 37.70s 
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
+[debug] [task] completed gtceu:mv_bender x5 on gtceu:mv_bender_5 run 9.50s total 37.80s
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_2 run 9.30s total 37.90s
+[debug] [task] completed gtceu:mv_bender x4 on gtceu:mv_bender_1 run 5.90s total 38.00s
+[debug] [task] start gtceu:mv_bender x4 reason: inputs_ready waited 38.30s 
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 38.60s 
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 38.90s 
+[info] [server] active tasks: 18
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_14 run 12.40s total 40.00s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_0 run 9.70s total 40.10s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_5 run 9.40s total 40.20s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_11 run 9.10s total 40.30s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_10 run 8.80s total 40.40s
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 40.80s 
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
+[debug] [task] start gtceu:mv_bender x5 reason: inputs_ready waited 41.10s 
+[info] [server] active tasks: 14
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_4 run 7.75s total 43.20s
 [warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
 [info] [server] active tasks: 13
-[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 4 waiting)
-[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
-[warn] [craft] gtceu:mv_compressor saturated (6/6 busy, 4 waiting)
-[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
-[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
-[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
-[info] [phase] critical_path_started at +11.15s
-[info] [server] active tasks: 12
-[info] [batch] wave_update gtceu:mv_electric_furnace plan 1 capacity 4 wave 1-1
-[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
-[info] [batch] wave_update gtceu:mv_electric_furnace plan 1 capacity 4 wave 1-1
-[info] [server] active tasks: 10
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_13 run 8.40s total 44.30s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_12 run 8.10s total 44.40s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_15 run 7.80s total 44.50s
+[debug] [task] completed gtceu:mv_bender x4 on gtceu:mv_bender_5 run 6.30s total 44.60s
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_2 run 6.10s total 44.70s
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_0 run 5.90s total 44.80s
+[debug] [task] start gtceu:mv_bender x4 reason: inputs_ready waited 45.10s 
+[debug] [task] start gtceu:mv_assembler x13 reason: inputs_ready waited 46.40s 
+[info] [server] active tasks: 9
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_9 run 10.40s total 47.50s
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_1 run 10.20s total 47.60s
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_0 run 10.00s total 47.70s
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 48.00s 
+[info] [batch] wave_update gtceu:mv_electric_furnace plan 1 capacity 4 wave 1-3
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 48.30s 
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 48.60s 
+[info] [server] active tasks: 8
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_0 run 8.90s total 49.70s
+[debug] [task] completed gtceu:mv_bender x5 on gtceu:mv_bender_1 run 8.70s total 49.80s
+[debug] [task] start gtceu:mv_bender x4 reason: inputs_ready waited 50.10s 
 [info] [server] active tasks: 7
-[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
-[info] [batch] wave_update gtceu:mv_assembler plan 1 capacity 3 wave 1-3
+[debug] [task] completed gtceu:mv_bender x4 on gtceu:mv_bender_5 run 6.10s total 51.20s
 [info] [server] active tasks: 6
-[info] [batch] wave_update gtceu:mv_electric_furnace plan 1 capacity 4 wave 1-1
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_2 run 6.00s total 54.30s
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_0 run 5.80s total 54.40s
+[info] [server] active tasks: 4
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_1 run 8.50s total 56.50s
+[debug] [task] completed gtceu:mv_bender x4 on gtceu:mv_bender_1 run 6.50s total 56.60s
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 56.90s 
 [info] [server] active tasks: 3
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_2 run 6.10s total 63.00s
+[debug] [task] start gtceu:mv_assembler x13 reason: inputs_ready waited 64.35s 
 [info] [server] active tasks: 3
+[debug] [task] completed gtceu:mv_assembler x14 on gtceu:mv_assembler_0 run 36.10s total 69.45s
+[info] [server] active tasks: 2
+[info] [server] active tasks: 2
+[debug] [task] completed gtceu:mv_assembler x13 on gtceu:mv_assembler_1 run 33.15s total 79.55s
 [info] [server] active tasks: 1
-[info] [summary] craft minecraft:piston x20
-[info]   total_time: 39.45s
+[info] [server] active tasks: 1
+[info] [server] active tasks: 1
+[info] [summary] craft minecraft:piston x80
+[info]   total_time: 97.65s
 [info]   critical_machine: gtceu:mv_forge_hammer
-[info]   lower_bound_infinite: 10.95s
-[info]   lower_bound_resource: 15.15s
-[info]   efficiency: 38%
-[info]   overhead: +24.30s (62%)
+[info]   lower_bound_infinite: 36.10s
+[info]   lower_bound_resource: 41.02s
+[info]   efficiency: 42%
+[info]   overhead: +56.63s (58%)
 [info]   utilization:
-[info]     gtceu:mv_electric_furnace: 12%
-[info]     gtceu:mv_assembler: 23%
-[info]     gtceu:mv_compressor: 37%
-[info]     gtceu:mv_bender: 21%
-[info]     gtceu:mv_forge_hammer: 38%
+[info]     gtceu:mv_electric_furnace: 17%
+[info]     gtceu:mv_assembler: 35%
+[info]     gtceu:mv_compressor: 36%
+[info]     gtceu:mv_bender: 25%
+[info]     gtceu:mv_forge_hammer: 42%
 [info]   waits:
-[info]     gtceu:mv_electric_furnace: avg 17.83s, max 24.20s
-[info]     gtceu:mv_assembler: avg 26.23s, max 31.00s
-[info]     gtceu:mv_compressor: avg 5.33s, max 10.85s
-[info]     gtceu:mv_bender: avg 15.94s, max 20.90s
-[info]     gtceu:mv_forge_hammer: avg 6.37s, max 13.55s
+[info]     gtceu:mv_electric_furnace: avg 35.44s, max 56.90s
+[info]     gtceu:mv_assembler: avg 48.03s, max 64.35s
+[info]     gtceu:mv_compressor: avg 19.11s, max 40.80s
+[info]     gtceu:mv_bender: avg 32.51s, max 50.10s
+[info]     gtceu:mv_forge_hammer: avg 23.87s, max 48.00s
 [info]   wait_reasons:
 [info]     gtceu:mv_electric_furnace: capacity avg 0.00s, max 0.00s; priority avg 0.00s, max 0.00s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
 [info]     gtceu:mv_assembler: capacity avg 0.00s, max 0.00s; priority avg 0.00s, max 0.00s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
-[info]     gtceu:mv_compressor: capacity avg 1.17s, max 1.70s; priority avg 1.22s, max 2.60s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_compressor: capacity avg 2.31s, max 3.85s; priority avg 2.54s, max 5.50s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
 [info]     gtceu:mv_bender: capacity avg 0.00s, max 0.00s; priority avg 0.00s, max 0.00s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
-[info]     gtceu:mv_forge_hammer: capacity avg 1.47s, max 2.70s; priority avg 0.00s, max 0.00s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_forge_hammer: capacity avg 2.51s, max 5.80s; priority avg 2.73s, max 6.10s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
 [info]   lost_time:
 [info]     waiting_inputs: 0%
-[info]     waiting_machine_capacity: 44%
-[info]     waiting_machine_priority: 56%
+[info]     waiting_machine_capacity: 9%
+[info]     waiting_machine_priority: 91%
 [info]     waiting_machine_unavailable: 0%
 [info]     idle: 0%
 [info] [hint] bottleneck detected: gtceu:mv_forge_hammer
-[info] [hint] adding +1 machine reduces theoretical_min to 10.10s
-[info] [run] id=2026-02-03T22:17Z completed in 39.45s
-[info] [run] id=2026-02-03T22:35Z goal=new gtceu:mv_assembler
-[cli] type 'help' for commands
-[info] executing CLI command: new gtceu:mv_assembler
-[warn] unknown command: new
-[info] [run] id=2026-02-03T22:35Z goal=
-[cli] type 'help' for commands
-> help
-commands:
-  help
-  list [filter]
-  count <item>
-  craft <item> <count>
-  new <machine>
-  ok
-  scan
-  devices
-  peripherals
-  status
-  quit
-  test
-> new
-[warn] unknown command: new
-> id
-[warn] unknown command: id
-[info] [run] id=2026-02-03T22:37Z goal=
-[cli] type 'help' for commands
-> help
-commands:
-  help
-  list [filter]
-  count <item>
-  craft <item> <count>
-  new <machine>
-  ok
-  scan
-  devices
-  peripherals
-  status
-  quit
-  test
-> new gtceu:assembler
-[warn] unknown command: new
-[info] [run] id=2026-02-03T22:38Z goal=new gtceu:mv_assembler
-[cli] type 'help' for commands
-[info] executing CLI command: new gtceu:mv_assembler
-[warn] unknown command: new
-[info] [run] id=2026-02-03T22:38Z goal=new gtceu:mv_assembler
-[cli] type 'help' for commands
-[info] executing CLI command: new gtceu:mv_assembler
-[warn] unknown command: new
-[info] [run] id=2026-02-03T22:42Z goal=
-[cli] type 'help' for commands
-> new gtceu:mv_assembler
-put ingredients into machine, then type 'ok'
-> ok
-[warn] output slot not empty; clear output and try again
-> ok
-[warn] output slot not empty; clear output and try again
-> ok
-[warn] no inputs detected
-> ok
-[warn] no inputs detected
-> 
-> ok
-[warn] output slot not empty; clear output and try again
-> ok
-[warn] output slot not empty; clear output and try again
-> ok
-[warn] output slot not empty; clear output and try again
-[info] [run] id=2026-02-03T22:46Z goal=
-[cli] type 'help' for commands
-> new gtceu:assembler
-[warn] unknown machine: gtceu:assembler
-> new gtceu:mv_assembler
-put ingredients into machine, then type 'ok'
-> ok
-[warn] no inputs detected
-> ok
-[warn] no inputs detected
-> ok
-inputs recorded, waiting for output...
-[info] [craft] added recipe gtceu:brass_rod
-recipe saved
-> ok
-no recipe capture in progress
-[info] [run] id=2026-02-03T22:53Z goal=
-[cli] type 'help' for commands
-> new gtceu:assembler
-[warn] unknown machine: gtceu:assembler
-> new gtceu:mv_assembler
-put ingredients into machine, then type 'ok'
-> ok
-[warn] no inputs detected
-> ok
-inputs recorded, waiting for output...
-output detected; type 'ok' to save recipe
-> ok
-[info] [craft] added recipe gtceu:lv_sensor
-recipe saved
-[info] [run] id=2026-02-03T22:57Z goal=
-[cli] type 'help' for commands
-> help
-commands:
-  help
-  list [filter]
-  count <item>
-  craft <item> <count>
-  new <machine>
-  ok
-  scan
-  devices
-  peripherals
-  status
-  quit
-  test
-[info] [run] id=2026-02-03T22:57Z goal=craft gtceu:lv_sensor 5
-[cli] type 'help' for commands
-[info] executing CLI command: craft gtceu:lv_sensor 5
-[info] [planner] plan 2 craft(s) on gtceu:mv_assembler at 939.40s
-[info] [planner] machines:
-[info]   gtceu:mv_assembler: 3 available, 3 total, 2 tasks, 0 waiting_machine, 0 waiting_inputs
-[info]   gtceu:mv_bender: 3 available, 3 total, 6 tasks, 0 waiting_machine, 0 waiting_inputs
-[info] planned 2 craft(s)
-[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
-[info] [phase] first_task_started at +1.30s
-[info] [phase] critical_path_started at +1.30s
-[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
-[warn] [craft] gtceu:mv_bender saturated (3/3 busy, 1 waiting)
-[info] [server] active tasks: 6
-[warn] [craft] gtceu:mv_bender saturated (3/3 busy, 1 waiting)
-[info] [server] active tasks: 4
-[info] [batch] wave_update gtceu:mv_assembler plan 1 capacity 3 wave 1-2
-[info] [server] active tasks: 2
-[info] [server] active tasks: 2
-[info] [server] active tasks: 2
-[info] [run] id=2026-02-03T22:58Z goal=craft gtceu:lv_sensor 5
-[cli] type 'help' for commands
-[info] executing CLI command: craft gtceu:lv_sensor 5
-[info] [planner] plan 1 craft(s) on gtceu:mv_assembler at 970.35s
-[info] [planner] machines:
-[info]   gtceu:mv_assembler: 3 available, 3 total, 1 tasks, 0 waiting_machine, 0 waiting_inputs
-[info]   gtceu:mv_bender: 3 available, 3 total, 3 tasks, 0 waiting_machine, 0 waiting_inputs
-[info] planned 1 craft(s)
-[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 3 wave 1-3
-[info] [phase] first_task_started at +1.55s
-[info] [phase] critical_path_started at +1.55s
-[info] [server] active tasks: 3
-[info] [server] active tasks: 1
-[info] [batch] wave_update gtceu:mv_assembler plan 1 capacity 3 wave 1-1
-[info] [server] active tasks: 1
-[info] [server] active tasks: 1
-[info] [server] active tasks: 1
+[info] [hint] adding +1 machine reduces theoretical_min to 27.35s
+[info] [run] id=2026-02-04T12:50Z completed in 97.65s
+[debug] [task] completed gtceu:mv_assembler x13 on gtceu:mv_assembler_2 run 33.30s total 97.65s

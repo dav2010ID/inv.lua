@@ -69,6 +69,9 @@ function CraftGraph.link(ctx, task, recipe, depth, visiting, craftCount, summary
                 local nOut = depRecipe:countProduced(item)
                 if nOut > 0 then
                     local crafts = math.ceil(item.count / nOut)
+                    if ctx and ctx.registerDependency then
+                        ctx.registerDependency(depRecipe.machine, recipe.machine, summaryId)
+                    end
                     enqueue(ctx, task, depRecipe, crafts, depth + 1, visiting, summaryId, result)
                 else
                     addWait(ctx, task, item, summaryId, "invalid_output", result)

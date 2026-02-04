@@ -246,9 +246,81 @@ function CliController:handleCommand(line)
     end
 
     if cmd == "status" then
-        self.logger.info("active tasks:", #self.server.taskScheduler.active)
+        local scheduler = self.server.taskScheduler
+        local active = scheduler and scheduler.active or {}
+        local sleeping = scheduler and scheduler.sleeping or {}
+        self.logger.info("active tasks:", #active)
+        self.logger.info("sleeping tasks:", (function()
+            local n = 0
+            for _ in pairs(sleeping) do
+                n = n + 1
+            end
+            return n
+        end)())
+        local function itemKey(item)
+            if not item then
+                return nil
+            end
+            if item.name then
+                return item.name
+            end
+            if item.tags then
+                for tag, _ in pairs(item.tags) do
+                    return "tag:" .. tag
+                end
+            end
+            return nil
+        end
+        local function taskType(task)
+            if task and task.recipe then
+                return "craft"
+            end
+            if task and task.waitItem then
+                return "wait"
+            end
+            return "task"
+        end
+        local function taskLine(task, state)
+            local parts = {
+                "#" .. tostring(task.id or "?"),
+                "type=" .. taskType(task),
+                "state=" .. tostring(state or task.status or "unknown")
+            }
+            if task.statusReason then
+                table.insert(parts, "reason=" .. tostring(task.statusReason))
+            end
+            if task.blockedBy then
+                table.insert(parts, "blocked_by=" .. tostring(task.blockedBy))
+            end
+            if task.machineType then
+                table.insert(parts, "machine=" .. tostring(task.machineType))
+            end
+            if task.recipe and task.recipe.output then
+                local out = task.recipe.output[1]
+                if out and out.name then
+                    table.insert(parts, "output=" .. out.name)
+                end
+            end
+            if task.waitItem then
+                local key = itemKey(task.waitItem)
+                if key then
+                    table.insert(parts, "wait_for=" .. key)
+                end
+            end
+            if task.craftCount then
+                table.insert(parts, "count=" .. tostring(task.craftCount))
+            end
+            return table.concat(parts, " ")
+        end
+        for _, task in ipairs(active) do
+            self.logger.info(taskLine(task, "active"))
+        end
+        for _, task in pairs(sleeping) do
+            self.logger.info(taskLine(task, "sleeping"))
+        end
         return
     end
+
 
     if cmd == "quit" or cmd == "exit" then
         if self.server.runtime then
