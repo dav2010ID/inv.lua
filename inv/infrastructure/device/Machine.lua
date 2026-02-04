@@ -159,6 +159,17 @@ function Machine:init(server, name, deviceType, config, backend)
 
     self.craftOutputSlot = self.config.craftOutputSlot or 10
 
+    self.modifiers = {}
+    if type(self.config.modifiers) == "table" then
+        for _, value in ipairs(self.config.modifiers) do
+            if type(value) == "string" and value ~= "" then
+                self.modifiers[value] = true
+            end
+        end
+    elseif type(self.config.modifiers) == "string" and self.config.modifiers ~= "" then
+        self.modifiers[self.config.modifiers] = true
+    end
+
     if self.config.location then
         self.location = self.config.location
     elseif self.backend.resolveLocation then
@@ -220,6 +231,23 @@ end
 -- Returns true if this machine is currently crafting.
 function Machine:isBusy()
     return self.activeSession ~= nil
+end
+
+function Machine:hasModifiers(required)
+    if not required then
+        return true
+    end
+    for key, _ in pairs(required) do
+        if not self.modifiers or not self.modifiers[key] then
+            return false
+        end
+    end
+    return true
+end
+
+function Machine:canAcceptTasks(task)
+    local required = task and task.recipe and task.recipe.modifiers or nil
+    return self:hasModifiers(required)
 end
 
 function Machine:isFinished()

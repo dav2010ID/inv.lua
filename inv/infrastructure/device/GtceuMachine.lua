@@ -3,6 +3,193 @@ local Log = require 'inv.infrastructure.Log'
 -- Extends Machine with GTCEu-specific helpers.
 local GtceuMachine = Machine:subclass()
 
+local CIRCUIT_NBT_KEYS = {
+    "Configuration",
+    "configuration",
+    "Config",
+    "config",
+    "Circuit",
+    "circuit",
+    "circuit_number",
+    "CircuitNumber"
+}
+
+local function addModifier(set, value)
+    if value and value ~= "" then
+        set[value] = true
+    end
+end
+
+local function moldKeyFromName(name)
+    if not name then
+        return nil
+    end
+    local key = string.match(name, "^gtceu:shape_mold_(.+)$")
+    if not key then
+        key = string.match(name, "^gtceu:shape_extruder_(.+)$")
+    end
+    if not key then
+        key = string.match(name, "^gtceu:mold_(.+)$")
+    end
+    if not key then
+        key = string.match(name, "^gtceu:extruder_mold_(.+)$")
+    end
+    return key
+end
+
+local function findCircuitValueInTable(tbl, depth)
+    if type(tbl) ~= "table" then
+        return nil
+    end
+    depth = depth or 0
+    if depth > 4 then
+        return nil
+    end
+    for _, key in ipairs(CIRCUIT_NBT_KEYS) do
+        local v = tbl[key]
+        if type(v) == "number" then
+            return v
+        end
+        if type(v) == "string" then
+            local num = tonumber(v)
+            if num ~= nil then
+                return num
+            end
+        end
+    end
+    for _, v in pairs(tbl) do
+        if type(v) == "table" then
+            local found = findCircuitValueInTable(v, depth + 1)
+            if found ~= nil then
+                return found
+            end
+        end
+    end
+    return nil
+end
+
+local function findCircuitValueInString(nbt)
+    if type(nbt) ~= "string" then
+        return nil
+    end
+    local patterns = {
+        "[Cc]onfiguration:%s*(-?%d+)",
+        "[Cc]onfig:%s*(-?%d+)",
+        "[Cc]ircuit:%s*(-?%d+)",
+        "[Cc]ircuit[Nn]umber:%s*(-?%d+)"
+    }
+    for _, pattern in ipairs(patterns) do
+        local value = string.match(nbt, pattern)
+        if value then
+            return tonumber(value)
+        end
+    end
+    return nil
+end
+
+local function extractCircuitModifier(detail)
+    if not detail or not detail.name then
+        return nil
+    end
+    if not string.find(detail.name, "circuit", 1, true) then
+        return nil
+    end
+    local nbt = detail.nbt
+    local num = nil
+    if type(nbt) == "table" then
+        num = findCircuitValueInTable(nbt, 0)
+    elseif type(nbt) == "string" then
+        num = findCircuitValueInString(nbt)
+    end
+    if num ~= nil then
+        return "circuit:" .. tostring(num)
+    end
+    return "circuit"
+end
+
+local function extractModifiers(detail)
+    local mods = {}
+    if not detail or not detail.name then
+        return mods
+    end
+    local moldKey = moldKeyFromName(detail.name)
+    if moldKey then
+        addModifier(mods, "mold:" .. moldKey)
+    end
+    local circuit = extractCircuitModifier(detail)
+    if circuit then
+        addModifier(mods, circuit)
+    end
+    return mods
+end
+
+function GtceuMachine:getDynamicModifiers()
+    local mods = {}
+    local slots = nil
+    if self.config and type(self.config.modifierSlots) == "table" then
+        slots = self.config.modifierSlots
+    end
+    local function readDetail(slot)
+        if not self.interface or type(self.interface.getItemDetail) ~= "function" then
+            return nil
+        end
+        local ok, detail = pcall(function()
+            return self.interface.getItemDetail(slot, true)
+        end)
+        if ok and detail then
+            return detail
+        end
+        return self:getItemDetail(slot)
+    end
+    if slots then
+        for _, slot in ipairs(slots) do
+            local detail = readDetail(slot)
+            if detail then
+                local found = extractModifiers(detail)
+                for key, _ in pairs(found) do
+                    addModifier(mods, key)
+                end
+            end
+        end
+        return mods
+    end
+    if self.interface and type(self.interface.list) == "function" then
+        local items = self.interface.list()
+        for slot, _ in pairs(items) do
+            local detail = readDetail(slot)
+            if detail then
+                local found = extractModifiers(detail)
+                for key, _ in pairs(found) do
+                    addModifier(mods, key)
+                end
+            end
+        end
+    end
+    return mods
+end
+
+function GtceuMachine:hasModifiers(required)
+    if not required then
+        return true
+    end
+    local available = {}
+    if self.modifiers then
+        for key, _ in pairs(self.modifiers) do
+            addModifier(available, key)
+        end
+    end
+    local dynamic = self:getDynamicModifiers()
+    for key, _ in pairs(dynamic) do
+        addModifier(available, key)
+    end
+    for key, _ in pairs(required) do
+        if not available[key] then
+            return false
+        end
+    end
+    return true
+end
+
 local function callInterface(self, name, ...)
     local iface = self.interface
     if not iface then
@@ -146,6 +333,9 @@ function GtceuMachine:estimateDuration(recipe, craftCount)
 end
 
 function GtceuMachine:canAcceptTasks(task)
+    if not GtceuMachine.superClass.canAcceptTasks(self, task) then
+        return false
+    end
     if self.cap and self.cap.working then
         local enabled = self:isWorkingEnabled()
         if enabled == false then

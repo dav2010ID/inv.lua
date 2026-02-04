@@ -130,6 +130,9 @@ function CliController:handleCommand(line)
             self.logger.cli("usage: craft <item> <count>")
             return
         end
+        if self.server.inventoryMutator and self.server.inventoryMutator.scanInventories then
+            self.server.inventoryMutator:scanInventories()
+        end
         local have = self.server.inventoryQuery:getItemCount(name)
         if have >= count then
             self.logger.cli("already have " .. tostring(have))

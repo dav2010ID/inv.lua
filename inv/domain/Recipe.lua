@@ -46,6 +46,20 @@ function Recipe:init(spec)
     self.input = {}
     -- SlotMap<int, Item>: The items returned as output from this recipe.
     self.output = {}
+    -- table<string, true>|nil: Optional machine modifiers required for this recipe.
+    self.modifiers = nil
+
+    if spec.modifiers ~= nil then
+        assert(type(spec.modifiers) == "table", "recipe modifiers must be a list of strings")
+        local set = {}
+        for _, value in ipairs(spec.modifiers) do
+            assert(type(value) == "string" and value ~= "", "recipe modifier must be a non-empty string")
+            set[value] = true
+        end
+        if next(set) then
+            self.modifiers = set
+        end
+    end
 
     -- Note: slot normalization should ideally happen in the recipe loader.
     for slot, itemSpec in pairs(spec.input) do

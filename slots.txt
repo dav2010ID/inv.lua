@@ -1,36 +1,16 @@
 1{
-  name = "create:brass_ingot",
-  itemGroups = {},
   tags = {
-    [ "forge:ingots/brass" ] = true,
-    [ "forge:ingots" ] = true,
-    [ "create:create_ingots" ] = true,
-    [ "minecraft:beacon_payment_items" ] = true,
+    [ "gtceu:skip_item_detector" ] = true,
   },
-  count = 58,
-  maxCount = 64,
-  displayName = "Brass Ingot",
-}
-2{
-  name = "gtceu:rod_extruder_mold",
+  name = "gtceu:programmed_circuit",
   itemGroups = {},
-  tags = {},
-  count = 64,
   maxCount = 64,
-  displayName = "Extruder Mold (Rod)",
+  count = 63,
+  nbt = "3db3679106deff3bc2e02d7d5e6125dd",
+  displayName = "Programmed Circuit",
 }
+2 empty
 3{
-  name = "gtceu:brass_rod",
-  itemGroups = {},
-  tags = {
-    [ "forge:rods/brass" ] = true,
-    [ "forge:rods" ] = true,
-  },
-  count = 10,
-  maxCount = 64,
-  displayName = "Brass Rod",
-}
-4{
   tags = {
     [ "gtceu:skip_item_detector" ] = true,
   },
@@ -38,6 +18,6 @@
   itemGroups = {},
   maxCount = 64,
   count = 1,
-  nbt = "ad0ac2cdf646644c3b06f2de1fc6894c",
+  nbt = "3db3679106deff3bc2e02d7d5e6125dd",
   displayName = "Programmed Circuit",
 }
