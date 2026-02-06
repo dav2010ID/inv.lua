@@ -235,15 +235,21 @@ end
 function GtceuMachine:canAcceptTasks(task)
     local recipe = task and task.recipe or nil
     local recipeModifiers = recipe and recipe.modifiers or nil
+    local dynamicModifiers = self:getDynamicModifiers()
     if recipeModifiers and next(recipeModifiers) ~= nil then
-        local machineModifiers = mergeModifiers(self.modifiers, self:getDynamicModifiers())
+        local machineModifiers = mergeModifiers(self.modifiers, dynamicModifiers)
         for modifier, _ in pairs(recipeModifiers) do
             if not machineModifiers[modifier] then
                 return false
             end
         end
-    elseif not GtceuMachine.superClass.canAcceptTasks(self, task) then
-        return false
+    else
+        -- Рецепт без modifiers должен идти только на машину без programmed_circuit.
+        for modifier, _ in pairs(dynamicModifiers) do
+            if string.match(modifier, "^circuit:%d+$") then
+                return false
+            end
+        end
     end
 
     if self.cap and self.cap.working then
