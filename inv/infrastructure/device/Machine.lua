@@ -169,8 +169,31 @@ function Machine:init(server, name, deviceType, config, backend)
 
     self.state = "idle"
     self.activeSession = nil
+    self.modifiers = {}
+    if self.config and type(self.config.modifiers) == "table" then
+        for _, modifier in ipairs(self.config.modifiers) do
+            if type(modifier) == "string" then
+                self.modifiers[modifier] = true
+            end
+        end
+    end
 
     self.server.machineRegistry:addMachine(self)
+end
+
+function Machine:canAcceptTasks(task)
+    local recipe = task and task.recipe or nil
+    local recipeModifiers = recipe and recipe.modifiers or nil
+    if not recipeModifiers or next(recipeModifiers) == nil then
+        return true
+    end
+    local machineModifiers = self.modifiers or {}
+    for modifier, _ in pairs(recipeModifiers) do
+        if not machineModifiers[modifier] then
+            return false
+        end
+    end
+    return true
 end
 
 function Machine:destroy()

@@ -35,6 +35,21 @@ local function buildKey(machine, input, output)
     return "machine=" .. tostring(machine) .. ";in=" .. slotList(input) .. ";out=" .. slotList(output)
 end
 
+local function normalizeModifiers(specModifiers)
+    local modifiers = {}
+    if specModifiers == nil then
+        return modifiers
+    end
+    assert(type(specModifiers) == "table", "recipe modifiers must be a list")
+    for _, modifier in ipairs(specModifiers) do
+        assert(type(modifier) == "string", "recipe modifier must be a string")
+        local circuit = string.match(modifier, "^circuit:(%d+)$")
+        assert(circuit ~= nil, "unsupported recipe modifier: " .. tostring(modifier))
+        modifiers["circuit:" .. tostring(tonumber(circuit))] = true
+    end
+    return modifiers
+end
+
 function Recipe:init(spec)
     assert(spec and type(spec) == "table", "recipe spec must be a table")
     assert(spec.machine, "recipe machine is required")
@@ -46,6 +61,8 @@ function Recipe:init(spec)
     self.input = {}
     -- SlotMap<int, Item>: The items returned as output from this recipe.
     self.output = {}
+    -- set<string, true>: Machine modifiers required by this recipe.
+    self.modifiers = normalizeModifiers(spec.modifiers)
 
     -- Note: slot normalization should ideally happen in the recipe loader.
     for slot, itemSpec in pairs(spec.input) do
