@@ -13,6 +13,7 @@
     },
     {
         "machine":"gtceu:mv_bender",
+        "modifiers": ["circuit:1"],
         "input":{
             "1":{"name":"gtceu:steel_ingot","count":1}
         },

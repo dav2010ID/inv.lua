@@ -4402,3 +4402,449 @@ commands:
 [info] [server] active tasks: 4
 [info] [server] active tasks: 4
 [info] [server] active tasks: 4
+[info] [run] id=2026-02-06T21:09Z goal=craft minecraft:piston 20
+[debug] [craft] added recipe minecraft:piston
+[debug] [craft] added recipe gtceu:steel_plate
+[debug] [craft] added recipe gtceu:steel_ingot
+[debug] [craft] added recipe minecraft:redstone
+[debug] [craft] added recipe gtceu:raw_redstone
+[debug] [craft] added recipe gtceu:lv_sensor
+[debug] [device] attach event back
+[debug] [device] unconfigured device back type peripheral_hub
+[debug] [device] attach event minecraft:chest_9
+[debug] [device] storage attached minecraft:chest_9 type minecraft:chest
+[debug] [device] attach event gtceu:mv_bender_1
+[debug] [device] machine attached gtceu:mv_bender_1 type gtceu:mv_bender
+[debug] [device] attach event gtceu:mv_bender_5
+[debug] [device] machine attached gtceu:mv_bender_5 type gtceu:mv_bender
+[debug] [device] attach event gtceu:mv_lathe_0
+[debug] [device] machine attached gtceu:mv_lathe_0 type gtceu:mv_lathe
+[debug] [device] attach event gtceu:mv_bender_6
+[debug] [device] machine attached gtceu:mv_bender_6 type gtceu:mv_bender
+[debug] [device] attach event gtceu:mv_assembler_9
+[debug] [device] machine attached gtceu:mv_assembler_9 type gtceu:mv_assembler
+[debug] [device] attach event gtceu:mv_electric_furnace_0
+[debug] [device] machine attached gtceu:mv_electric_furnace_0 type gtceu:mv_electric_furnace
+[debug] [device] attach event gtceu:mv_electric_furnace_2
+[debug] [device] machine attached gtceu:mv_electric_furnace_2 type gtceu:mv_electric_furnace
+[debug] [device] attach event gtceu:mv_electric_furnace_1
+[debug] [device] machine attached gtceu:mv_electric_furnace_1 type gtceu:mv_electric_furnace
+[debug] [device] attach event gtceu:mv_electric_furnace_3
+[debug] [device] machine attached gtceu:mv_electric_furnace_3 type gtceu:mv_electric_furnace
+[debug] [device] attach event gtceu:mv_assembler_2
+[debug] [device] machine attached gtceu:mv_assembler_2 type gtceu:mv_assembler
+[debug] [device] attach event gtceu:mv_assembler_1
+[debug] [device] machine attached gtceu:mv_assembler_1 type gtceu:mv_assembler
+[debug] [device] attach event minecraft:chest_13
+[debug] [device] storage attached minecraft:chest_13 type minecraft:chest
+[debug] [device] attach event gtceu:mv_assembler_0
+[debug] [device] machine attached gtceu:mv_assembler_0 type gtceu:mv_assembler
+[debug] [device] attach event minecraft:chest_12
+[debug] [device] storage attached minecraft:chest_12 type minecraft:chest
+[debug] [device] attach event minecraft:chest_10
+[debug] [device] storage attached minecraft:chest_10 type minecraft:chest
+[debug] [device] attach event gtceu:mv_compressor_10
+[debug] [device] machine attached gtceu:mv_compressor_10 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_11
+[debug] [device] machine attached gtceu:mv_compressor_11 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_12
+[debug] [device] machine attached gtceu:mv_compressor_12 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_13
+[debug] [device] machine attached gtceu:mv_compressor_13 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_9
+[debug] [device] machine attached gtceu:mv_compressor_9 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_14
+[debug] [device] machine attached gtceu:mv_compressor_14 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_15
+[debug] [device] machine attached gtceu:mv_compressor_15 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_0
+[debug] [device] machine attached gtceu:mv_compressor_0 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_assembler_11
+[debug] [device] machine attached gtceu:mv_assembler_11 type gtceu:mv_assembler
+[debug] [device] attach event gtceu:mv_assembler_10
+[debug] [device] machine attached gtceu:mv_assembler_10 type gtceu:mv_assembler
+[debug] [device] attach event gtceu:mv_compressor_4
+[debug] [device] machine attached gtceu:mv_compressor_4 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_bender_13
+[debug] [device] machine attached gtceu:mv_bender_13 type gtceu:mv_bender
+[debug] [device] attach event gtceu:mv_compressor_5
+[debug] [device] machine attached gtceu:mv_compressor_5 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_bender_12
+[debug] [device] machine attached gtceu:mv_bender_12 type gtceu:mv_bender
+[debug] [device] attach event gtceu:mv_extruder_0
+[debug] [device] machine attached gtceu:mv_extruder_0 type gtceu:mv_extruder
+[debug] [device] attach event gtceu:mv_extruder_1
+[debug] [device] machine attached gtceu:mv_extruder_1 type gtceu:mv_extruder
+[debug] [device] attach event gtceu:mv_wiremill_0
+[debug] [device] machine attached gtceu:mv_wiremill_0 type gtceu:mv_wiremill
+[debug] [device] attach event gtceu:mv_forge_hammer_0
+[debug] [device] machine attached gtceu:mv_forge_hammer_0 type gtceu:mv_forge_hammer
+[debug] [device] attach event gtceu:mv_polarizer_0
+[debug] [device] machine attached gtceu:mv_polarizer_0 type gtceu:mv_polarizer
+[debug] [device] attach event gtceu:mv_forge_hammer_1
+[debug] [device] machine attached gtceu:mv_forge_hammer_1 type gtceu:mv_forge_hammer
+[debug] [device] attach event gtceu:mv_compressor_25
+[debug] [device] machine attached gtceu:mv_compressor_25 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_26
+[debug] [device] machine attached gtceu:mv_compressor_26 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_27
+[debug] [device] machine attached gtceu:mv_compressor_27 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_28
+[debug] [device] machine attached gtceu:mv_compressor_28 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_29
+[debug] [device] machine attached gtceu:mv_compressor_29 type gtceu:mv_compressor
+[cli] type 'help' for commands
+[info] executing CLI command: craft minecraft:piston 20
+[debug] [craft] recipe found minecraft:piston
+[info] [planner] plan 10 craft(s) on gtceu:mv_assembler at 40.00s
+[debug] [task] enqueue gtceu:mv_assembler x2 priority 1.00 weight 1.00 base 1.00
+[debug] [craft] recipe found gtceu:steel_plate
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[debug] [craft] recipe found minecraft:redstone
+[debug] [task] enqueue gtceu:mv_electric_furnace x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:raw_redstone
+[debug] [task] enqueue gtceu:mv_forge_hammer x1 priority 4.66 weight 4.66 base 1.00
+[debug] [task] enqueue gtceu:mv_assembler x2 priority 1.00 weight 1.00 base 1.00
+[debug] [craft] recipe found gtceu:steel_plate
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[debug] [craft] recipe found minecraft:redstone
+[debug] [task] enqueue gtceu:mv_electric_furnace x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:raw_redstone
+[debug] [task] enqueue gtceu:mv_forge_hammer x1 priority 4.66 weight 4.66 base 1.00
+[debug] [task] enqueue gtceu:mv_assembler x2 priority 1.00 weight 1.00 base 1.00
+[debug] [craft] recipe found gtceu:steel_plate
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[debug] [craft] recipe found minecraft:redstone
+[debug] [task] enqueue gtceu:mv_electric_furnace x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:raw_redstone
+[debug] [task] enqueue gtceu:mv_forge_hammer x1 priority 4.66 weight 4.66 base 1.00
+[debug] [task] enqueue gtceu:mv_assembler x2 priority 1.00 weight 1.00 base 1.00
+[debug] [craft] recipe found gtceu:steel_plate
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[debug] [craft] recipe found minecraft:redstone
+[debug] [task] enqueue gtceu:mv_electric_furnace x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:raw_redstone
+[debug] [task] enqueue gtceu:mv_forge_hammer x1 priority 4.66 weight 4.66 base 1.00
+[debug] [task] enqueue gtceu:mv_assembler x1 priority 1.00 weight 1.00 base 1.00
+[debug] [craft] recipe found gtceu:steel_plate
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[debug] [craft] recipe found minecraft:redstone
+[debug] [task] enqueue gtceu:mv_electric_furnace x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:raw_redstone
+[debug] [task] enqueue gtceu:mv_forge_hammer x1 priority 4.66 weight 4.66 base 1.00
+[debug] [task] enqueue gtceu:mv_assembler x1 priority 1.00 weight 1.00 base 1.00
+[debug] [craft] recipe found gtceu:steel_plate
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[debug] [craft] recipe found minecraft:redstone
+[debug] [task] enqueue gtceu:mv_electric_furnace x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:raw_redstone
+[debug] [task] enqueue gtceu:mv_forge_hammer x1 priority 4.66 weight 4.66 base 1.00
+[info] [planner] machines:
+[info]   gtceu:mv_electric_furnace: 4 available, 4 total, 6 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_assembler: 6 available, 6 total, 6 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_compressor: 15 available, 15 total, 10 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_bender: 5 available, 5 total, 10 tasks, 0 waiting_machine, 0 waiting_inputs
+[info]   gtceu:mv_forge_hammer: 2 available, 2 total, 6 tasks, 0 waiting_machine, 0 waiting_inputs
+[info] planned 10 craft(s)
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 15 wave 1-10
+[info] [phase] first_task_started at +1.05s
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 1.05s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 1.40s 
+[info] [batch] wave_update gtceu:mv_forge_hammer plan 1 capacity 2 wave 1-2
+[info] [phase] critical_path_started at +1.70s
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 1.70s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 2.05s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 2.40s 
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 2.65s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 3.00s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 3.35s 
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 1 waiting)
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 3.70s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 4.10s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 4.45s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 4.80s 
+[info] [server] active tasks: 16
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 4 waiting)
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 4 waiting)
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_0 run 7.95s total 9.00s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_29 run 7.75s total 9.15s
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 5 wave 1-5
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 9.50s 
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 9.85s 
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_1 run 9.30s total 11.00s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_28 run 9.20s total 11.25s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_5 run 9.10s total 11.50s
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_0 run 8.95s total 11.60s
+[info] [batch] wave_advance gtceu:mv_forge_hammer plan 1 capacity 2 wave 3-4
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_27 run 8.85s total 11.85s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_26 run 8.75s total 12.10s
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 12.40s 
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_11 run 8.95s total 12.65s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_10 run 8.80s total 12.90s
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 13.20s 
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_25 run 9.00s total 13.45s
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 2 waiting)
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_4 run 8.90s total 13.70s
+[debug] [task] completed gtceu:mv_bender x1 on gtceu:mv_bender_12 run 4.20s total 14.05s
+[info] [batch] wave_update gtceu:mv_electric_furnace plan 1 capacity 4 wave 1-4
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 14.40s 
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 14.85s 
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 15.30s 
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 15.60s 
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 16.05s 
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 16.50s 
+[warn] [craft] gtceu:mv_bender saturated (5/5 busy, 1 waiting)
+[info] [server] active tasks: 15
+[warn] [craft] gtceu:mv_forge_hammer saturated (2/2 busy, 2 waiting)
+[debug] [task] completed gtceu:mv_bender x1 on gtceu:mv_bender_12 run 3.00s total 17.85s
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 18.35s 
+[info] [server] active tasks: 14
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_2 run 5.30s total 19.70s
+[debug] [task] completed gtceu:mv_bender x1 on gtceu:mv_bender_1 run 3.50s total 20.00s
+[debug] [task] completed gtceu:mv_bender x1 on gtceu:mv_bender_12 run 1.90s total 20.25s
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 20.70s 
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 21.15s 
+[warn] [craft] gtceu:mv_bender saturated (5/5 busy, 1 waiting)
+[info] [server] active tasks: 11
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_1 run 9.90s total 22.30s
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_0 run 9.25s total 22.45s
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 22.75s 
+[debug] [task] start gtceu:mv_forge_hammer x1 reason: inputs_ready waited 23.05s 
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_0 run 7.80s total 23.40s
+[debug] [task] completed gtceu:mv_bender x1 on gtceu:mv_bender_12 run 3.00s total 23.70s
+[info] [batch] wave_advance gtceu:mv_bender plan 1 capacity 5 wave 6-10
+[debug] [task] completed gtceu:mv_bender x1 on gtceu:mv_bender_1 run 2.80s total 23.95s
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 24.40s 
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 24.75s 
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 25.10s 
+[info] [server] active tasks: 8
+[debug] [task] completed gtceu:mv_bender x1 on gtceu:mv_bender_12 run 2.10s total 26.50s
+[info] [server] active tasks: 7
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_2 run 5.45s total 30.20s
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_0 run 5.35s total 30.45s
+[info] [batch] wave_advance gtceu:mv_electric_furnace plan 1 capacity 4 wave 5-6
+[info] [batch] wave_update gtceu:mv_assembler plan 1 capacity 6 wave 1-6
+[debug] [task] start gtceu:mv_assembler x2 reason: inputs_ready waited 32.00s 
+[info] [server] active tasks: 6
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_1 run 10.35s total 33.10s
+[debug] [task] completed gtceu:mv_forge_hammer x1 on gtceu:mv_forge_hammer_0 run 10.15s total 33.20s
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 33.65s 
+[debug] [task] start gtceu:mv_electric_furnace x1 reason: inputs_ready waited 33.95s 
+[debug] [task] completed gtceu:mv_assembler x2 on gtceu:mv_assembler_0 run 5.65s total 37.65s
+[info] [server] active tasks: 5
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_2 run 5.40s total 39.05s
+[debug] [task] completed gtceu:mv_electric_furnace x1 on gtceu:mv_electric_furnace_0 run 5.35s total 39.30s
+[debug] [task] start gtceu:mv_assembler x1 reason: inputs_ready waited 40.80s 
+[debug] [task] start gtceu:mv_assembler x1 reason: inputs_ready waited 42.30s 
+[debug] [task] completed gtceu:mv_assembler x1 on gtceu:mv_assembler_0 run 2.90s total 43.70s
+[info] [server] active tasks: 4
+[debug] [task] completed gtceu:mv_assembler x1 on gtceu:mv_assembler_1 run 2.80s total 45.10s
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [server] active tasks: 3
+[info] [run] id=2026-02-06T21:12Z goal=craft minecraft:piston 20
+[debug] [craft] added recipe minecraft:piston
+[debug] [craft] added recipe gtceu:steel_plate
+[debug] [craft] added recipe gtceu:steel_ingot
+[debug] [craft] added recipe minecraft:redstone
+[debug] [craft] added recipe gtceu:raw_redstone
+[debug] [craft] added recipe gtceu:lv_sensor
+[debug] [device] attach event back
+[debug] [device] unconfigured device back type peripheral_hub
+[debug] [device] attach event minecraft:chest_9
+[debug] [device] storage attached minecraft:chest_9 type minecraft:chest
+[debug] [device] attach event gtceu:mv_bender_1
+[debug] [device] machine attached gtceu:mv_bender_1 type gtceu:mv_bender
+[debug] [device] attach event gtceu:mv_bender_5
+[debug] [device] machine attached gtceu:mv_bender_5 type gtceu:mv_bender
+[debug] [device] attach event gtceu:mv_lathe_0
+[debug] [device] machine attached gtceu:mv_lathe_0 type gtceu:mv_lathe
+[debug] [device] attach event gtceu:mv_bender_6
+[debug] [device] machine attached gtceu:mv_bender_6 type gtceu:mv_bender
+[debug] [device] attach event gtceu:mv_assembler_9
+[debug] [device] machine attached gtceu:mv_assembler_9 type gtceu:mv_assembler
+[debug] [device] attach event gtceu:mv_electric_furnace_0
+[debug] [device] machine attached gtceu:mv_electric_furnace_0 type gtceu:mv_electric_furnace
+[debug] [device] attach event gtceu:mv_electric_furnace_2
+[debug] [device] machine attached gtceu:mv_electric_furnace_2 type gtceu:mv_electric_furnace
+[debug] [device] attach event gtceu:mv_electric_furnace_1
+[debug] [device] machine attached gtceu:mv_electric_furnace_1 type gtceu:mv_electric_furnace
+[debug] [device] attach event gtceu:mv_electric_furnace_3
+[debug] [device] machine attached gtceu:mv_electric_furnace_3 type gtceu:mv_electric_furnace
+[debug] [device] attach event gtceu:mv_assembler_2
+[debug] [device] machine attached gtceu:mv_assembler_2 type gtceu:mv_assembler
+[debug] [device] attach event gtceu:mv_assembler_1
+[debug] [device] machine attached gtceu:mv_assembler_1 type gtceu:mv_assembler
+[debug] [device] attach event minecraft:chest_13
+[debug] [device] storage attached minecraft:chest_13 type minecraft:chest
+[debug] [device] attach event gtceu:mv_assembler_0
+[debug] [device] machine attached gtceu:mv_assembler_0 type gtceu:mv_assembler
+[debug] [device] attach event minecraft:chest_12
+[debug] [device] storage attached minecraft:chest_12 type minecraft:chest
+[debug] [device] attach event minecraft:chest_10
+[debug] [device] storage attached minecraft:chest_10 type minecraft:chest
+[debug] [device] attach event gtceu:mv_compressor_10
+[debug] [device] machine attached gtceu:mv_compressor_10 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_11
+[debug] [device] machine attached gtceu:mv_compressor_11 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_12
+[debug] [device] machine attached gtceu:mv_compressor_12 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_13
+[debug] [device] machine attached gtceu:mv_compressor_13 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_9
+[debug] [device] machine attached gtceu:mv_compressor_9 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_14
+[debug] [device] machine attached gtceu:mv_compressor_14 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_15
+[debug] [device] machine attached gtceu:mv_compressor_15 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_0
+[debug] [device] machine attached gtceu:mv_compressor_0 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_assembler_11
+[debug] [device] machine attached gtceu:mv_assembler_11 type gtceu:mv_assembler
+[debug] [device] attach event gtceu:mv_assembler_10
+[debug] [device] machine attached gtceu:mv_assembler_10 type gtceu:mv_assembler
+[debug] [device] attach event gtceu:mv_compressor_4
+[debug] [device] machine attached gtceu:mv_compressor_4 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_bender_13
+[debug] [device] machine attached gtceu:mv_bender_13 type gtceu:mv_bender
+[debug] [device] attach event gtceu:mv_compressor_5
+[debug] [device] machine attached gtceu:mv_compressor_5 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_bender_12
+[debug] [device] machine attached gtceu:mv_bender_12 type gtceu:mv_bender
+[debug] [device] attach event gtceu:mv_extruder_0
+[debug] [device] machine attached gtceu:mv_extruder_0 type gtceu:mv_extruder
+[debug] [device] attach event gtceu:mv_extruder_1
+[debug] [device] machine attached gtceu:mv_extruder_1 type gtceu:mv_extruder
+[debug] [device] attach event gtceu:mv_wiremill_0
+[debug] [device] machine attached gtceu:mv_wiremill_0 type gtceu:mv_wiremill
+[debug] [device] attach event gtceu:mv_forge_hammer_0
+[debug] [device] machine attached gtceu:mv_forge_hammer_0 type gtceu:mv_forge_hammer
+[debug] [device] attach event gtceu:mv_polarizer_0
+[debug] [device] machine attached gtceu:mv_polarizer_0 type gtceu:mv_polarizer
+[debug] [device] attach event gtceu:mv_forge_hammer_1
+[debug] [device] machine attached gtceu:mv_forge_hammer_1 type gtceu:mv_forge_hammer
+[debug] [device] attach event gtceu:mv_compressor_25
+[debug] [device] machine attached gtceu:mv_compressor_25 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_26
+[debug] [device] machine attached gtceu:mv_compressor_26 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_27
+[debug] [device] machine attached gtceu:mv_compressor_27 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_28
+[debug] [device] machine attached gtceu:mv_compressor_28 type gtceu:mv_compressor
+[debug] [device] attach event gtceu:mv_compressor_29
+[debug] [device] machine attached gtceu:mv_compressor_29 type gtceu:mv_compressor
+[cli] type 'help' for commands
+[info] executing CLI command: craft minecraft:piston 20
+[debug] [craft] recipe found minecraft:piston
+[info] [planner] plan 6 craft(s) on gtceu:mv_assembler at 207.95s
+[debug] [task] enqueue gtceu:mv_assembler x1 priority 1.00 weight 1.00 base 1.00
+[debug] [task] enqueue gtceu:mv_assembler x1 priority 1.00 weight 1.00 base 1.00
+[debug] [task] enqueue gtceu:mv_assembler x1 priority 1.00 weight 1.00 base 1.00
+[debug] [task] enqueue gtceu:mv_assembler x1 priority 1.00 weight 1.00 base 1.00
+[debug] [task] enqueue gtceu:mv_assembler x1 priority 1.00 weight 1.00 base 1.00
+[debug] [task] enqueue gtceu:mv_assembler x1 priority 1.00 weight 1.00 base 1.00
+[info] [planner] machines:
+[info]   gtceu:mv_assembler: 6 available, 6 total, 6 tasks, 0 waiting_machine, 0 waiting_inputs
+[info] planned 6 craft(s)
+[info] [batch] wave_update gtceu:mv_assembler plan 1 capacity 6 wave 1-6
+[info] [phase] first_task_started at +1.65s
+[info] [phase] critical_path_started at +1.65s
+[debug] [task] start gtceu:mv_assembler x1 reason: inputs_ready waited 1.65s 
+[debug] [task] start gtceu:mv_assembler x1 reason: inputs_ready waited 3.15s 
+[debug] [task] start gtceu:mv_assembler x1 reason: inputs_ready waited 4.65s 
+[debug] [craft] recipe found gtceu:steel_plate
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[debug] [craft] recipe found gtceu:steel_plate
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[debug] [craft] recipe found gtceu:steel_plate
+[debug] [task] enqueue gtceu:mv_bender x1 priority 2.64 weight 2.64 base 1.00
+[debug] [craft] recipe found gtceu:steel_ingot
+[debug] [task] enqueue gtceu:mv_compressor x1 priority 4.66 weight 4.66 base 1.00
+[info] [batch] wave_update gtceu:mv_compressor plan 1 capacity 15 wave 1-3
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 0.35s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 0.70s 
+[debug] [task] start gtceu:mv_compressor x1 reason: inputs_ready waited 1.05s 
+[info] [server] active tasks: 6
+[debug] [task] completed gtceu:mv_assembler x1 on gtceu:mv_assembler_0 run 5.30s total 6.95s
+[debug] [task] completed gtceu:mv_assembler x1 on gtceu:mv_assembler_1 run 4.05s total 7.20s
+[debug] [task] completed gtceu:mv_assembler x1 on gtceu:mv_assembler_11 run 2.80s total 7.45s
+[info] [server] active tasks: 3
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_0 run 8.70s total 9.05s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_29 run 8.60s total 9.30s
+[debug] [task] completed gtceu:mv_compressor x1 on gtceu:mv_compressor_28 run 8.50s total 9.55s
+[info] [batch] wave_update gtceu:mv_bender plan 1 capacity 5 wave 1-3
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 10.15s 
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 10.90s 
+[warn] [craft] gtceu:mv_bender saturated (2/5 busy, 1 waiting)
+[info] [server] active tasks: 3
+[debug] [task] completed gtceu:mv_bender x1 on gtceu:mv_bender_12 run 2.20s total 12.35s
+[debug] [task] completed gtceu:mv_bender x1 on gtceu:mv_bender_1 run 1.70s total 12.60s
+[debug] [task] start gtceu:mv_bender x1 reason: inputs_ready waited 13.20s 
+[debug] [task] start gtceu:mv_assembler x1 reason: inputs_ready waited 19.35s 
+[debug] [task] start gtceu:mv_assembler x1 reason: inputs_ready waited 20.85s 
+[info] [server] active tasks: 3
+[debug] [task] completed gtceu:mv_bender x1 on gtceu:mv_bender_12 run 4.25s total 17.45s
+[debug] [task] completed gtceu:mv_assembler x1 on gtceu:mv_assembler_0 run 3.00s total 22.35s
+[debug] [task] start gtceu:mv_assembler x1 reason: inputs_ready waited 23.85s 
+[info] [server] active tasks: 2
+[debug] [task] completed gtceu:mv_assembler x1 on gtceu:mv_assembler_1 run 4.25s total 25.10s
+[info] [server] active tasks: 1
+[info] [summary] craft minecraft:piston x12
+[info]   total_time: 27.35s
+[info]   critical_machine: gtceu:mv_assembler
+[info]   lower_bound_infinite: 8.70s
+[info]   lower_bound_resource: 3.82s
+[info]   efficiency: 14%
+[info]   overhead: +23.53s (86%)
+[info]   utilization:
+[info]     gtceu:mv_compressor: 6%
+[info]     gtceu:mv_assembler: 14%
+[info]     gtceu:mv_bender: 6%
+[info]   waits:
+[info]     gtceu:mv_compressor: avg 0.70s, max 1.05s
+[info]     gtceu:mv_assembler: avg 12.25s, max 23.85s
+[info]     gtceu:mv_bender: avg 11.42s, max 13.20s
+[info]   wait_reasons:
+[info]     gtceu:mv_compressor: capacity avg 0.00s, max 0.00s; priority avg 0.00s, max 0.00s; batch avg 0.00s, max 0.00s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_assembler: capacity avg 0.00s, max 0.00s; priority avg 0.00s, max 0.00s; batch avg 0.00s, max 0.00s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]     gtceu:mv_bender: capacity avg 2.10s, max 2.10s; priority avg 0.00s, max 0.00s; batch avg 0.00s, max 0.00s; unavailable avg 0.00s, max 0.00s; inputs avg 0.00s, max 0.00s
+[info]   lost_time:
+[info]     waiting_inputs: 0%
+[info]     waiting_machine_capacity: 100%
+[info]     waiting_machine_priority: 0%
+[info]     waiting_machine_batch: 0%
+[info]     waiting_machine_unavailable: 0%
+[info]     idle: 65%
+[info] [run] id=2026-02-06T21:12Z completed in 27.35s
+[debug] [task] completed gtceu:mv_assembler x1 on gtceu:mv_assembler_0 run 3.50s total 27.35s
