@@ -93,9 +93,11 @@ function GtceuMachine:init(server, name, deviceType, config, backend)
     self.cap = {
         active = iface and type(iface.isActive) == "function" or false,
         progress = iface and type(iface.getProgress) == "function" and type(iface.getMaxProgress) == "function" or false,
-        ioRate = iface and (type(iface.getInputPerSec) == "function" or type(iface.getOutputPerSec) == "function") or false,
+        ioRate = iface and (type(iface.getInputPerSec) == "function" or type(iface.getOutputPerSec) == "function") or
+        false,
         limits = iface and type(iface.getItemLimit) == "function" or false,
-        energy = iface and (type(iface.getEnergyStored) == "function" or type(iface.getEnergyCapacity) == "function") or false,
+        energy = iface and (type(iface.getEnergyStored) == "function" or type(iface.getEnergyCapacity) == "function") or
+        false,
         working = iface and type(iface.isWorkingEnabled) == "function" or false
     }
 end
@@ -222,10 +224,14 @@ function GtceuMachine:getDynamicModifiers()
     local slots = buildModifierSlotList(self)
     for _, slot in ipairs(slots) do
         local detail = self:getItemDetail(slot)
-        if detail and detail.name == "gtceu:programmed_circuit" then
-            local circuit = detail.nbt and CIRCUIT_BY_NBT[detail.nbt] or nil
-            if circuit ~= nil then
-                modifiers["circuit:" .. tostring(circuit)] = true
+        if detail then
+            if detail.name == "gtceu:programmed_circuit" then
+                local circuit = detail.nbt and CIRCUIT_BY_NBT[detail.nbt] or nil
+                if circuit ~= nil then
+                    modifiers["circuit:" .. tostring(circuit)] = true
+                end
+            elseif string.find(detail.name, "mold") then
+                modifiers["mold:" .. detail.name] = true
             end
         end
     end

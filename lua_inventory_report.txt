@@ -39,6 +39,7 @@ FUNCTIONS:
   TaskGraphBuilder:graphContext
   TaskGraphBuilder:link
   TaskQueue:init
+  TaskQueue:shouldDeferMachine
   TaskQueue:resolveSummary
   TaskQueue:buildBatches
   TaskQueue:schedule
@@ -125,7 +126,9 @@ FUNCTIONS:
 FILE: inv\infrastructure\device\GtceuMachine.lua
 REQUIRES:
   require 'inv.infrastructure.device.Machine'
+  require 'inv.infrastructure.Log'
 FUNCTIONS:
+  GtceuMachine:init
   GtceuMachine:isActive
   GtceuMachine:getProgress
   GtceuMachine:getMaxProgress
@@ -139,6 +142,8 @@ FUNCTIONS:
   GtceuMachine:setSuspendAfterFinish
   GtceuMachine:isOutputReady
   GtceuMachine:estimateDuration
+  GtceuMachine:getDynamicModifiers
+  GtceuMachine:canAcceptTasks
 
 FILE: inv\infrastructure\device\Machine.lua
 REQUIRES:
@@ -157,6 +162,7 @@ FUNCTIONS:
   CraftSession:isDone
   CraftSession:close
   Machine:init
+  Machine:canAcceptTasks
   Machine:destroy
   Machine:mapSlot
   Machine:getCraftOutputSlot
@@ -184,6 +190,7 @@ REQUIRES:
   require 'inv.infrastructure.device.Machine'
   require 'inv.infrastructure.device.GtceuMachine'
   require 'inv.infrastructure.machine.BackendRegistry'
+  require 'inv.infrastructure.Log'
 FUNCTIONS:
   DeviceCatalog:init
   DeviceCatalog:scanDevices
@@ -263,6 +270,7 @@ FILE: inv\runtime\CliController.lua
 REQUIRES:
   require 'inv.core.Class'
   require 'inv.domain.Item'
+  require 'inv.infrastructure.Config'
 FUNCTIONS:
   CliController:init
   CliController:setEnabled
@@ -271,6 +279,15 @@ FUNCTIONS:
   CliController:onChar
   CliController:onKey
   CliController:handleCommand
+  CliController:findMachine
+  CliController:virtualSlotForReal
+  CliController:snapshotMachine
+  CliController:buildRecipeInput
+  CliController:computeOutputDelta
+  CliController:recordRecipeInputs
+  CliController:appendRecipeToFile
+  CliController:finalizeRecipe
+  CliController:tick
 
 FILE: inv\runtime\EventDispatcher.lua
 REQUIRES:
@@ -394,6 +411,9 @@ FUNCTIONS:
   TaskScheduler:nextID
   TaskScheduler:ensureTaskId
   TaskScheduler:getExecution
+  TaskScheduler:registerMachineDependency
+  TaskScheduler:isMachineSaturated
+  TaskScheduler:isDownstreamSaturated
   TaskScheduler:clearExecution
   TaskScheduler:registerBatch
   TaskScheduler:batchAllows
@@ -417,4 +437,16 @@ REQUIRES:
   require 'inv.infrastructure.Log'
 FUNCTIONS:
   run
+
+FILE: test.lua
+REQUIRES: (none)
+FUNCTIONS: (none)
+
+FILE: test2.lua
+REQUIRES: (none)
+FUNCTIONS: (none)
+
+FILE: test3.lua
+REQUIRES: (none)
+FUNCTIONS: (none)
 

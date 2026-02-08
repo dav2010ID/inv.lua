@@ -43,9 +43,13 @@ local function normalizeModifiers(specModifiers)
     assert(type(specModifiers) == "table", "recipe modifiers must be a list")
     for _, modifier in ipairs(specModifiers) do
         assert(type(modifier) == "string", "recipe modifier must be a string")
-        local circuit = string.match(modifier, "^circuit:(%d+)$")
-        assert(circuit ~= nil, "unsupported recipe modifier: " .. tostring(modifier))
-        modifiers["circuit:" .. tostring(tonumber(circuit))] = true
+        if string.match(modifier, "^circuit:%d+$") then
+            modifiers[modifier] = true
+        elseif string.match(modifier, "^mold:.+$") then
+            modifiers[modifier] = true
+        else
+            error("unsupported recipe modifier: " .. tostring(modifier))
+        end
     end
     return modifiers
 end
@@ -114,6 +118,3 @@ function Recipe:matchesOutput(criteria)
 end
 
 return Recipe
-
-
-
