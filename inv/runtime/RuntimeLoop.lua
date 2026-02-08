@@ -22,7 +22,7 @@ function RuntimeLoop:tick()
         local activeCount = #self.server.taskScheduler.active
         local now = os.clock()
         if self.lastActiveCount ~= activeCount or (now - self.lastActiveLogTime) > 5 then
-            self.server.logger.info("[server] active tasks:", activeCount)
+            self.cli:status()
             self.lastActiveCount = activeCount
             self.lastActiveLogTime = now
         end
@@ -35,7 +35,7 @@ end
 
 function RuntimeLoop:run()
     while self.running do
-        local evt = {os.pullEventRaw()}
+        local evt = { os.pullEventRaw() }
         local shouldContinue = true
         if self.dispatcher then
             shouldContinue = self.dispatcher:handleEvent(evt)
@@ -61,6 +61,3 @@ function RuntimeLoop:run()
 end
 
 return RuntimeLoop
-
-
-

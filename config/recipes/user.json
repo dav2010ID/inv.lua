@@ -25,5 +25,23 @@
                 "count": 1
             }
         }
+    },
+    {
+        "modifiers": [
+            "gtceu:rod_extruder_mold"
+        ],
+        "input": {
+            "1": {
+                "name": "create:brass_ingot",
+                "count": 1
+            }
+        },
+        "machine": "gtceu:mv_extruder",
+        "output": {
+            "3": {
+                "name": "gtceu:brass_rod",
+                "count": 2
+            }
+        }
     }
 ]

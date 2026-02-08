@@ -94,10 +94,10 @@ function GtceuMachine:init(server, name, deviceType, config, backend)
         active = iface and type(iface.isActive) == "function" or false,
         progress = iface and type(iface.getProgress) == "function" and type(iface.getMaxProgress) == "function" or false,
         ioRate = iface and (type(iface.getInputPerSec) == "function" or type(iface.getOutputPerSec) == "function") or
-        false,
+            false,
         limits = iface and type(iface.getItemLimit) == "function" or false,
         energy = iface and (type(iface.getEnergyStored) == "function" or type(iface.getEnergyCapacity) == "function") or
-        false,
+            false,
         working = iface and type(iface.isWorkingEnabled) == "function" or false
     }
 end
@@ -230,17 +230,19 @@ function GtceuMachine:getDynamicModifiers()
                 if circuit ~= nil then
                     modifiers["circuit:" .. tostring(circuit)] = true
                 end
-            elseif string.find(detail.name, "mold") then
-                modifiers["mold:" .. detail.name] = true
+            elseif string.find(detail.name, "_mold") then
+                modifiers[detail.name] = true
             end
         end
     end
     return modifiers
 end
 
-function GtceuMachine:canAcceptTasks(task)
-    local recipe = task and task.recipe or nil
-    local recipeModifiers = recipe and recipe.modifiers or nil
+function GtceuMachine:canAcceptRecipe(recipe)
+    if not recipe then
+        return true
+    end
+    local recipeModifiers = recipe.modifiers or nil
     local dynamicModifiers = self:getDynamicModifiers()
     if recipeModifiers and next(recipeModifiers) ~= nil then
         local machineModifiers = mergeModifiers(self.modifiers, dynamicModifiers)
@@ -256,6 +258,14 @@ function GtceuMachine:canAcceptTasks(task)
                 return false
             end
         end
+    end
+    return true
+end
+
+function GtceuMachine:canAcceptTasks(task)
+    local recipe = task and task.recipe or nil
+    if not self:canAcceptRecipe(recipe) then
+        return false
     end
 
     if self.cap and self.cap.working then

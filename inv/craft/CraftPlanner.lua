@@ -25,12 +25,32 @@ function CraftPlanner:planWithReason(criteria)
         return nil, "invalid_output"
     end
 
+    local compatible = false
+    if self.server.machineRegistry then
+        local machines = self.server.machineRegistry:getMachines(recipe.machine)
+        if machines then
+            for _, machine in pairs(machines) do
+                if machine.canAcceptRecipe then
+                    if machine:canAcceptRecipe(recipe) then
+                        compatible = true
+                        break
+                    end
+                else
+                    compatible = true
+                    break
+                end
+            end
+        end
+    end
+
+    if not compatible then
+        self.logger.warn("[planner] no machine compatible with recipe modifiers for", recipe.machine)
+        return nil, "no_compatible_machine"
+    end
+
     local crafts = math.ceil(criteria.count / nOut)
     self.logger.info("[planner] plan", crafts, "craft(s) on", recipe.machine, "at", string.format("%.2fs", os.clock()))
-    return {criteria = criteria, recipe = recipe, crafts = crafts}, nil
+    return { criteria = criteria, recipe = recipe, crafts = crafts }, nil
 end
 
 return CraftPlanner
-
-
-

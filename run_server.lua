@@ -1,7 +1,7 @@
 local Server = require 'inv.runtime.Server'
 local Logger = require 'inv.infrastructure.Log'
 
-local args = {...}
+local args = { ... }
 
 local function initLogging(path)
     local log = fs.open(path, "a")
@@ -23,7 +23,7 @@ end
 
 function run()
     initLogging("CraftOSTest.log")
-    Logger.setLevel("debug")
+    Logger.setLevel("info")
     local runId = os.date("!%Y-%m-%dT%H:%MZ")
     Logger.info("[run] id=" .. runId, "goal=" .. table.concat(args, " "))
     Logger.runId = runId

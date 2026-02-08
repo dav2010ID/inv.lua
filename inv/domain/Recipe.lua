@@ -45,7 +45,7 @@ local function normalizeModifiers(specModifiers)
         assert(type(modifier) == "string", "recipe modifier must be a string")
         if string.match(modifier, "^circuit:%d+$") then
             modifiers[modifier] = true
-        elseif string.match(modifier, "^mold:.+$") then
+        elseif string.match(modifier, "_mold$") then
             modifiers[modifier] = true
         else
             error("unsupported recipe modifier: " .. tostring(modifier))
