@@ -168,8 +168,11 @@ function MachineScheduler:logMachineSummary()
     local stats = self.server.taskScheduler:getMachineStats()
     self.logger.info("[planner] machines:")
     for machineType, entry in pairs(stats) do
-        local total = self.machineRegistry:countMachines(machineType)
+        local total = entry.capacity or self.machineRegistry:countMachines(machineType)
         local available = self:countAvailableMachines(machineType)
+        if total > 0 and available > total then
+            available = total
+        end
         self.logger.info(
             "  " .. machineType .. ":",
             tostring(available) .. " available,",
@@ -189,7 +192,7 @@ function MachineScheduler:setCriticalMachine()
     local critical = nil
     local criticalRatio = -1
     for machineType, entry in pairs(stats) do
-        local count = self.machineRegistry:countMachines(machineType)
+        local count = entry.capacity or self.machineRegistry:countMachines(machineType)
         if count > 0 then
             local ratio = entry.total / count
             if ratio > criticalRatio then
