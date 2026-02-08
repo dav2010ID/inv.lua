@@ -143,6 +143,7 @@ FUNCTIONS:
   GtceuMachine:isOutputReady
   GtceuMachine:estimateDuration
   GtceuMachine:getDynamicModifiers
+  GtceuMachine:canAcceptRecipe
   GtceuMachine:canAcceptTasks
 
 FILE: inv\infrastructure\device\Machine.lua
@@ -277,6 +278,7 @@ FUNCTIONS:
   CliController:clearBuffer
   CliController:drawPrompt
   CliController:onChar
+  CliController:status
   CliController:onKey
   CliController:handleCommand
   CliController:findMachine
@@ -431,20 +433,18 @@ FUNCTIONS:
   TaskScheduler:logSummary
   TaskScheduler:getMachineStats
 
+FILE: reproduce_issue.lua
+REQUIRES:
+  require 'inv.domain.Recipe'
+  require 'inv.infrastructure.device.GtceuMachine'
+FUNCTIONS: (none)
+
 FILE: run_server.lua
 REQUIRES:
   require 'inv.runtime.Server'
   require 'inv.infrastructure.Log'
 FUNCTIONS:
   run
-
-FILE: test.lua
-REQUIRES: (none)
-FUNCTIONS: (none)
-
-FILE: test2.lua
-REQUIRES: (none)
-FUNCTIONS: (none)
 
 FILE: test3.lua
 REQUIRES: (none)

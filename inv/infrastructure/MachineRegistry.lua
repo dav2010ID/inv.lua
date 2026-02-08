@@ -47,19 +47,18 @@ function MachineRegistry:getAny(machineType)
     return nil
 end
 
-function MachineRegistry:countMachines(machineType)
+function MachineRegistry:countMachines(machineType, filter)
     local machinesOfType = self.machines[machineType]
     if not machinesOfType then
         return 0
     end
     local n = 0
-    for _, _ in pairs(machinesOfType) do
-        n = n + 1
+    for _, machine in pairs(machinesOfType) do
+        if not filter or filter(machine) then
+            n = n + 1
+        end
     end
     return n
 end
 
 return MachineRegistry
-
-
-

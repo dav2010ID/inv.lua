@@ -77,10 +77,23 @@ local function isWaitTask(task)
     return task and task.waitItem ~= nil
 end
 
+local function countCompatibleMachines(server, machineType, recipe)
+    if not server or not server.machineRegistry then
+        return 0
+    end
+    local function filter(machine)
+        if not machine.canAcceptRecipe then
+            return true
+        end
+        return machine:canAcceptRecipe(recipe)
+    end
+    return server.machineRegistry:countMachines(machineType, filter)
+end
+
 function TaskScheduler:getExecution(task)
     local exec = self.executions[task.id]
     if not exec then
-        exec = {machine=nil, session=nil}
+        exec = { machine = nil, session = nil }
         self.executions[task.id] = exec
     end
     return exec
@@ -132,7 +145,7 @@ function TaskScheduler:isDownstreamSaturated(task)
     end
     local stats = self:getMachineStats()
     local visited = {}
-    local stack = {task.machineType}
+    local stack = { task.machineType }
     visited[task.machineType] = true
     while #stack > 0 do
         local node = table.remove(stack)
@@ -153,7 +166,7 @@ function TaskScheduler:isDownstreamSaturated(task)
 end
 
 local function runWaitTask(self, task)
-    local missing = self.server.inventoryQuery:tryMatchAll({task.waitItem})
+    local missing = self.server.inventoryQuery:tryMatchAll({ task.waitItem })
     if #missing == 0 then
         return "done"
     end
@@ -181,7 +194,7 @@ function TaskScheduler:registerBatch(task)
     end
     local entry = byMachine[task.batchMachine]
     if not entry then
-        entry = {total=0, currentStart=1, waveSize=0, remaining=0, completedInWave=0, lastCapacity=nil, lastWaveEnd=nil}
+        entry = { total = 0, currentStart = 1, waveSize = 0, remaining = 0, completedInWave = 0, lastCapacity = nil, lastWaveEnd = nil }
         byMachine[task.batchMachine] = entry
     end
     entry.total = entry.total + 1
@@ -196,7 +209,7 @@ function TaskScheduler:batchAllows(task)
     if not entry then
         return true, nil
     end
-    local capacity = self.server.machineRegistry and self.server.machineRegistry:countMachines(task.batchMachine) or 0
+    local capacity = countCompatibleMachines(self.server, task.batchMachine, task.recipe)
     if capacity <= 0 then
         if entry.lastCapacity ~= capacity then
             entry.lastCapacity = capacity
@@ -288,7 +301,7 @@ function TaskScheduler:recordBatchComplete(task)
         entry.remaining = 0
         return
     end
-    local capacity = self.server.machineRegistry and self.server.machineRegistry:countMachines(task.batchMachine) or 0
+    local capacity = countCompatibleMachines(self.server, task.batchMachine, task.recipe)
     if capacity <= 0 then
         entry.waveSize = 0
         entry.remaining = 0
@@ -375,7 +388,8 @@ local function runCraftTask(self, task)
             local blockedBy = blockedByForMissing(missing)
             if task.needsDependencies and self.server.craftExecutor and self.server.craftExecutor.taskGraphBuilder then
                 task.needsDependencies = false
-                self.server.craftExecutor.taskGraphBuilder:link(task, task.recipe, 0, {}, task.craftCount, task.summaryId)
+                self.server.craftExecutor.taskGraphBuilder:link(task, task.recipe, 0, {}, task.craftCount, task
+                    .summaryId)
             end
             task.state = "waiting_inputs"
             self:setStatus(task, "blocked", "inputs", blockedBy)
@@ -621,26 +635,26 @@ local function getMachineEntry(summary, machineType)
     local entry = summary.machineStats[machineType]
     if not entry then
         entry = {
-            waitSum=0,
-            waitCount=0,
-            waitMax=0,
-            waitMachineCapacitySum=0,
-            waitMachineCapacityCount=0,
-            waitMachineCapacityMax=0,
-            waitMachinePrioritySum=0,
-            waitMachinePriorityCount=0,
-            waitMachinePriorityMax=0,
-            waitMachineBatchSum=0,
-            waitMachineBatchCount=0,
-            waitMachineBatchMax=0,
-            waitMachineUnavailableSum=0,
-            waitMachineUnavailableCount=0,
-            waitMachineUnavailableMax=0,
-            waitInputsSum=0,
-            waitInputsCount=0,
-            waitInputsMax=0,
-            runSum=0,
-            runMax=0
+            waitSum = 0,
+            waitCount = 0,
+            waitMax = 0,
+            waitMachineCapacitySum = 0,
+            waitMachineCapacityCount = 0,
+            waitMachineCapacityMax = 0,
+            waitMachinePrioritySum = 0,
+            waitMachinePriorityCount = 0,
+            waitMachinePriorityMax = 0,
+            waitMachineBatchSum = 0,
+            waitMachineBatchCount = 0,
+            waitMachineBatchMax = 0,
+            waitMachineUnavailableSum = 0,
+            waitMachineUnavailableCount = 0,
+            waitMachineUnavailableMax = 0,
+            waitInputsSum = 0,
+            waitInputsCount = 0,
+            waitInputsMax = 0,
+            runSum = 0,
+            runMax = 0
         }
         summary.machineStats[machineType] = entry
     end
@@ -654,11 +668,13 @@ function TaskScheduler:recordTaskStart(summaryId, machineType, waitSeconds)
     end
     if not summary.firstTaskStartedAt then
         summary.firstTaskStartedAt = os.clock()
-        self.logger.info("[phase] first_task_started at +" .. string.format("%.2fs", summary.firstTaskStartedAt - summary.startTime))
+        self.logger.info("[phase] first_task_started at +" ..
+            string.format("%.2fs", summary.firstTaskStartedAt - summary.startTime))
     end
     if summary.criticalPathStartedAt == nil and self.currentCriticalMachine == machineType then
         summary.criticalPathStartedAt = os.clock()
-        self.logger.info("[phase] critical_path_started at +" .. string.format("%.2fs", summary.criticalPathStartedAt - summary.startTime))
+        self.logger.info("[phase] critical_path_started at +" ..
+            string.format("%.2fs", summary.criticalPathStartedAt - summary.startTime))
     end
     local entry = getMachineEntry(summary, machineType)
     entry.waitSum = entry.waitSum + waitSeconds
@@ -715,7 +731,7 @@ function TaskScheduler:recordInputBlocker(summaryId, machineType, itemName, wait
     summary.inputBlockers[machineType] = summary.inputBlockers[machineType] or {}
     local entry = summary.inputBlockers[machineType][itemName]
     if not entry then
-        entry = {sum=0, max=0}
+        entry = { sum = 0, max = 0 }
         summary.inputBlockers[machineType][itemName] = entry
     end
     entry.sum = entry.sum + waitSeconds
@@ -783,8 +799,10 @@ function TaskScheduler:logSummary(summary)
         overhead = 0
     end
     local overheadPct = totalTime > 0 and (overhead / totalTime) * 100 or 0
-    local lostTotal = totalWaitInputs + totalWaitMachineCapacity + totalWaitMachinePriority + totalWaitMachineBatch + totalWaitMachineUnavailable
-    local idle = totalTime - (totalRun / math.max(1, (criticalMachine and machineRegistry:countMachines(criticalMachine) or 1)))
+    local lostTotal = totalWaitInputs + totalWaitMachineCapacity + totalWaitMachinePriority + totalWaitMachineBatch +
+        totalWaitMachineUnavailable
+    local idle = totalTime -
+        (totalRun / math.max(1, (criticalMachine and machineRegistry:countMachines(criticalMachine) or 1)))
     if idle < 0 then
         idle = 0
     end
@@ -800,7 +818,8 @@ function TaskScheduler:logSummary(summary)
         self.logger.info("  lower_bound_resource:", string.format("%.2fs", resourceLowerBound))
         local efficiency = (resourceLowerBound / totalTime) * 100
         self.logger.info("  efficiency:", string.format("%.0f%%", efficiency))
-        self.logger.info("  overhead:", "+" .. string.format("%.2fs", overhead), "(" .. string.format("%.0f%%", overheadPct) .. ")")
+        self.logger.info("  overhead:", "+" .. string.format("%.2fs", overhead),
+            "(" .. string.format("%.0f%%", overheadPct) .. ")")
     end
     self.logger.info("  utilization:")
     for machineType, entry in pairs(summary.machineStats) do
@@ -819,10 +838,14 @@ function TaskScheduler:logSummary(summary)
     end
     self.logger.info("  wait_reasons:")
     for machineType, entry in pairs(summary.machineStats) do
-        local avgMachineCapacity = entry.waitMachineCapacityCount > 0 and (entry.waitMachineCapacitySum / entry.waitMachineCapacityCount) or 0
-        local avgMachinePriority = entry.waitMachinePriorityCount > 0 and (entry.waitMachinePrioritySum / entry.waitMachinePriorityCount) or 0
-        local avgMachineBatch = entry.waitMachineBatchCount > 0 and (entry.waitMachineBatchSum / entry.waitMachineBatchCount) or 0
-        local avgMachineUnavailable = entry.waitMachineUnavailableCount > 0 and (entry.waitMachineUnavailableSum / entry.waitMachineUnavailableCount) or 0
+        local avgMachineCapacity = entry.waitMachineCapacityCount > 0 and
+            (entry.waitMachineCapacitySum / entry.waitMachineCapacityCount) or 0
+        local avgMachinePriority = entry.waitMachinePriorityCount > 0 and
+            (entry.waitMachinePrioritySum / entry.waitMachinePriorityCount) or 0
+        local avgMachineBatch = entry.waitMachineBatchCount > 0 and
+            (entry.waitMachineBatchSum / entry.waitMachineBatchCount) or 0
+        local avgMachineUnavailable = entry.waitMachineUnavailableCount > 0 and
+            (entry.waitMachineUnavailableSum / entry.waitMachineUnavailableCount) or 0
         local avgInputs = entry.waitInputsCount > 0 and (entry.waitInputsSum / entry.waitInputsCount) or 0
         self.logger.info(
             "    " .. machineType .. ":",
@@ -841,10 +864,13 @@ function TaskScheduler:logSummary(summary)
     self.logger.info("  lost_time:")
     if lostTotal > 0 then
         self.logger.info("    waiting_inputs:", string.format("%.0f%%", (totalWaitInputs / lostTotal) * 100))
-        self.logger.info("    waiting_machine_capacity:", string.format("%.0f%%", (totalWaitMachineCapacity / lostTotal) * 100))
-        self.logger.info("    waiting_machine_priority:", string.format("%.0f%%", (totalWaitMachinePriority / lostTotal) * 100))
+        self.logger.info("    waiting_machine_capacity:",
+            string.format("%.0f%%", (totalWaitMachineCapacity / lostTotal) * 100))
+        self.logger.info("    waiting_machine_priority:",
+            string.format("%.0f%%", (totalWaitMachinePriority / lostTotal) * 100))
         self.logger.info("    waiting_machine_batch:", string.format("%.0f%%", (totalWaitMachineBatch / lostTotal) * 100))
-        self.logger.info("    waiting_machine_unavailable:", string.format("%.0f%%", (totalWaitMachineUnavailable / lostTotal) * 100))
+        self.logger.info("    waiting_machine_unavailable:",
+            string.format("%.0f%%", (totalWaitMachineUnavailable / lostTotal) * 100))
         local idlePct = totalTime > 0 and (idle / totalTime) * 100 or 0
         self.logger.info("    idle:", string.format("%.0f%%", idlePct))
     end
@@ -864,7 +890,8 @@ function TaskScheduler:logSummary(summary)
             self.logger.info("  input_blockers:")
             self.logger.info("    " .. machineType .. ":")
             self.logger.info("      primary_blocker:", topName)
-            self.logger.info("      impact:", string.format("%.2fs", topSum), "(" .. string.format("%.0f%%", impactPct) .. ")")
+            self.logger.info("      impact:", string.format("%.2fs", topSum),
+                "(" .. string.format("%.0f%%", impactPct) .. ")")
         end
     end
     if criticalMachine and machineRegistry then
@@ -877,7 +904,8 @@ function TaskScheduler:logSummary(summary)
                 local newMin = criticalEntry and (criticalEntry.runSum / (count + 1)) or 0
                 if newMin > 0 then
                     self.logger.info("[hint] bottleneck detected:", criticalMachine)
-                    self.logger.info("[hint] adding +1 machine reduces theoretical_min to", string.format("%.2fs", newMin))
+                    self.logger.info("[hint] adding +1 machine reduces theoretical_min to",
+                        string.format("%.2fs", newMin))
                 end
             end
         end
@@ -896,7 +924,7 @@ function TaskScheduler:getMachineStats()
         end
         local entry = stats[task.machineType]
         if not entry then
-            entry = {waiting_inputs=0, waiting_machine_capacity=0, waiting_machine_priority=0, waiting_machine_batch=0, waiting_machine_unavailable=0, running=0, waiting_subtasks=0, total=0}
+            entry = { waiting_inputs = 0, waiting_machine_capacity = 0, waiting_machine_priority = 0, waiting_machine_batch = 0, waiting_machine_unavailable = 0, running = 0, waiting_subtasks = 0, total = 0 }
             stats[task.machineType] = entry
         end
         entry.total = entry.total + 1
