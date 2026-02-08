@@ -9,6 +9,20 @@ local TaskQueue = Class:subclass()
 
 local PRIORITY_ALPHA = 1.4
 
+local function countCompatibleMachines(server, recipe)
+    local registry = server and server.machineRegistry or nil
+    if not registry or not recipe then
+        return 0
+    end
+    local function filter(machine)
+        if not machine or type(machine.canAcceptRecipe) ~= "function" then
+            return true
+        end
+        return machine:canAcceptRecipe(recipe)
+    end
+    return registry:countMachines(recipe.machine, filter)
+end
+
 function TaskFactory:init(server)
     self.server = server
 end
@@ -122,7 +136,7 @@ function TaskQueue:resolveSummary(summaryRef)
 end
 
 function TaskQueue:buildBatches(recipe, crafts)
-    local machineCount = self.server.machineScheduler:countAvailableMachines(recipe.machine)
+    local machineCount = countCompatibleMachines(self.server, recipe)
     local batches = crafts
     if machineCount > 0 then
         batches = math.min(crafts, machineCount)

@@ -420,6 +420,7 @@ FUNCTIONS:
   TaskScheduler:registerBatch
   TaskScheduler:batchAllows
   TaskScheduler:recordBatchComplete
+  TaskScheduler:wakeBatchSleepers
   TaskScheduler:tick
   TaskScheduler:addTask
   TaskScheduler:createSummary
