@@ -634,6 +634,9 @@ local function waitReasonForTask(task)
     if task.status == "waiting" and task.statusReason == "machine_unavailable" then
         return "waiting_machine_unavailable"
     end
+    if task.status == "waiting" and task.statusReason == "subtasks" then
+        return "waiting_subtasks"
+    end
     if task.status == "blocked" and task.statusReason == "inputs" then
         return "waiting_inputs"
     end
@@ -697,6 +700,9 @@ local function getMachineEntry(summary, machineType)
             waitMachineUnavailableSum = 0,
             waitMachineUnavailableCount = 0,
             waitMachineUnavailableMax = 0,
+            waitSubtasksSum = 0,
+            waitSubtasksCount = 0,
+            waitSubtasksMax = 0,
             waitInputsSum = 0,
             waitInputsCount = 0,
             waitInputsMax = 0,
@@ -765,6 +771,12 @@ function TaskScheduler:recordWait(summaryId, machineType, reason, waitSeconds, r
         if waitSeconds > entry.waitMachineUnavailableMax then
             entry.waitMachineUnavailableMax = waitSeconds
         end
+    elseif reason == "waiting_subtasks" then
+        entry.waitSubtasksSum = entry.waitSubtasksSum + waitSeconds
+        entry.waitSubtasksCount = entry.waitSubtasksCount + 1
+        if waitSeconds > entry.waitSubtasksMax then
+            entry.waitSubtasksMax = waitSeconds
+        end
     elseif reason == "waiting_inputs" then
         entry.waitInputsSum = entry.waitInputsSum + waitSeconds
         entry.waitInputsCount = entry.waitInputsCount + 1
@@ -822,6 +834,7 @@ function TaskScheduler:logSummary(summary)
     local totalWaitMachinePriority = 0
     local totalWaitMachineBatch = 0
     local totalWaitMachineUnavailable = 0
+    local totalWaitSubtasks = 0
     local totalRun = 0
     local capacityByMachine = {}
     for machineType, entry in pairs(summary.machineStats) do
@@ -854,6 +867,7 @@ function TaskScheduler:logSummary(summary)
         totalWaitMachinePriority = totalWaitMachinePriority + entry.waitMachinePrioritySum
         totalWaitMachineBatch = totalWaitMachineBatch + entry.waitMachineBatchSum
         totalWaitMachineUnavailable = totalWaitMachineUnavailable + entry.waitMachineUnavailableSum
+        totalWaitSubtasks = totalWaitSubtasks + entry.waitSubtasksSum
         totalRun = totalRun + entry.runSum
     end
     local overhead = totalTime - resourceLowerBound
@@ -862,7 +876,7 @@ function TaskScheduler:logSummary(summary)
     end
     local overheadPct = totalTime > 0 and (overhead / totalTime) * 100 or 0
     local lostTotal = totalWaitInputs + totalWaitMachineCapacity + totalWaitMachinePriority + totalWaitMachineBatch +
-        totalWaitMachineUnavailable
+        totalWaitMachineUnavailable + totalWaitSubtasks
     local criticalCapacity = criticalMachine and (capacityByMachine[criticalMachine] or 0) or 0
     local idle = totalTime - (totalRun / math.max(1, criticalCapacity > 0 and criticalCapacity or 1))
     if idle < 0 then
@@ -870,6 +884,13 @@ function TaskScheduler:logSummary(summary)
     end
     self.logger.info("[summary] craft", summary.name, "x" .. tostring(summary.count))
     self.logger.info("  total_time:", string.format("%.2fs", totalTime))
+    if summary.firstTaskStartedAt then
+        local prepTime = summary.firstTaskStartedAt - summary.startTime
+        if prepTime < 0 then
+            prepTime = 0
+        end
+        self.logger.info("  prep_time:", string.format("%.2fs", prepTime))
+    end
     if criticalMachine then
         self.logger.info("  critical_machine:", criticalMachine)
     end
@@ -908,6 +929,8 @@ function TaskScheduler:logSummary(summary)
             (entry.waitMachineBatchSum / entry.waitMachineBatchCount) or 0
         local avgMachineUnavailable = entry.waitMachineUnavailableCount > 0 and
             (entry.waitMachineUnavailableSum / entry.waitMachineUnavailableCount) or 0
+        local avgSubtasks = entry.waitSubtasksCount > 0 and
+            (entry.waitSubtasksSum / entry.waitSubtasksCount) or 0
         local avgInputs = entry.waitInputsCount > 0 and (entry.waitInputsSum / entry.waitInputsCount) or 0
         self.logger.info(
             "    " .. machineType .. ":",
@@ -919,6 +942,8 @@ function TaskScheduler:logSummary(summary)
             "max " .. string.format("%.2fs", entry.waitMachineBatchMax) .. ";",
             "unavailable avg " .. string.format("%.2fs", avgMachineUnavailable) .. ",",
             "max " .. string.format("%.2fs", entry.waitMachineUnavailableMax) .. ";",
+            "subtasks avg " .. string.format("%.2fs", avgSubtasks) .. ",",
+            "max " .. string.format("%.2fs", entry.waitSubtasksMax) .. ";",
             "inputs avg " .. string.format("%.2fs", avgInputs) .. ",",
             "max " .. string.format("%.2fs", entry.waitInputsMax)
         )
@@ -933,6 +958,7 @@ function TaskScheduler:logSummary(summary)
         self.logger.info("    waiting_machine_batch:", string.format("%.0f%%", (totalWaitMachineBatch / lostTotal) * 100))
         self.logger.info("    waiting_machine_unavailable:",
             string.format("%.0f%%", (totalWaitMachineUnavailable / lostTotal) * 100))
+        self.logger.info("    waiting_subtasks:", string.format("%.0f%%", (totalWaitSubtasks / lostTotal) * 100))
         local idlePct = totalTime > 0 and (idle / totalTime) * 100 or 0
         self.logger.info("    idle:", string.format("%.0f%%", idlePct))
     end

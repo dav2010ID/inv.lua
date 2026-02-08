@@ -1,6 +1,7 @@
 local Class = require 'inv.core.Class'
 
 local RuntimeLoop = Class:subclass()
+local TASK_TICK_SECONDS = 0.25
 
 function RuntimeLoop:init(server, dispatcher, cli)
     self.server = server
@@ -18,7 +19,7 @@ end
 
 function RuntimeLoop:tick()
     if self.server.taskScheduler:tick() then
-        self.taskTimer = os.startTimer(1)
+        self.taskTimer = os.startTimer(TASK_TICK_SECONDS)
         local activeCount = #self.server.taskScheduler.active
         local now = os.clock()
         if self.lastActiveCount ~= activeCount or (now - self.lastActiveLogTime) > 5 then
@@ -34,6 +35,8 @@ function RuntimeLoop:broadcastUpdatedItems()
 end
 
 function RuntimeLoop:run()
+    -- Kick off queued tasks before waiting on the first event.
+    self:tick()
     while self.running do
         local evt = { os.pullEventRaw() }
         local shouldContinue = true

@@ -21,7 +21,6 @@ function RecipeStore:loadRecipes(data)
             assert(item.name) -- output should not be generic
             if not self.recipes[item.name] then
                 self.recipes[item.name] = recipe
-                self.logger.debug("[craft] added recipe", item.name)
             end
             local info = self.server.inventoryQuery:getItem(item.name)
             if not info then
@@ -52,6 +51,3 @@ function RecipeStore:findRecipe(item)
 end
 
 return RecipeStore
-
-
-

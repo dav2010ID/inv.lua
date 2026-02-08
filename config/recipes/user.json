@@ -32,7 +32,7 @@
         ],
         "input": {
             "1": {
-                "name": "create:brass_ingot",
+                "name": "gtceu:brass_ingot",
                 "count": 1
             }
         },
@@ -41,6 +41,21 @@
             "3": {
                 "name": "gtceu:brass_rod",
                 "count": 2
+            }
+        }
+    },
+    {
+        "machine": "gtceu:mv_compressor",
+        "input": {
+            "1": {
+                "name": "gtceu:brass_nugget",
+                "count": 9
+            }
+        },
+        "output": {
+            "2": {
+                "name": "gtceu:brass_ingot",
+                "count": 1
             }
         }
     }
