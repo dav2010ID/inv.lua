@@ -21,6 +21,7 @@ function TaskScheduler:init(server)
     self.currentRunId = nil
     self.executions = {}
     self.machineDeps = {}
+    self.batchSleeping = {}
 end
 
 -- Returns the next available task ID for creating a new task.
@@ -323,6 +324,26 @@ function TaskScheduler:recordBatchComplete(task)
         "wave",
         tostring(entry.currentStart) .. "-" .. tostring(waveEnd)
     )
+    self:wakeBatchSleepers(task.batchKey)
+end
+
+function TaskScheduler:wakeBatchSleepers(batchKey)
+    if not self.batchSleeping or not self.batchSleeping[batchKey] then
+        return
+    end
+    local sleepers = self.batchSleeping[batchKey]
+    local i = 1
+    while i <= #sleepers do
+        local task = sleepers[i]
+        local allowed, reason = self:batchAllows(task)
+        if allowed then
+            table.remove(sleepers, i)
+            table.insert(self.active, task)
+            self:setStatus(task, "ready") -- Reset status so it gets picked up
+        else
+            i = i + 1
+        end
+    end
 end
 
 local function runCraftTask(self, task)
@@ -535,6 +556,15 @@ function TaskScheduler:addTask(task)
         self:setStatus(task, "blocked", "inputs", waitItemKey(task.waitItem))
         return
     end
+
+    local allowed, reason = self:batchAllows(task)
+    if not allowed and task.batchKey and reason ~= "machine_unavailable" then
+        self:setStatus(task, "waiting", reason)
+        self.batchSleeping[task.batchKey] = self.batchSleeping[task.batchKey] or {}
+        table.insert(self.batchSleeping[task.batchKey], task)
+        return
+    end
+
     if task.nSubTasks and task.nSubTasks > 0 then
         self.sleeping[task.id] = task
         self:setStatus(task, "waiting", "subtasks")
