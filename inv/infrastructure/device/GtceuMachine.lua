@@ -246,15 +246,42 @@ function GtceuMachine:canAcceptRecipe(recipe)
     local dynamicModifiers = self:getDynamicModifiers()
     if recipeModifiers and next(recipeModifiers) ~= nil then
         local machineModifiers = mergeModifiers(self.modifiers, dynamicModifiers)
+        local missing = nil
         for modifier, _ in pairs(recipeModifiers) do
             if not machineModifiers[modifier] then
-                return false
+                missing = missing or {}
+                table.insert(missing, modifier)
             end
+        end
+        if missing and #missing > 0 then
+            if self.server and self.server.logger then
+                self.server.logger.throttle(
+                    "mod_missing_" .. tostring(self.name),
+                    2,
+                    self.server.logger.levels.debug,
+                    "[task] ",
+                    "modifier_missing",
+                    self.name,
+                    table.concat(missing, ",")
+                )
+            end
+            return false
         end
     else
         -- Рецепт без modifiers должен идти только на машину без programmed_circuit.
         for modifier, _ in pairs(dynamicModifiers) do
             if string.match(modifier, "^circuit:%d+$") then
+                if self.server and self.server.logger then
+                    self.server.logger.throttle(
+                        "mod_reject_" .. tostring(self.name),
+                        2,
+                        self.server.logger.levels.debug,
+                        "[task] ",
+                        "modifier_reject",
+                        self.name,
+                        modifier
+                    )
+                end
                 return false
             end
         end

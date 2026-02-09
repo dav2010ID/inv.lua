@@ -424,6 +424,17 @@ local function runCraftTask(self, task)
         local missing = self.server.inventoryQuery:tryMatchAll(task:scaledInputs())
         if #missing > 0 then
             local blockedBy = blockedByForMissing(missing)
+            if not task.inputBlockedAt then
+                task.inputBlockedAt = os.clock()
+                local sample = missing[1]
+                self.logger.debug(
+                    "[task] waiting_inputs",
+                    task.recipe.machine,
+                    "need",
+                    formatCriteria(sample),
+                    blockedBy and ("blocked_by " .. blockedBy) or ""
+                )
+            end
             if task.needsDependencies and self.server.craftExecutor and self.server.craftExecutor.taskGraphBuilder then
                 task.needsDependencies = false
                 self.server.craftExecutor.taskGraphBuilder:link(task, task.recipe, 0, {}, task.craftCount, task
@@ -433,6 +444,17 @@ local function runCraftTask(self, task)
             self:setStatus(task, "blocked", "inputs", blockedBy)
             self:recordWaitProgress(task)
             return nil
+        end
+        if task.inputBlockedAt then
+            local waited = os.clock() - task.inputBlockedAt
+            self.logger.debug(
+                "[task] inputs_ready",
+                task.recipe.machine,
+                "waited",
+                string.format("%.2fs", waited),
+                task.blockedBy and ("blocked_by " .. task.blockedBy) or ""
+            )
+            task.inputBlockedAt = nil
         end
         if task.state == "waiting_inputs" then
             task.state = "waiting_machine"
@@ -481,6 +503,7 @@ local function runCraftTask(self, task)
         exec.session = nil
         exec.machine = nil
         task:onStartFailure("inputs")
+        self.logger.debug("[task] prepare_inputs_failed", task.recipe.machine, code or "unknown")
         self:setStatus(task, "blocked", "inputs")
         self:recordWaitProgress(task)
         return nil
@@ -641,6 +664,21 @@ local function waitReasonForTask(task)
         return "waiting_inputs"
     end
     return nil
+end
+
+local function formatCriteria(item)
+    if not item then
+        return "unknown"
+    end
+    if item.name then
+        return item.name .. " x" .. tostring(item.count or 0)
+    end
+    if item.tags then
+        for tag, _ in pairs(item.tags) do
+            return "tag:" .. tag .. " x" .. tostring(item.count or 0)
+        end
+    end
+    return "unknown"
 end
 
 function TaskScheduler:recordWaitProgress(task)

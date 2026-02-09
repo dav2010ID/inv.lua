@@ -36,12 +36,46 @@ function CraftSession:prepareInputs()
                 local detail = self.machine:getItemDetail(realSlot)
                 if detail then
                     if not crit:matches(detail) then
+                        if self.server and self.server.logger then
+                            self.server.logger.throttle(
+                                "input_mismatch_" .. tostring(self.machine.name) .. "_" .. tostring(realSlot),
+                                2,
+                                self.server.logger.levels.debug,
+                                "[task] ",
+                                "input_mismatch",
+                                self.machine.name,
+                                "slot",
+                                tostring(realSlot),
+                                "have",
+                                detail.name or "unknown",
+                                "need",
+                                crit.name or "tag"
+                            )
+                        end
                         return false, "insufficient_input"
                     end
                     current = detail.count or 0
                 end
                 local available = limit - current
                 if available < needed.count then
+                    if self.server and self.server.logger then
+                        self.server.logger.throttle(
+                            "input_limit_" .. tostring(self.machine.name) .. "_" .. tostring(realSlot),
+                            2,
+                            self.server.logger.levels.debug,
+                            "[task] ",
+                            "input_limit",
+                            self.machine.name,
+                            "slot",
+                            tostring(realSlot),
+                            "limit",
+                            tostring(limit),
+                            "current",
+                            tostring(current),
+                            "need",
+                            tostring(needed.count)
+                        )
+                    end
                     return false, "insufficient_input"
                 end
             end
@@ -49,6 +83,22 @@ function CraftSession:prepareInputs()
         local n = self.server.inventoryMutator:push(self.machine, needed, needed.count, realSlot)
         pushed[virtSlot] = n
         if n < needed.count then
+            if self.server and self.server.logger then
+                self.server.logger.throttle(
+                    "input_short_" .. tostring(self.machine.name) .. "_" .. tostring(realSlot),
+                    2,
+                    self.server.logger.levels.debug,
+                    "[task] ",
+                    "input_short",
+                    self.machine.name,
+                    "slot",
+                    tostring(realSlot),
+                    "pushed",
+                    tostring(n),
+                    "need",
+                    tostring(needed.count)
+                )
+            end
             self:rollbackInputs(pushed)
             return false, "insufficient_input"
         end

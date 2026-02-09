@@ -8,6 +8,7 @@ local TaskGraphBuilder = Class:subclass()
 local TaskQueue = Class:subclass()
 
 local PRIORITY_ALPHA = 1.4
+local FAST_START_TICKS = 3
 
 local function countCompatibleMachines(server, recipe)
     local registry = server and server.machineRegistry or nil
@@ -202,6 +203,13 @@ function TaskQueue:queuePlan(plan, dest, destSlot)
     self:enqueueRecipe(plan.recipe, plan.crafts, summary, nil, dest, destSlot, 0, {}, false)
     self.server.machineScheduler:setCriticalMachine()
     self.server.machineScheduler:logMachineSummary()
+    if self.server.taskScheduler then
+        for _ = 1, FAST_START_TICKS do
+            if not self.server.taskScheduler:tick() then
+                break
+            end
+        end
+    end
     return summary
 end
 
