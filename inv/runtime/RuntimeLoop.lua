@@ -2,6 +2,7 @@ local Class = require 'inv.core.Class'
 
 local RuntimeLoop = Class:subclass()
 local TASK_TICK_SECONDS = 0.25
+local TASK_TICK_BURST = 3
 
 function RuntimeLoop:init(server, dispatcher, cli)
     self.server = server
@@ -18,15 +19,23 @@ function RuntimeLoop:stop()
 end
 
 function RuntimeLoop:tick()
-    if self.server.taskScheduler:tick() then
-        self.taskTimer = os.startTimer(TASK_TICK_SECONDS)
-        local activeCount = #self.server.taskScheduler.active
-        local now = os.clock()
-        if self.lastActiveCount ~= activeCount or (now - self.lastActiveLogTime) > 5 then
-            self.cli:status()
-            self.lastActiveCount = activeCount
-            self.lastActiveLogTime = now
+    local ran = false
+    for _ = 1, TASK_TICK_BURST do
+        if not self.server.taskScheduler:tick() then
+            break
         end
+        ran = true
+    end
+    if not ran then
+        return
+    end
+    self.taskTimer = os.startTimer(TASK_TICK_SECONDS)
+    local activeCount = #self.server.taskScheduler.active
+    local now = os.clock()
+    if self.lastActiveCount ~= activeCount or (now - self.lastActiveLogTime) > 5 then
+        self.cli:status()
+        self.lastActiveCount = activeCount
+        self.lastActiveLogTime = now
     end
 end
 
