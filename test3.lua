@@ -1,1 +1,0 @@
-print(fs.getFreeSpace('./'))

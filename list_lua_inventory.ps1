@@ -5,7 +5,7 @@
 
 $ErrorActionPreference = 'Stop'
 
-$rootPath = (Resolve-Path -Path $Root).Path.TrimEnd('\','/')
+$rootPath = (Resolve-Path -Path $Root).Path.TrimEnd('\', '/')
 $rootPrefix = $rootPath + [IO.Path]::DirectorySeparatorChar
 $files = Get-ChildItem -Path $rootPath -Recurse -Filter *.lua | Sort-Object FullName
 
@@ -14,7 +14,8 @@ foreach ($f in $files) {
   $full = $f.FullName
   if ($full.StartsWith($rootPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
     $rel = $full.Substring($rootPrefix.Length)
-  } else {
+  }
+  else {
     $rel = $full
   }
   $lines.Add("FILE: $rel")
@@ -24,16 +25,12 @@ foreach ($f in $files) {
   if ($requires) {
     $lines.Add('REQUIRES:')
     foreach ($r in $requires) { $lines.Add('  ' + $r.Matches.Value) }
-  } else {
-    $lines.Add('REQUIRES: (none)')
   }
 
   $funcs = $content | Select-String -Pattern '^\s*function\s+([\w\.:]+)'
   if ($funcs) {
     $lines.Add('FUNCTIONS:')
     foreach ($fn in $funcs) { $lines.Add('  ' + $fn.Matches.Groups[1].Value) }
-  } else {
-    $lines.Add('FUNCTIONS: (none)')
   }
 
   $lines.Add('')
